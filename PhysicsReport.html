@@ -1,0 +1,67 @@
+﻿<!DOCTYPE html>
+
+<html lang="en" xmlns="http://www.w3.org/1999/xhtml">
+<head>
+    <meta charset="utf-8" />
+    <title>PhysicsReport</title>
+    <style>
+        div.container {
+            width: 1800px;
+            border: 1px solid gray;
+            background-color: snow;
+        }
+        header, footer {
+            padding: 1em;
+            color: black;
+            background-color: snow;
+            clear: left;
+            text-align: left;
+        }
+        nav {
+            float: left;
+            max-width: 200px;
+            margin: 0;
+            padding: 1em;
+            background-color: snow;
+            border: none;
+        }
+        nav ul {
+            list-style-type: none;
+            padding: 0;
+            background-color: snow;
+            border: none;
+        }
+        nav ul a {
+            text-decoration: none;
+            background-color: snow;
+            border: none;
+        }
+        article {
+            margin-left: 200px;
+            border-left: 1px solid gray;
+            padding: 1em;
+            overflow: hidden;
+            background-color: snow;
+        }
+        table {
+            border-spacing: 10px 0;
+        }
+        .tab {
+            margin-left: 35px;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="" container"">
+        <header>
+            <h1>External Beam Treatment - Physics 2nd Check Report</h1>
+            <h2>{PATIENT_FIRST_NAME} {PATIENT_MIDDLE_NAME} {PATIENT_LAST_NAME} ({PATIENT_ID}) - {PLAN_ID}</h2>
+            <hr noshade, size=1>
+            {PHYSICS_INFO}
+        </header>
+    </div>
+
+</body>
+
+</html>

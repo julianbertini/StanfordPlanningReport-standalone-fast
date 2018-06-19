@@ -1,0 +1,482 @@
+<?xml version="1.0" encoding="utf-8"?>
+<edmx:Edmx Version="3.0" xmlns:edmx="http://schemas.microsoft.com/ado/2009/11/edmx">
+ <!-- EF Designer content (DO NOT EDIT MANUALLY BELOW HERE) -->
+  <edmx:Designer xmlns="http://schemas.microsoft.com/ado/2009/11/edmx">
+    <!-- Diagram content (shape and connector positions) -->
+    <edmx:Diagrams>
+      <Diagram DiagramId="8a88a6a4c2cd47028b3f8fa5f585d510" Name="Diagram1">
+        <EntityTypeShape EntityType="Aria.ExecutionLog" Width="1.5" PointX="0.75" PointY="0.75" IsExpanded="true" />
+        <EntityTypeShape EntityType="Aria.C__RefactorLog" Width="1.5" PointX="2.75" PointY="0.75" IsExpanded="true" />
+        <EntityTypeShape EntityType="Aria.sysssislog" Width="1.5" PointX="2.75" PointY="2.75" IsExpanded="true" />
+        <EntityTypeShape EntityType="Aria.AttributeCustomGrouping" Width="1.5" PointX="4.75" PointY="0.75" IsExpanded="true" />
+        <EntityTypeShape EntityType="Aria.AttributeMetaData" Width="1.5" PointX="4.75" PointY="3.75" IsExpanded="true" />
+        <EntityTypeShape EntityType="Aria.AuraConfiguration" Width="1.5" PointX="6.75" PointY="0.75" IsExpanded="true" />
+        <EntityTypeShape EntityType="Aria.AuraDBHistory" Width="1.5" PointX="6.75" PointY="3.75" IsExpanded="true" />
+        <EntityTypeShape EntityType="Aria.CustomGroup" Width="1.5" PointX="0.75" PointY="7.75" IsExpanded="true" />
+        <EntityTypeShape EntityType="Aria.CustomGrouping" Width="1.5" PointX="2.75" PointY="7.75" IsExpanded="true" />
+        <EntityTypeShape EntityType="Aria.DataModelList" Width="1.5" PointX="4.75" PointY="7.75" IsExpanded="true" />
+        <EntityTypeShape EntityType="Aria.DimActivity" Width="1.5" PointX="5.25" PointY="176.125" IsExpanded="true" />
+        <EntityTypeShape EntityType="Aria.DimActivityAttribute" Width="1.5" PointX="7.5" PointY="102.875" IsExpanded="true" />
+        <EntityTypeShape EntityType="Aria.DimActivityTransaction" Width="1.5" PointX="7.5" PointY="177.875" IsExpanded="true" />
+        <EntityTypeShape EntityType="Aria.DimActivityTransactionWorkTable" Width="1.5" PointX="6.75" PointY="7.75" IsExpanded="true" />
+        <EntityTypeShape EntityType="Aria.DimAddOn" Width="1.5" PointX="11.25" PointY="107.125" IsExpanded="true" />
+        <EntityTypeShape EntityType="Aria.DimCellType" Width="1.5" PointX="9.75" PointY="120.875" IsExpanded="true" />
+        <EntityTypeShape EntityType="Aria.DimClinic" Width="1.5" PointX="14.25" PointY="129.375" IsExpanded="true" />
+        <EntityTypeShape EntityType="Aria.DimConstantResource" Width="1.5" PointX="3" PointY="170.5" IsExpanded="true" />
+        <EntityTypeShape EntityType="Aria.DimCourse" Width="1.5" PointX="12" PointY="135.875" IsExpanded="true" />
+        <EntityTypeShape EntityType="Aria.DimDate" Width="1.5" PointX="9.75" PointY="134.75" IsExpanded="true" />
+        <EntityTypeShape EntityType="Aria.DimDateRangeController" Width="1.5" PointX="8.75" PointY="0.75" IsExpanded="true" />
+        <EntityTypeShape EntityType="Aria.DimDiagnosisCode" Width="1.5" PointX="9.75" PointY="125.875" IsExpanded="true" />
+        <EntityTypeShape EntityType="Aria.DimDoctor" Width="1.5" PointX="3" PointY="160.625" IsExpanded="true" />
+        <EntityTypeShape EntityType="Aria.DimDrug" Width="1.5" PointX="19.5" PointY="161" IsExpanded="true" />
+        <EntityTypeShape EntityType="Aria.DimDxSite" Width="1.5" PointX="9.75" PointY="114.25" IsExpanded="true" />
+        <EntityTypeShape EntityType="Aria.DimEnergy" Width="1.5" PointX="11.25" PointY="181.625" IsExpanded="true" />
+        <EntityTypeShape EntityType="Aria.DimField" Width="1.5" PointX="14.25" PointY="216.75" IsExpanded="true" />
+        <EntityTypeShape EntityType="Aria.DimHospitalDepartment" Width="1.5" PointX="12" PointY="126.875" IsExpanded="true" />
+        <EntityTypeShape EntityType="Aria.DimICDOSite" Width="1.5" PointX="9.75" PointY="214" IsExpanded="true" />
+        <EntityTypeShape EntityType="Aria.DimInstituteLocation" Width="1.5" PointX="16.5" PointY="170.75" IsExpanded="true" />
+        <EntityTypeShape EntityType="Aria.DimLocation" Width="1.5" PointX="0.75" PointY="152.5" IsExpanded="true" />
+        <EntityTypeShape EntityType="Aria.DimLookup" Width="1.5" PointX="0.75" PointY="156.625" IsExpanded="true" />
+        <EntityTypeShape EntityType="Aria.DimMachine" Width="1.5" PointX="14.25" PointY="228.875" IsExpanded="true" />
+        <EntityTypeShape EntityType="Aria.DimMedoncPlan" Width="1.5" PointX="5.25" PointY="184.625" IsExpanded="true" />
+        <EntityTypeShape EntityType="Aria.DimMedoncPlanInterval" Width="1.5" PointX="27.5" PointY="200" IsExpanded="true" />
+        <EntityTypeShape EntityType="Aria.DimMedoncPlanPhase" Width="1.5" PointX="5.25" PointY="190.625" IsExpanded="true" />
+        <EntityTypeShape EntityType="Aria.DimMedoncPlanSummary" Width="1.5" PointX="7.5" PointY="194.375" IsExpanded="true" />
+        <EntityTypeShape EntityType="Aria.DimNationality" Width="1.5" PointX="12" PointY="124" IsExpanded="true" />
+        <EntityTypeShape EntityType="Aria.DimOperatingLimit" Width="1.5" PointX="16.5" PointY="224.375" IsExpanded="true" />
+        <EntityTypeShape EntityType="Aria.DimPatient" Width="1.5" PointX="9.75" PointY="220.375" IsExpanded="true" />
+        <EntityTypeShape EntityType="Aria.DimPatientDepartment" Width="1.5" PointX="27.25" PointY="189" IsExpanded="true" />
+        <EntityTypeShape EntityType="Aria.DimPatientDepartmentbyCUID" Width="1.5" PointX="7.5" PointY="208.5" IsExpanded="true" />
+        <EntityTypeShape EntityType="Aria.DimPatientDiseaseResponse" Width="1.5" PointX="9.75" PointY="190.625" IsExpanded="true" />
+        <EntityTypeShape EntityType="Aria.DimPatientDoctor" Width="1.5" PointX="8.75" PointY="3.75" IsExpanded="true" />
+        <EntityTypeShape EntityType="Aria.DimPatientJournal" Width="1.5" PointX="10.5" PointY="207.875" IsExpanded="true" />
+        <EntityTypeShape EntityType="Aria.DimPatientPerformanceStatu" Width="1.5" PointX="8.75" PointY="9.75" IsExpanded="true" />
+        <EntityTypeShape EntityType="Aria.DimPatientPhoto" Width="1.5" PointX="12" PointY="231.125" IsExpanded="true" />
+        <EntityTypeShape EntityType="Aria.DimPatientUserDefinedLabel" Width="1.5" PointX="6" PointY="160.375" IsExpanded="true" />
+        <EntityTypeShape EntityType="Aria.DimPatientVisitTracking" Width="1.5" PointX="15.75" PointY="177.375" IsExpanded="true" />
+        <EntityTypeShape EntityType="Aria.DimPayor" Width="1.5" PointX="14.75" PointY="234.375" IsExpanded="true" />
+        <EntityTypeShape EntityType="Aria.DimPlan" Width="1.5" PointX="12" PointY="216" IsExpanded="true" />
+        <EntityTypeShape EntityType="Aria.DimPrescription" Width="1.5" PointX="22" PointY="211" IsExpanded="true" />
+        <EntityTypeShape EntityType="Aria.DimPrescriptionAnatomy" Width="1.5" PointX="22" PointY="218.25" IsExpanded="true" />
+        <EntityTypeShape EntityType="Aria.DimPrescriptionProperty" Width="1.5" PointX="22" PointY="223" IsExpanded="true" />
+        <EntityTypeShape EntityType="Aria.DimProcedureCode" Width="1.5" PointX="19.5" PointY="206.125" IsExpanded="true" />
+        <EntityTypeShape EntityType="Aria.DimQuestionnaire" Width="1.5" PointX="3" PointY="197.375" IsExpanded="true" />
+        <EntityTypeShape EntityType="Aria.DimResource" Width="1.5" PointX="3" PointY="206.75" IsExpanded="true" />
+        <EntityTypeShape EntityType="Aria.DimResourceDepartmentHospital" Width="1.5" PointX="5.25" PointY="202" IsExpanded="true" />
+        <EntityTypeShape EntityType="Aria.DimRx" Width="1.5" PointX="18.75" PointY="180" IsExpanded="true" />
+        <EntityTypeShape EntityType="Aria.DimRxAdmin" Width="1.5" PointX="29.5" PointY="163.625" IsExpanded="true" />
+        <EntityTypeShape EntityType="Aria.DimRxAgt" Width="1.5" PointX="27.25" PointY="167" IsExpanded="true" />
+        <EntityTypeShape EntityType="Aria.DimRxHydra" Width="1.5" PointX="21" PointY="165.375" IsExpanded="true" />
+        <EntityTypeShape EntityType="Aria.DimStaff" Width="1.5" PointX="10.75" PointY="0.75" IsExpanded="true" />
+        <EntityTypeShape EntityType="Aria.DimStructure" Width="1.5" PointX="25" PointY="202.125" IsExpanded="true" />
+        <EntityTypeShape EntityType="Aria.DimToxicityGradingCriteria" Width="1.5" PointX="16.5" PointY="203.75" IsExpanded="true" />
+        <EntityTypeShape EntityType="Aria.DimTreatmentDateRangeController" Width="1.5" PointX="4.75" PointY="10.75" IsExpanded="true" />
+        <EntityTypeShape EntityType="Aria.DimTreatmentTransaction" Width="1.5" PointX="11.25" PointY="242.625" IsExpanded="true" />
+        <EntityTypeShape EntityType="Aria.DimUser" Width="1.5" PointX="5.25" PointY="205.5" IsExpanded="true" />
+        <EntityTypeShape EntityType="Aria.DimUserDepartment" Width="1.5" PointX="7.5" PointY="204.75" IsExpanded="true" />
+        <EntityTypeShape EntityType="Aria.DimVisitEventDetail" Width="1.5" PointX="18.75" PointY="172.625" IsExpanded="true" />
+        <EntityTypeShape EntityType="Aria.DVHInputParameter" Width="1.5" PointX="10.75" PointY="8.75" IsExpanded="true" />
+        <EntityTypeShape EntityType="Aria.FactActivityBilling" Width="1.5" PointX="21.75" PointY="171.125" IsExpanded="true" />
+        <EntityTypeShape EntityType="Aria.FactActivityCaptureAttribute" Width="1.5" PointX="9.75" PointY="103.125" IsExpanded="true" />
+        <EntityTypeShape EntityType="Aria.FactActivityDiagnosi" Width="1.5" PointX="24" PointY="167.875" IsExpanded="true" />
+        <EntityTypeShape EntityType="Aria.FactCourseDiagnosi" Width="1.5" PointX="14.25" PointY="153.125" IsExpanded="true" />
+        <EntityTypeShape EntityType="Aria.FactDVH" Width="1.5" PointX="27.25" PointY="192.625" IsExpanded="true" />
+        <EntityTypeShape EntityType="Aria.FactInVivoDosimetry" Width="1.5" PointX="7.5" PointY="212.625" IsExpanded="true" />
+        <EntityTypeShape EntityType="Aria.FactMedOncPrescription" Width="1.5" PointX="0.75" PointY="11.75" IsExpanded="true" />
+        <EntityTypeShape EntityType="Aria.FactPatient" Width="1.5" PointX="14.25" PointY="159.125" IsExpanded="true" />
+        <EntityTypeShape EntityType="Aria.FactPatientAllergy" Width="1.5" PointX="9" PointY="163.25" IsExpanded="true" />
+        <EntityTypeShape EntityType="Aria.FactPatientDiagnosi" Width="1.5" PointX="12" PointY="143.5" IsExpanded="true" />
+        <EntityTypeShape EntityType="Aria.FactPatientExam" Width="1.5" PointX="9.75" PointY="195.875" IsExpanded="true" />
+        <EntityTypeShape EntityType="Aria.FactPatientFamilyHistory" Width="1.5" PointX="9" PointY="158" IsExpanded="true" />
+        <EntityTypeShape EntityType="Aria.FactPatientImage" Width="1.5" PointX="16.5" PointY="183.25" IsExpanded="true" />
+        <EntityTypeShape EntityType="Aria.FactPatientLabResult" Width="1.5" PointX="24.75" PointY="175.5" IsExpanded="true" />
+        <EntityTypeShape EntityType="Aria.FactPatientMedicalHistory" Width="1.5" PointX="10" PointY="169.375" IsExpanded="true" />
+        <EntityTypeShape EntityType="Aria.FactPatientMedoncTreatment" Width="1.5" PointX="13.5" PointY="205.625" IsExpanded="true" />
+        <EntityTypeShape EntityType="Aria.FactPatientPayor" Width="1.5" PointX="17" PointY="228.875" IsExpanded="true" />
+        <EntityTypeShape EntityType="Aria.FactPatientPrescription" Width="1.5" PointX="24.25" PointY="197" IsExpanded="true" />
+        <EntityTypeShape EntityType="Aria.FactPatientSocialHistory" Width="1.5" PointX="12" PointY="237.375" IsExpanded="true" />
+        <EntityTypeShape EntityType="Aria.FactPatientToxicity" Width="1.5" PointX="18.75" PointY="192.25" IsExpanded="true" />
+        <EntityTypeShape EntityType="Aria.FactPhysicianOrder" Width="1.5" PointX="21.75" PointY="196.875" IsExpanded="true" />
+        <EntityTypeShape EntityType="Aria.FactQuestionnaire" Width="1.5" PointX="15.75" PointY="195.75" IsExpanded="true" />
+        <EntityTypeShape EntityType="Aria.FactRxAdminAgtLevel" Width="1.5" PointX="29.5" PointY="174.875" IsExpanded="true" />
+        <EntityTypeShape EntityType="Aria.FactRxAdminDetail" Width="1.5" PointX="31.75" PointY="166.75" IsExpanded="true" />
+        <EntityTypeShape EntityType="Aria.FactRxDispensary" Width="1.5" PointX="29.5" PointY="180.375" IsExpanded="true" />
+        <EntityTypeShape EntityType="Aria.FactRxDispSyringe" Width="1.5" PointX="10.5" PointY="185.75" IsExpanded="true" />
+        <EntityTypeShape EntityType="Aria.FactTreatmentHistory" Width="1.5" PointX="13.5" PointY="167.25" IsExpanded="true" />
+        <EntityTypeShape EntityType="Aria.FactVisitNote" Width="1.5" PointX="12.75" PointY="0.75" IsExpanded="true" />
+        <EntityTypeShape EntityType="Aria.InSightiveActivitiesConfiguration" Width="1.5" PointX="7.5" PointY="174" IsExpanded="true" />
+        <EntityTypeShape EntityType="Aria.TempstgDimPatient" Width="1.5" PointX="12.75" PointY="10.75" IsExpanded="true" />
+        <EntityTypeShape EntityType="Aria.CommandLog" Width="1.5" PointX="2.75" PointY="13.75" IsExpanded="true" />
+        <EntityTypeShape EntityType="Aria.ProcessLog" Width="1.5" PointX="4.75" PointY="13.75" IsExpanded="true" />
+        <EntityTypeShape EntityType="Aria.StatisticLog" Width="1.5" PointX="10.75" PointY="13.75" IsExpanded="true" />
+        <EntityTypeShape EntityType="Aria.AppendDoseHelper" Width="1.5" PointX="12.75" PointY="13.75" IsExpanded="true" />
+        <EntityTypeShape EntityType="Aria.CourseModel" Width="1.5" PointX="14.75" PointY="0.75" IsExpanded="true" />
+        <EntityTypeShape EntityType="Aria.Cube_DimActivityTransaction" Width="1.5" PointX="14.75" PointY="6.75" IsExpanded="true" />
+        <EntityTypeShape EntityType="Aria.Cube_DimPatientExam" Width="1.5" PointX="16.75" PointY="0.75" IsExpanded="true" />
+        <EntityTypeShape EntityType="Aria.Cube_DimPhysicianOrder" Width="1.5" PointX="2.75" PointY="16.75" IsExpanded="true" />
+        <EntityTypeShape EntityType="Aria.Cube_DimStructure" Width="1.5" PointX="4.75" PointY="16.75" IsExpanded="true" />
+        <EntityTypeShape EntityType="Aria.Cube_FactActivity" Width="1.5" PointX="6.75" PointY="16.75" IsExpanded="true" />
+        <EntityTypeShape EntityType="Aria.Cube_FactCourseDiagnosis" Width="1.5" PointX="16.75" PointY="7.75" IsExpanded="true" />
+        <EntityTypeShape EntityType="Aria.Cube_FactDVH" Width="1.5" PointX="8.75" PointY="17.75" IsExpanded="true" />
+        <EntityTypeShape EntityType="Aria.Cube_FactPatientDiagnosis" Width="1.5" PointX="10.75" PointY="17.75" IsExpanded="true" />
+        <EntityTypeShape EntityType="Aria.Cube_FactPatientLabResult" Width="1.5" PointX="18.75" PointY="0.75" IsExpanded="true" />
+        <EntityTypeShape EntityType="Aria.Cube_FactPatientPrescription" Width="1.5" PointX="18.75" PointY="8.75" IsExpanded="true" />
+        <EntityTypeShape EntityType="Aria.Cube_FactTreatmentHistory" Width="1.5" PointX="18.75" PointY="16.75" IsExpanded="true" />
+        <EntityTypeShape EntityType="Aria.Cube_VisitNotes" Width="1.5" PointX="20.75" PointY="0.75" IsExpanded="true" />
+        <EntityTypeShape EntityType="Aria.DimInSightiveActivityTransactionWorkTable" Width="1.5" PointX="20.75" PointY="10.75" IsExpanded="true" />
+        <EntityTypeShape EntityType="Aria.DoseContributionModel" Width="1.5" PointX="20.75" PointY="16.75" IsExpanded="true" />
+        <EntityTypeShape EntityType="Aria.DVHInputParametersTempForETL" Width="1.5" PointX="22.75" PointY="0.75" IsExpanded="true" />
+        <EntityTypeShape EntityType="Aria.DVHPatientPoint" Width="1.5" PointX="22.75" PointY="5.75" IsExpanded="true" />
+        <EntityTypeShape EntityType="Aria.FactDVHToxicity" Width="1.5" PointX="22.75" PointY="9.75" IsExpanded="true" />
+        <EntityTypeShape EntityType="Aria.FieldModel" Width="1.5" PointX="22.75" PointY="12.75" IsExpanded="true" />
+        <EntityTypeShape EntityType="Aria.ImageModel" Width="1.5" PointX="24.75" PointY="0.75" IsExpanded="true" />
+        <EntityTypeShape EntityType="Aria.InSightiveResourceMachine" Width="1.5" PointX="24.75" PointY="9.75" IsExpanded="true" />
+        <EntityTypeShape EntityType="Aria.InSightiveWaitTimeAppointments_TB" Width="1.5" PointX="24.75" PointY="14.75" IsExpanded="true" />
+        <EntityTypeShape EntityType="Aria.MigrationAuditInfo" Width="1.5" PointX="24.75" PointY="21.75" IsExpanded="true" />
+        <EntityTypeShape EntityType="Aria.OverrideModel" Width="1.5" PointX="24.75" PointY="24.75" IsExpanded="true" />
+        <EntityTypeShape EntityType="Aria.PlanModel" Width="1.5" PointX="12.75" PointY="25.75" IsExpanded="true" />
+        <EntityTypeShape EntityType="Aria.PlannedAddOn_FullMig" Width="1.5" PointX="14.75" PointY="25.75" IsExpanded="true" />
+        <EntityTypeShape EntityType="Aria.RefPointModel" Width="1.5" PointX="26.75" PointY="0.75" IsExpanded="true" />
+        <EntityTypeShape EntityType="Aria.RegistrationModel" Width="1.5" PointX="26.75" PointY="10.75" IsExpanded="true" />
+        <EntityTypeShape EntityType="Aria.stgAllTreatmentChanx" Width="1.5" PointX="26.75" PointY="16.75" IsExpanded="true" />
+        <EntityTypeShape EntityType="Aria.stgCourseModel" Width="1.5" PointX="26.75" PointY="19.75" IsExpanded="true" />
+        <EntityTypeShape EntityType="Aria.stgDimActivityTransaction" Width="1.5" PointX="26.75" PointY="22.75" IsExpanded="true" />
+        <EntityTypeShape EntityType="Aria.stgDoseContributionModel" Width="1.5" PointX="20.75" PointY="27.75" IsExpanded="true" />
+        <EntityTypeShape EntityType="Aria.stgFieldModel" Width="1.5" PointX="28.75" PointY="0.75" IsExpanded="true" />
+        <EntityTypeShape EntityType="Aria.stgImageModel" Width="1.5" PointX="0.75" PointY="28.75" IsExpanded="true" />
+        <EntityTypeShape EntityType="Aria.stgOverrideModel" Width="1.5" PointX="2.75" PointY="28.75" IsExpanded="true" />
+        <EntityTypeShape EntityType="Aria.stgPlanModel" Width="1.5" PointX="28.75" PointY="3.75" IsExpanded="true" />
+        <EntityTypeShape EntityType="Aria.stgRefPointModel" Width="1.5" PointX="4.75" PointY="28.75" IsExpanded="true" />
+        <EntityTypeShape EntityType="Aria.stgTreatmentHistoryModel" Width="1.5" PointX="28.75" PointY="6.75" IsExpanded="true" />
+        <EntityTypeShape EntityType="Aria.TableMetaData" Width="1.5" PointX="6.75" PointY="28.75" IsExpanded="true" />
+        <EntityTypeShape EntityType="Aria.TempInterpolationDVHData" Width="1.5" PointX="28.75" PointY="9.75" IsExpanded="true" />
+        <EntityTypeShape EntityType="Aria.TreatmentHstryModel" Width="1.5" PointX="28.75" PointY="13.75" IsExpanded="true" />
+        <EntityTypeShape EntityType="Aria.UpgradeMigrationAuditInfo" Width="1.5" PointX="14.75" PointY="28.75" IsExpanded="true" />
+        <AssociationConnector Association="Aria.DimActivityAttribute_DimActivityID" ManuallyRouted="false" />
+        <AssociationConnector Association="Aria.DimActivityTransaction_DimActivityID" ManuallyRouted="false" />
+        <AssociationConnector Association="Aria.FactActivityBilling_DimActivityID" ManuallyRouted="false" />
+        <AssociationConnector Association="Aria.FK__InSightiv__DimAc__636563D7" ManuallyRouted="false" />
+        <AssociationConnector Association="Aria.FactActivityCaptureAttribute_DimActivityAttributeID" ManuallyRouted="false" />
+        <AssociationConnector Association="Aria.DimActivityTransaction_DimHospitalDepartmentID" ManuallyRouted="false" />
+        <AssociationConnector Association="Aria.DimActivityTransaction_DimPatientID" ManuallyRouted="false" />
+        <AssociationConnector Association="Aria.DimActivityTransaction_DimResource" ManuallyRouted="false" />
+        <AssociationConnector Association="Aria.DimActivityTransaction_DimUser_ActivityCreatedBy" ManuallyRouted="false" />
+        <AssociationConnector Association="Aria.DimRx_DimActivityTransactionID" ManuallyRouted="false" />
+        <AssociationConnector Association="Aria.FKDimActivityTransaction_DimDate_ActivityEndDateTime" ManuallyRouted="false" />
+        <AssociationConnector Association="Aria.FKDimActivityTransaction_DimDate_ActivityStartDateTime" ManuallyRouted="false" />
+        <AssociationConnector Association="Aria.FKDimActivityTransaction_DimDate_AppointmentDateTime" ManuallyRouted="false" />
+        <AssociationConnector Association="Aria.FKDimActivityTransaction_DimDate_PatientArrivalDateTime" ManuallyRouted="false" />
+        <AssociationConnector Association="Aria.FKDimActivityTransaction_DimDate_ScheduledEndTime" ManuallyRouted="false" />
+        <AssociationConnector Association="Aria.FKDimActivityTransaction_DimDateID_CreationDate" ManuallyRouted="false" />
+        <AssociationConnector Association="Aria.FKDimActivityTransaction_DimLookup_ActualResourceType" ManuallyRouted="false" />
+        <AssociationConnector Association="Aria.FKDimActivityTransaction_DimLookup_AppointmentStatus" ManuallyRouted="false" />
+        <AssociationConnector Association="Aria.FKDimActivityTransaction_DimMedoncPlanID" ManuallyRouted="false" />
+        <AssociationConnector Association="Aria.FKDimActivityTransaction_DimMedoncPlanPhaseID" ManuallyRouted="false" />
+        <AssociationConnector Association="Aria.FKDimPatientDiseaseResponse_DimActivityTransaction" ManuallyRouted="false" />
+        <AssociationConnector Association="Aria.FKDimPatientVisitTracking_DimActivityTransaction" ManuallyRouted="false" />
+        <AssociationConnector Association="Aria.FKDimVisitEventDetail_DimActivityTransaction" ManuallyRouted="false" />
+        <AssociationConnector Association="Aria.FKFactActivityBilling_DimActivityTransaction" ManuallyRouted="false" />
+        <AssociationConnector Association="Aria.FKFactActivityDiagnosis_DimActivityTransaction" ManuallyRouted="false" />
+        <AssociationConnector Association="Aria.FKFactPatientExam_DimActivityTransaction" ManuallyRouted="false" />
+        <AssociationConnector Association="Aria.FKFactPatientLabResult_DimActivityTransaction" ManuallyRouted="false" />
+        <AssociationConnector Association="Aria.FKFactPatientToxicity_DimActivityTransaction" ManuallyRouted="false" />
+        <AssociationConnector Association="Aria.FKFactPhysicianOrder_DimActivityTransaction" ManuallyRouted="false" />
+        <AssociationConnector Association="Aria.FKFactQuestionnaires_DimActivityTransaction" ManuallyRouted="false" />
+        <AssociationConnector Association="Aria.DimAddOn_DimMachine" ManuallyRouted="false" />
+        <AssociationConnector Association="Aria.FKFactTreatmentHistory_DimActualAddOn1" ManuallyRouted="false" />
+        <AssociationConnector Association="Aria.FKFactTreatmentHistory_DimActualAddOn10" ManuallyRouted="false" />
+        <AssociationConnector Association="Aria.FKFactTreatmentHistory_DimActualAddOn2" ManuallyRouted="false" />
+        <AssociationConnector Association="Aria.FKFactTreatmentHistory_DimActualAddOn3" ManuallyRouted="false" />
+        <AssociationConnector Association="Aria.FKFactTreatmentHistory_DimActualAddOn4" ManuallyRouted="false" />
+        <AssociationConnector Association="Aria.FKFactTreatmentHistory_DimActualAddOn5" ManuallyRouted="false" />
+        <AssociationConnector Association="Aria.FKFactTreatmentHistory_DimActualAddOn6" ManuallyRouted="false" />
+        <AssociationConnector Association="Aria.FKFactTreatmentHistory_DimActualAddOn7" ManuallyRouted="false" />
+        <AssociationConnector Association="Aria.FKFactTreatmentHistory_DimActualAddOn8" ManuallyRouted="false" />
+        <AssociationConnector Association="Aria.FKFactTreatmentHistory_DimActualAddOn9" ManuallyRouted="false" />
+        <AssociationConnector Association="Aria.FKFactTreatmentHistory_DimPlannedAddOn1" ManuallyRouted="false" />
+        <AssociationConnector Association="Aria.FKFactTreatmentHistory_DimPlannedAddOn2" ManuallyRouted="false" />
+        <AssociationConnector Association="Aria.FKFactTreatmentHistory_DimPlannedAddOn3" ManuallyRouted="false" />
+        <AssociationConnector Association="Aria.FKFactTreatmentHistory_DimPlannedAddOn4" ManuallyRouted="false" />
+        <AssociationConnector Association="Aria.FKFactTreatmentHistory_DimPlannedAddOn5" ManuallyRouted="false" />
+        <AssociationConnector Association="Aria.FKFactPatientDiagnosis_DimCellType" ManuallyRouted="false" />
+        <AssociationConnector Association="Aria.FKDimClinic_DimHospitalDepartment" ManuallyRouted="false" />
+        <AssociationConnector Association="Aria.DimConstantResource_DimLookup_ResourceType" ManuallyRouted="false" />
+        <AssociationConnector Association="Aria.DimCourse_DimDxSite" ManuallyRouted="false" />
+        <AssociationConnector Association="Aria.DimCourse_DimPatient" ManuallyRouted="false" />
+        <AssociationConnector Association="Aria.DimField_DimCourse" ManuallyRouted="false" />
+        <AssociationConnector Association="Aria.DimPlan_DimCourse" ManuallyRouted="false" />
+        <AssociationConnector Association="Aria.DimTreatmentTransaction_DimCourse" ManuallyRouted="false" />
+        <AssociationConnector Association="Aria.FactActivityBilling_DimCourseID" ManuallyRouted="false" />
+        <AssociationConnector Association="Aria.FactCourseDiagnosis_DimCourseID" ManuallyRouted="false" />
+        <AssociationConnector Association="Aria.FK_FactDVH_DimCourse" ManuallyRouted="false" />
+        <AssociationConnector Association="Aria.FKFactPatientImage_DimCourse" ManuallyRouted="false" />
+        <AssociationConnector Association="Aria.FKFactPatientPrescription_DimCourse_DimCourseID" ManuallyRouted="false" />
+        <AssociationConnector Association="Aria.FKFactTreatmentHistory_DimCourse" ManuallyRouted="false" />
+        <AssociationConnector Association="Aria.FKFactActivityBilling_DimDate_CompletedDateTime" ManuallyRouted="false" />
+        <AssociationConnector Association="Aria.FKFactActivityBilling_DimDate_CreditedDateTime" ManuallyRouted="false" />
+        <AssociationConnector Association="Aria.FKFactActivityBilling_DimDate_CreditExportedDateTime" ManuallyRouted="false" />
+        <AssociationConnector Association="Aria.FKFactActivityBilling_DimDate_ExportedDateTime" ManuallyRouted="false" />
+        <AssociationConnector Association="Aria.FKFactActivityBilling_DimDate_FromDateOfService" ManuallyRouted="false" />
+        <AssociationConnector Association="Aria.FKFactActivityBilling_DimDate_MarkedCompletedDateTime" ManuallyRouted="false" />
+        <AssociationConnector Association="Aria.FKFactActivityBilling_DimDate_TemplateCreationDate" ManuallyRouted="false" />
+        <AssociationConnector Association="Aria.FKFactActivityBilling_DimDate_ToDateOfService" ManuallyRouted="false" />
+        <AssociationConnector Association="Aria.FKFactInVivoDosimetry_DimDate_CreationDate" ManuallyRouted="false" />
+        <AssociationConnector Association="Aria.FKFactInVivoDosimetry_DimDate_InVivoDate" ManuallyRouted="false" />
+        <AssociationConnector Association="Aria.FKFactPatient_DimDate_PatientAdmission" ManuallyRouted="false" />
+        <AssociationConnector Association="Aria.FKFactPatient_DimDate_PatientCreation" ManuallyRouted="false" />
+        <AssociationConnector Association="Aria.FKFactPatient_DimDate_PatientDischarge" ManuallyRouted="false" />
+        <AssociationConnector Association="Aria.FKFactPatientAllergy_DimDate_AllergyStartedOn" ManuallyRouted="false" />
+        <AssociationConnector Association="Aria.FKFactPatientDiagnosis_DimDate_DiagnosisStatusDate" ManuallyRouted="false" />
+        <AssociationConnector Association="Aria.FKFactPatientExam_DimDate_DictationApprovedDateTime" ManuallyRouted="false" />
+        <AssociationConnector Association="Aria.FKFactPatientExam_DimDate_ExamApprovedDateTime" ManuallyRouted="false" />
+        <AssociationConnector Association="Aria.FKFactPatientExam_DimDate_ExamDateTime" ManuallyRouted="false" />
+        <AssociationConnector Association="Aria.FKFactPatientFamilyHistory_DimDate_FamilyMemberDOB" ManuallyRouted="false" />
+        <AssociationConnector Association="Aria.FKFactPatientImage_DimDate_ApprovalDate" ManuallyRouted="false" />
+        <AssociationConnector Association="Aria.FKFactPatientImage_DimDate_ImageCreationDate" ManuallyRouted="false" />
+        <AssociationConnector Association="Aria.FKFactPatientLabResult_DimDate_CollectionEndDate" ManuallyRouted="false" />
+        <AssociationConnector Association="Aria.FKFactPatientLabResult_DimDate_CollectionStartDate" ManuallyRouted="false" />
+        <AssociationConnector Association="Aria.FKFactPatientLabResult_DimDate_OrderedDateTime" ManuallyRouted="false" />
+        <AssociationConnector Association="Aria.FKFactPatientLabResult_DimDate_TestDateTime" ManuallyRouted="false" />
+        <AssociationConnector Association="Aria.FKFactPatientLabResult_DimDate_TestRequestedDateTime" ManuallyRouted="false" />
+        <AssociationConnector Association="Aria.FKFactPatientMedicalHistory_DimDate_DiagnosisDate" ManuallyRouted="false" />
+        <AssociationConnector Association="Aria.FKFactPatientMedicalHistory_DimDate_MrMammogramDate" ManuallyRouted="false" />
+        <AssociationConnector Association="Aria.FKFactPatientMedicalHistory_DimDate_MrPapDate" ManuallyRouted="false" />
+        <AssociationConnector Association="Aria.FKFactPatientToxicity_DimDate_AssessmentDateTime" ManuallyRouted="false" />
+        <AssociationConnector Association="Aria.FKFactPatientToxicity_DimDate_AssessmentEndDateTime" ManuallyRouted="false" />
+        <AssociationConnector Association="Aria.FKFactPatientToxicity_DimDate_AssessmentPerformedDateTime" ManuallyRouted="false" />
+        <AssociationConnector Association="Aria.FKFactPatientToxicity_DimDate_AssessmentStartDateTime" ManuallyRouted="false" />
+        <AssociationConnector Association="Aria.FKFactPatientToxicity_DimDate_ToxicityApprovedDateTime" ManuallyRouted="false" />
+        <AssociationConnector Association="Aria.FKFactPatientToxicity_DimDate_ToxicityReviewedDateTime" ManuallyRouted="false" />
+        <AssociationConnector Association="Aria.FKFactPhysicianOrder_DimDate_AppliedDateTime" ManuallyRouted="false" />
+        <AssociationConnector Association="Aria.FKFactPhysicianOrder_DimDate_Verbal" ManuallyRouted="false" />
+        <AssociationConnector Association="Aria.FKFactPhysicianOrder_DimDate_VerbalApproved" ManuallyRouted="false" />
+        <AssociationConnector Association="Aria.FKFactQuestionnaires_DimDate_ApprovedDateTime" ManuallyRouted="false" />
+        <AssociationConnector Association="Aria.FKFactQuestionnaires_DimDate_QuestionnaireDateTime" ManuallyRouted="false" />
+        <AssociationConnector Association="Aria.FKFactQuestionnaires_DimDate_ResponseDateTime" ManuallyRouted="false" />
+        <AssociationConnector Association="Aria.FKFactTreatmentHistory_DimDate_AuthorizationDate" ManuallyRouted="false" />
+        <AssociationConnector Association="Aria.FKFactTreatmentHistory_DimDate_BreakPointDate" ManuallyRouted="false" />
+        <AssociationConnector Association="Aria.FKFactTreatmentHistory_DimDate_CorrectionDateTime" ManuallyRouted="false" />
+        <AssociationConnector Association="Aria.FKFactTreatmentHistory_DimDate_CourseCompletedDateTime" ManuallyRouted="false" />
+        <AssociationConnector Association="Aria.FKFactTreatmentHistory_DimDate_FirstTreatmentDate" ManuallyRouted="false" />
+        <AssociationConnector Association="Aria.FKFactTreatmentHistory_DimDate_LastTreatmentDate" ManuallyRouted="false" />
+        <AssociationConnector Association="Aria.FKFactTreatmentHistory_DimDate_PlanApprovedStatusDate" ManuallyRouted="false" />
+        <AssociationConnector Association="Aria.FKFactTreatmentHistory_DimDate_TreatmentEndTime" ManuallyRouted="false" />
+        <AssociationConnector Association="Aria.FKFactTreatmentHistory_DimDate_TreatmentRecordDateTime" ManuallyRouted="false" />
+        <AssociationConnector Association="Aria.FKFactTreatmentHistory_DimDate_TreatmentStartTime" ManuallyRouted="false" />
+        <AssociationConnector Association="Aria.FactActivityDiagnosis_DimDiagnosisCodeID" ManuallyRouted="false" />
+        <AssociationConnector Association="Aria.FactCourseDiagnosis_DimDiagnosisCodeID" ManuallyRouted="false" />
+        <AssociationConnector Association="Aria.FKFactActivityBilling_DimDiagnosisCode" ManuallyRouted="false" />
+        <AssociationConnector Association="Aria.FKFactPatientDiagnosis_DimDiagnosisCode" ManuallyRouted="false" />
+        <AssociationConnector Association="Aria.FKFactPatientMedicalHistory_DimDiagnosisCode" ManuallyRouted="false" />
+        <AssociationConnector Association="Aria.FKFactPatientToxicity_DimDiagnosisCode" ManuallyRouted="false" />
+        <AssociationConnector Association="Aria.DimDoctor_DimLookup_ResourceType" ManuallyRouted="false" />
+        <AssociationConnector Association="Aria.FactActivityBilling_DimDoctorID" ManuallyRouted="false" />
+        <AssociationConnector Association="Aria.FactActivityBilling_DimDoctorID_AttendingOncologist" ManuallyRouted="false" />
+        <AssociationConnector Association="Aria.FKDimDoctor_DimLocation" ManuallyRouted="false" />
+        <AssociationConnector Association="Aria.FKFactActivityBilling_DimDoctor_Referring" ManuallyRouted="false" />
+        <AssociationConnector Association="Aria.FKFactPatient_DimPrimaryOncologist" ManuallyRouted="false" />
+        <AssociationConnector Association="Aria.FKFactPatient_DimPrimaryReferringPhysician" ManuallyRouted="false" />
+        <AssociationConnector Association="Aria.FKFactPatientImage_DimDoctor_Oncologist" ManuallyRouted="false" />
+        <AssociationConnector Association="Aria.FKFactActivityBilling_DimDrug" ManuallyRouted="false" />
+        <AssociationConnector Association="Aria.FKFactActivityDiagnosis_DimDxSite" ManuallyRouted="false" />
+        <AssociationConnector Association="Aria.FKFactActivityDiagnosis_DimDxSiteID_BodySystem" ManuallyRouted="false" />
+        <AssociationConnector Association="Aria.FKFactCourseDiagnosis_DimDxSite" ManuallyRouted="false" />
+        <AssociationConnector Association="Aria.FKFactCourseDiagnosis_DimDxSiteID_BodySystem" ManuallyRouted="false" />
+        <AssociationConnector Association="Aria.FKFactPatientDiagnosis_DimDxSite" ManuallyRouted="false" />
+        <AssociationConnector Association="Aria.FKFactPatientDiagnosis_DimDxSiteID_BodySystem" ManuallyRouted="false" />
+        <AssociationConnector Association="Aria.FKFactPatientDiagnosis_DimDxSiteID_PrimaryCancerSite" ManuallyRouted="false" />
+        <AssociationConnector Association="Aria.DimEnergy_DimMachine" ManuallyRouted="false" />
+        <AssociationConnector Association="Aria.FKFactTreatmentHistory_DimActualEnergy" ManuallyRouted="false" />
+        <AssociationConnector Association="Aria.FKFactTreatmentHistory_DimPlannedEnergy" ManuallyRouted="false" />
+        <AssociationConnector Association="Aria.DimField_DimPlan" ManuallyRouted="false" />
+        <AssociationConnector Association="Aria.DimTreatmentTransaction_DimField" ManuallyRouted="false" />
+        <AssociationConnector Association="Aria.FKFactPatientImage_DimField" ManuallyRouted="false" />
+        <AssociationConnector Association="Aria.FKFactTreatmentHistory_DimField" ManuallyRouted="false" />
+        <AssociationConnector Association="Aria.DimPatientDepartment_DimHospitalDepartmentID" ManuallyRouted="false" />
+        <AssociationConnector Association="Aria.DimPatientDepartmentbyCUID_DimHospitalDepartmentID" ManuallyRouted="false" />
+        <AssociationConnector Association="Aria.DimUserDepartment_DimHospitalDepartmentID" ManuallyRouted="false" />
+        <AssociationConnector Association="Aria.FactActivityBilling_DimHospitalDepartmentID" ManuallyRouted="false" />
+        <AssociationConnector Association="Aria.FKDimInstituteLocation_DimHospitalDepartment" ManuallyRouted="false" />
+        <AssociationConnector Association="Aria.FKDimPatientJournal_DimHospitalDept" ManuallyRouted="false" />
+        <AssociationConnector Association="Aria.FKDimPatientVisitTracking_DimHospitalDepartment" ManuallyRouted="false" />
+        <AssociationConnector Association="Aria.FKDimPayor_DimHospitalDepartment" ManuallyRouted="false" />
+        <AssociationConnector Association="Aria.FKDimVisitEventDetail_DimHospitalDepartment" ManuallyRouted="false" />
+        <AssociationConnector Association="Aria.FKFactPatient_DimHospitalDepartment" ManuallyRouted="false" />
+        <AssociationConnector Association="Aria.FKFactPatientLabResult_DimHospitalDepartment_Facility" ManuallyRouted="false" />
+        <AssociationConnector Association="Aria.FKFactPatientLabResult_DimHospitalDepartment_Physician" ManuallyRouted="false" />
+        <AssociationConnector Association="Aria.FKFactPatientMedoncTreatment_DimHospitalDepartment" ManuallyRouted="false" />
+        <AssociationConnector Association="Aria.FKFactPhysicianOrder_DimHospitalDepartment" ManuallyRouted="false" />
+        <AssociationConnector Association="Aria.FKFactQuestionnaires_DimHospitalDepartment_Approved" ManuallyRouted="false" />
+        <AssociationConnector Association="Aria.FKFactPatientDiagnosis_DimICDOSite" ManuallyRouted="false" />
+        <AssociationConnector Association="Aria.FKDimVisitEventDetail_DimInstituteLocation" ManuallyRouted="false" />
+        <AssociationConnector Association="Aria.FKFactActivityBilling_DimInstituteLocation" ManuallyRouted="false" />
+        <AssociationConnector Association="Aria.FKFactPatient_DimLocation" ManuallyRouted="false" />
+        <AssociationConnector Association="Aria.DimResource_DimLookup_ResourceType" ManuallyRouted="false" />
+        <AssociationConnector Association="Aria.FactPatientFamilyHistory_DimLookup_FamilyRelationType" ManuallyRouted="false" />
+        <AssociationConnector Association="Aria.FKDimPatientUserDefinedLabels_DimLookupID_UDFLable1" ManuallyRouted="false" />
+        <AssociationConnector Association="Aria.FKDimPatientUserDefinedLabels_DimLookupID_UDFLable10" ManuallyRouted="false" />
+        <AssociationConnector Association="Aria.FKDimPatientUserDefinedLabels_DimLookupID_UDFLable11" ManuallyRouted="false" />
+        <AssociationConnector Association="Aria.FKDimPatientUserDefinedLabels_DimLookupID_UDFLable12" ManuallyRouted="false" />
+        <AssociationConnector Association="Aria.FKDimPatientUserDefinedLabels_DimLookupID_UDFLable13" ManuallyRouted="false" />
+        <AssociationConnector Association="Aria.FKDimPatientUserDefinedLabels_DimLookupID_UDFLable14" ManuallyRouted="false" />
+        <AssociationConnector Association="Aria.FKDimPatientUserDefinedLabels_DimLookupID_UDFLable15" ManuallyRouted="false" />
+        <AssociationConnector Association="Aria.FKDimPatientUserDefinedLabels_DimLookupID_UDFLable16" ManuallyRouted="false" />
+        <AssociationConnector Association="Aria.FKDimPatientUserDefinedLabels_DimLookupID_UDFLable2" ManuallyRouted="false" />
+        <AssociationConnector Association="Aria.FKDimPatientUserDefinedLabels_DimLookupID_UDFLable3" ManuallyRouted="false" />
+        <AssociationConnector Association="Aria.FKDimPatientUserDefinedLabels_DimLookupID_UDFLable4" ManuallyRouted="false" />
+        <AssociationConnector Association="Aria.FKDimPatientUserDefinedLabels_DimLookupID_UDFLable5" ManuallyRouted="false" />
+        <AssociationConnector Association="Aria.FKDimPatientUserDefinedLabels_DimLookupID_UDFLable6" ManuallyRouted="false" />
+        <AssociationConnector Association="Aria.FKDimPatientUserDefinedLabels_DimLookupID_UDFLable7" ManuallyRouted="false" />
+        <AssociationConnector Association="Aria.FKDimPatientUserDefinedLabels_DimLookupID_UDFLable8" ManuallyRouted="false" />
+        <AssociationConnector Association="Aria.FKDimPatientUserDefinedLabels_DimLookupID_UDFLable9" ManuallyRouted="false" />
+        <AssociationConnector Association="Aria.FKDimQuestionnaires_DimLookup_QuestionnaireType" ManuallyRouted="false" />
+        <AssociationConnector Association="Aria.FKDimQuestionnaires_DimLookup_QuestionType" ManuallyRouted="false" />
+        <AssociationConnector Association="Aria.FKFactActivityBilling_DimLookup_ActivityCategory" ManuallyRouted="false" />
+        <AssociationConnector Association="Aria.FKFactActivityBilling_DimLookup_BillEventType" ManuallyRouted="false" />
+        <AssociationConnector Association="Aria.FKFactActivityBilling_DimLookup_DoseWastageUnit" ManuallyRouted="false" />
+        <AssociationConnector Association="Aria.FKFactPatient_DimLookup_Gender" ManuallyRouted="false" />
+        <AssociationConnector Association="Aria.FKFactPatient_DimLookup_PatientStatus" ManuallyRouted="false" />
+        <AssociationConnector Association="Aria.FKFactPatient_DimLookup_Race" ManuallyRouted="false" />
+        <AssociationConnector Association="Aria.FKFactPatientAllergy_DimLookup_AllergySeverity" ManuallyRouted="false" />
+        <AssociationConnector Association="Aria.FKFactPatientAllergy_DimLookup_AllergyType" ManuallyRouted="false" />
+        <AssociationConnector Association="Aria.FKFactPatientDiagnosis_DimLookup_CellCategory" ManuallyRouted="false" />
+        <AssociationConnector Association="Aria.FKFactPatientDiagnosis_DimLookup_CellGrade" ManuallyRouted="false" />
+        <AssociationConnector Association="Aria.FKFactPatientDiagnosis_DimLookup_ConfirmedDx" ManuallyRouted="false" />
+        <AssociationConnector Association="Aria.FKFactPatientDiagnosis_DimLookup_DiagnosisStatus" ManuallyRouted="false" />
+        <AssociationConnector Association="Aria.FKFactPatientDiagnosis_DimLookup_DiagnosisType" ManuallyRouted="false" />
+        <AssociationConnector Association="Aria.FKFactPatientDiagnosis_DimLookup_DxMethodType" ManuallyRouted="false" />
+        <AssociationConnector Association="Aria.FKFactPatientDiagnosis_DimLookup_ERStatus" ManuallyRouted="false" />
+        <AssociationConnector Association="Aria.FKFactPatientDiagnosis_DimLookup_Her2neuMethod2Type" ManuallyRouted="false" />
+        <AssociationConnector Association="Aria.FKFactPatientDiagnosis_DimLookup_Her2neuMethodType" ManuallyRouted="false" />
+        <AssociationConnector Association="Aria.FKFactPatientDiagnosis_DimLookup_Her2neuStatus2Type" ManuallyRouted="false" />
+        <AssociationConnector Association="Aria.FKFactPatientDiagnosis_DimLookup_Her2neuStatusType" ManuallyRouted="false" />
+        <AssociationConnector Association="Aria.FKFactPatientDiagnosis_DimLookup_HistoricDxFlag" ManuallyRouted="false" />
+        <AssociationConnector Association="Aria.FKFactPatientDiagnosis_DimLookup_ICDOVersion" ManuallyRouted="false" />
+        <AssociationConnector Association="Aria.FKFactPatientDiagnosis_DimLookup_Invasive" ManuallyRouted="false" />
+        <AssociationConnector Association="Aria.FKFactPatientDiagnosis_DimLookup_Laterality" ManuallyRouted="false" />
+        <AssociationConnector Association="Aria.FKFactPatientDiagnosis_DimLookup_PRStatus" ManuallyRouted="false" />
+        <AssociationConnector Association="Aria.FKFactPatientDiagnosis_DimLookup_Ranking" ManuallyRouted="false" />
+        <AssociationConnector Association="Aria.FKFactPatientDiagnosis_DimLookup_Recurrence" ManuallyRouted="false" />
+        <AssociationConnector Association="Aria.FKFactPatientDiagnosis_DimLookup_Source" ManuallyRouted="false" />
+        <AssociationConnector Association="Aria.FKFactPatientDiagnosis_DimLookup_Stage" ManuallyRouted="false" />
+        <AssociationConnector Association="Aria.FKFactPatientDiagnosis_DimLookup_StageStatus" ManuallyRouted="false" />
+        <AssociationConnector Association="Aria.FKFactPatientLabResult_DimLookup_SpecimenAction" ManuallyRouted="false" />
+        <AssociationConnector Association="Aria.FKFactPatientLabResult_DimLookup_TestPriority" ManuallyRouted="false" />
+        <AssociationConnector Association="Aria.FKFactPatientLabResult_DimLookup_TestRequestType" ManuallyRouted="false" />
+        <AssociationConnector Association="Aria.FKFactPatientLabResult_DimLookupID_AbnormalFlagCode" ManuallyRouted="false" />
+        <AssociationConnector Association="Aria.FKFactPatientLabResult_DimLookupID_CollectionVolumeUnit" ManuallyRouted="false" />
+        <AssociationConnector Association="Aria.FKFactPatientLabResult_DimLookupID_ComponentType" ManuallyRouted="false" />
+        <AssociationConnector Association="Aria.FKFactPatientLabResult_DimLookupID_SpecimenCondCode" ManuallyRouted="false" />
+        <AssociationConnector Association="Aria.FKFactPatientLabResult_DimLookupID_StatusType" ManuallyRouted="false" />
+        <AssociationConnector Association="Aria.FKFactPatientLabResult_DimLookupID_SymbolCode" ManuallyRouted="false" />
+        <AssociationConnector Association="Aria.FKFactPatientLabResult_DimLookupID_UOM" ManuallyRouted="false" />
+        <AssociationConnector Association="Aria.FkFactPatientMedicalHistory_DimLookup_MpauseReasonType" ManuallyRouted="false" />
+        <AssociationConnector Association="Aria.FKFactPatientToxicity_DimLookup_Scheme" ManuallyRouted="false" />
+        <AssociationConnector Association="Aria.FKFactPatientToxicity_DimLookup_ToxicityCauseCertaintyType" ManuallyRouted="false" />
+        <AssociationConnector Association="Aria.FKFactPatientToxicity_DimLookup_ToxicityCauseType" ManuallyRouted="false" />
+        <AssociationConnector Association="Aria.FKFactRxDispSyringe_DimLookup_VolumeUnit" ManuallyRouted="false" />
+        <AssociationConnector Association="Aria.FKFactTreatmentHistory_DimLookup_ClinicalStatus" ManuallyRouted="false" />
+        <AssociationConnector Association="Aria.FKFactTreatmentHistory_DimLookup_FieldTechnique" ManuallyRouted="false" />
+        <AssociationConnector Association="Aria.FKFactTreatmentHistory_DimLookup_PlanStatus" ManuallyRouted="false" />
+        <AssociationConnector Association="Aria.FKFactTreatmentHistory_DimLookup_Technique" ManuallyRouted="false" />
+        <AssociationConnector Association="Aria.FKFactTreatmentHistory_DimLookup_TechniqueLabel" ManuallyRouted="false" />
+        <AssociationConnector Association="Aria.FKFactTreatmentHistory_DimLookup_TreatmentDeliveryType" ManuallyRouted="false" />
+        <AssociationConnector Association="Aria.FKFactTreatmentHistory_DimLookup_TreatmentIntentType" ManuallyRouted="false" />
+        <AssociationConnector Association="Aria.FKDimMachine" ManuallyRouted="false" />
+        <AssociationConnector Association="Aria.FKFactPatientImage_DimMachine" ManuallyRouted="false" />
+        <AssociationConnector Association="Aria.FKFactTreatmentHistory_DimActualMachine" ManuallyRouted="false" />
+        <AssociationConnector Association="Aria.FKFactTreatmentHistory_DimPlanMachine" ManuallyRouted="false" />
+        <AssociationConnector Association="Aria.FKDimMedoncPlanInterval_DimMedoncPlan" ManuallyRouted="false" />
+        <AssociationConnector Association="Aria.FKDimMedoncPlanPhase_DimMedoncPlan" ManuallyRouted="false" />
+        <AssociationConnector Association="Aria.FKDimMedoncPlanSummary_DimMedoncPlan" ManuallyRouted="false" />
+        <AssociationConnector Association="Aria.FKFactPatientMedoncTreatment_DimMedoncPlan" ManuallyRouted="false" />
+        <AssociationConnector Association="Aria.FKDimMedoncPlanInterval_DimMedoncPlanPhase" ManuallyRouted="false" />
+        <AssociationConnector Association="Aria.FKFactPatientMedoncTreatment_DimMedoncPlanPhase" ManuallyRouted="false" />
+        <AssociationConnector Association="Aria.FKFactPatient_DimNationality" ManuallyRouted="false" />
+        <AssociationConnector Association="Aria.DimPatientDepartment_DimPatientID" ManuallyRouted="false" />
+        <AssociationConnector Association="Aria.DimPatientDepartmentbyCUID_DimPatientID" ManuallyRouted="false" />
+        <AssociationConnector Association="Aria.DimRx_DimPatientID" ManuallyRouted="false" />
+        <AssociationConnector Association="Aria.FactActivityBilling_DimPatientID" ManuallyRouted="false" />
+        <AssociationConnector Association="Aria.FactInVivoDosimetry_DimPatient" ManuallyRouted="false" />
+        <AssociationConnector Association="Aria.FK_DimPatientPhoto_DimPatient" ManuallyRouted="false" />
+        <AssociationConnector Association="Aria.FK_FactDVH_DimPatient" ManuallyRouted="false" />
+        <AssociationConnector Association="Aria.FKDimPatientJournal_DimPatient" ManuallyRouted="false" />
+        <AssociationConnector Association="Aria.FKDimPatientUserDefinedLabels_DimPatientID" ManuallyRouted="false" />
+        <AssociationConnector Association="Aria.FKDimPatientVisitTracking_DimPatient" ManuallyRouted="false" />
+        <AssociationConnector Association="Aria.FKDimVisitEventDetail_DimPatient" ManuallyRouted="false" />
+        <AssociationConnector Association="Aria.FKFactPatient_DimPatient" ManuallyRouted="false" />
+        <AssociationConnector Association="Aria.FKFactPatientAllergy_DimPatient" ManuallyRouted="false" />
+        <AssociationConnector Association="Aria.FKFactPatientDiagnosis_DimPatient" ManuallyRouted="false" />
+        <AssociationConnector Association="Aria.FKFactPatientExam_DimPatient" ManuallyRouted="false" />
+        <AssociationConnector Association="Aria.FKFactPatientFamilyHistory_DimPatientID" ManuallyRouted="false" />
+        <AssociationConnector Association="Aria.FKFactPatientImage_DimPatient" ManuallyRouted="false" />
+        <AssociationConnector Association="Aria.FKFactPatientLabResult_DimPatientID" ManuallyRouted="false" />
+        <AssociationConnector Association="Aria.FKFactPatientMedicalHistory_DimPatient" ManuallyRouted="false" />
+        <AssociationConnector Association="Aria.FKFactPatientMedoncTreatment_DimPatient" ManuallyRouted="false" />
+        <AssociationConnector Association="Aria.FKFactPatientPayor_DimPatient" ManuallyRouted="false" />
+        <AssociationConnector Association="Aria.FKFactPatientPrescription_DimPatient_DimPatientID" ManuallyRouted="false" />
+        <AssociationConnector Association="Aria.FKFactPatientSocialHistory_DimPatient" ManuallyRouted="false" />
+        <AssociationConnector Association="Aria.FKFactPatientToxicity_DimPatient" ManuallyRouted="false" />
+        <AssociationConnector Association="Aria.FKFactPhysicianOrder_DimPatient" ManuallyRouted="false" />
+        <AssociationConnector Association="Aria.FKFactQuestionnaires_DimPatient" ManuallyRouted="false" />
+        <AssociationConnector Association="Aria.FKFactRxDispSyringe_DimPatient" ManuallyRouted="false" />
+        <AssociationConnector Association="Aria.FKFactTreatmentHistory_DimPatient" ManuallyRouted="false" />
+        <AssociationConnector Association="Aria.DimPatientDepartmentbyCUID_DimUserID" ManuallyRouted="false" />
+        <AssociationConnector Association="Aria.FKDimPatientJournal_DimUser" ManuallyRouted="false" />
+        <AssociationConnector Association="Aria.FKFactPatientPayor_DimPayor" ManuallyRouted="false" />
+        <AssociationConnector Association="Aria.DimTreatmentTransaction_DimPlan" ManuallyRouted="false" />
+        <AssociationConnector Association="Aria.FK_FactDVH_DimPlan" ManuallyRouted="false" />
+        <AssociationConnector Association="Aria.FKFactTreatmentHistory_DimPlan" ManuallyRouted="false" />
+        <AssociationConnector Association="Aria.FKFactPatientPrescription_DimPrescription_DimPrescriptionID" ManuallyRouted="false" />
+        <AssociationConnector Association="Aria.FKFactPatientPrescription_DimPrescriptionAnatomy_DimPrescriptionAnatomyID" ManuallyRouted="false" />
+        <AssociationConnector Association="Aria.FKFactPatientPrescription_DimPrescriptionProperty_DimPrescriptionPropertyID" ManuallyRouted="false" />
+        <AssociationConnector Association="Aria.FactActivityBilling_DimProcedureCodeID" ManuallyRouted="false" />
+        <AssociationConnector Association="Aria.FKFactQuestionnaires_DimQuestionnaires" ManuallyRouted="false" />
+        <AssociationConnector Association="Aria.DimUser_DimResource" ManuallyRouted="false" />
+        <AssociationConnector Association="Aria.FKDimResourceDepartmentHospital_DimResource" ManuallyRouted="false" />
+        <AssociationConnector Association="Aria.FKFactPatientToxicity_DimResource_Reviewer" ManuallyRouted="false" />
+        <AssociationConnector Association="Aria.FKFactQuestionnaires_DimResource_Author" ManuallyRouted="false" />
+        <AssociationConnector Association="Aria.DimRxAgt_DimRxID" ManuallyRouted="false" />
+        <AssociationConnector Association="Aria.DimRxHydra_DimRxID" ManuallyRouted="false" />
+        <AssociationConnector Association="Aria.DimRxAdmin_DimRxAgtID" ManuallyRouted="false" />
+        <AssociationConnector Association="Aria.FactRxAdminDetail_DimRxAdminID" ManuallyRouted="false" />
+        <AssociationConnector Association="Aria.DimRxAgt_DimRxHydraID" ManuallyRouted="false" />
+        <AssociationConnector Association="Aria.FactRxAdminAgtLevel_DimRxAgtID" ManuallyRouted="false" />
+        <AssociationConnector Association="Aria.FactRxDispensary_DimRxAgtID" ManuallyRouted="false" />
+        <AssociationConnector Association="Aria.FK_FactDVH_DimStructure" ManuallyRouted="false" />
+        <AssociationConnector Association="Aria.FKFactPatientToxicity_DimToxicityGradingCriteria" ManuallyRouted="false" />
+        <AssociationConnector Association="Aria.FKFactTreatmentHistory_DimTreatmentTransaction" ManuallyRouted="false" />
+        <AssociationConnector Association="Aria.DimUserDepartment_DimUserID" ManuallyRouted="false" />
+        <AssociationConnector Association="Aria.FactActivityBilling_DimUserID_ChargeWaivedBy" ManuallyRouted="false" />
+        <AssociationConnector Association="Aria.FactActivityBilling_DimUserID_CreditedBy" ManuallyRouted="false" />
+        <AssociationConnector Association="Aria.FactActivityBilling_DimUserID_ExportedBy" ManuallyRouted="false" />
+        <AssociationConnector Association="Aria.FactActivityBilling_DimUserID_MarkedCompletedBy" ManuallyRouted="false" />
+        <AssociationConnector Association="Aria.FactActivityBilling_DimUserID_ReviewedBy" ManuallyRouted="false" />
+        <AssociationConnector Association="Aria.FKFactActivityBilling_DimUserID_CompletedByUser" ManuallyRouted="false" />
+        <AssociationConnector Association="Aria.FKFactActivityBilling_DimUserID_Physician" ManuallyRouted="false" />
+        <AssociationConnector Association="Aria.FKFactInVivoDosimetry_DimUser_CreationUserName" ManuallyRouted="false" />
+        <AssociationConnector Association="Aria.FKFactPatientExam_DimUser" ManuallyRouted="false" />
+        <AssociationConnector Association="Aria.FKFactPatientExam_DimUser_Approved" ManuallyRouted="false" />
+        <AssociationConnector Association="Aria.FKFactPatientImage_DimUser_ApprovedBy" ManuallyRouted="false" />
+        <AssociationConnector Association="Aria.FKFactPatientLabResult_DimUser_Physician" ManuallyRouted="false" />
+        <AssociationConnector Association="Aria.FKFactPatientMedoncTreatment_DimUser" ManuallyRouted="false" />
+        <AssociationConnector Association="Aria.FKFactPhysicianOrder_DimUser_AppliedUser" ManuallyRouted="false" />
+        <AssociationConnector Association="Aria.FKFactPhysicianOrder_DimUser_Verbal" ManuallyRouted="false" />
+        <AssociationConnector Association="Aria.FKFactQuestionnaires_DimUser_Approved" ManuallyRouted="false" />
+        <AssociationConnector Association="Aria.FKFactRxDispSyringe_DimUser_EnteredBy" ManuallyRouted="false" />
+        <AssociationConnector Association="Aria.FKFactRxDispSyringe_DimUser_ModifiedBy" ManuallyRouted="false" />
+        <AssociationConnector Association="Aria.FKFactTreatmentHistory_DimUser_ApprovalUser" ManuallyRouted="false" />
+        <AssociationConnector Association="Aria.FKFactTreatmentHistory_DimUser_AuthorizedBy" ManuallyRouted="false" />
+        <AssociationConnector Association="Aria.FKFactTreatmentHistory_DimUser_CompletedByUser" ManuallyRouted="false" />
+        <AssociationConnector Association="Aria.FKFactTreatmentHistory_DimUser_MachineAuthorization" ManuallyRouted="false" />
+        <AssociationConnector Association="Aria.FKFactTreatmentHistory_DimUser_StatusUser" ManuallyRouted="false" />
+        <AssociationConnector Association="Aria.FKFactTreatmentHistory_DimUser_UserName1" ManuallyRouted="false" />
+        <AssociationConnector Association="Aria.FKFactTreatmentHistory_DimUser_UserName2" ManuallyRouted="false" />
+        <AssociationConnector Association="Aria.FKFactTreatmentHistory_DimUser_UserName3" ManuallyRouted="false" />
+        <AssociationConnector Association="Aria.FactActivityDiagnosis_FactActivityBillingID" ManuallyRouted="false" />
+        <AssociationConnector Association="Aria.FactActivityDiagnosis_FactPatientDiagnosis" ManuallyRouted="false" />
+        <AssociationConnector Association="Aria.FactCourseDiagnosis_FactPatientDiagnosis" ManuallyRouted="false" />
+      </Diagram>
+    </edmx:Diagrams>
+  </edmx:Designer>
+</edmx:Edmx>
