@@ -27,12 +27,21 @@ namespace StanfordPlanningReport
         private string physicsReportFileName;
         private string courseId;
         private string planId;
+        private Patient patient;
+        private Course course;
 
-        List<string> failedItems = new List<string>(); List<string> passedItems = new List<string>();
-        List<int> failedIndices = new List<int>(); List<int> passedIndices = new List<int>();
+        private List<TestCase> testResults;
 
-        public Report(Patient patient, Course c, PlanSetup currentPlan)
+        public static List<string> failedItems = new List<string>(); 
+        public static List<string> passedItems = new List<string>();
+        public static List<int> failedIndices = new List<int>();
+        public static List<int> passedIndices = new List<int>();
+        public static int checkCnter;
+
+        public Report(Patient p, Course c, PlanSetup currentPlan)
         {
+            patient = p;
+            course = c;
             monthName = thisDay.ToString("MMMM");
             monthNumber = thisDay.Month;
             yearNumber = thisDay.Year;
@@ -41,6 +50,8 @@ namespace StanfordPlanningReport
             reportSourceFile = "";
             physicsDestFile = "";
             physicsSourceFile = "";
+            
+            testResults = new List<TestCase>();
 
             string[] specialChars = new string[] { ";", ":", "/", "\\", "'", "\"" };
 
@@ -69,17 +80,24 @@ namespace StanfordPlanningReport
 
         }
 
-        public void createPDF(string reportContent, string physicsReportContent)
+        public List<TestCase> TestResults
         {
+            get { return testResults; }
+            set { testResults = value;  }
+        }
+
+        public void createPDF(string reportContent)
+        {
+           string physicsReportContent = this.FormatTestResultHTML();
+
             HtmlToPdf htmlToPdf = new HtmlToPdf();
             htmlToPdf.Document.PageOrientation = PdfPageOrientation.Landscape;
-            htmlToPdf.Document.Margins = new PdfMargins(5.0F);
+            htmlToPdf.Document.Margins = new PdfMargins(1.0F);
             htmlToPdf.Document.FitPageHeight = false;
             htmlToPdf.ConvertHtmlToFile(reportContent, null, reportSourceFile);
             htmlToPdf.Document.FitPageHeight = true;
             htmlToPdf.Document.FitPageWidth = true;
-
-            htmlToPdf.ConvertUrlToFile(physicsReportHTMLPath, physicsSourceFile);
+            htmlToPdf.ConvertHtmlToFile(physicsReportContent, null, physicsSourceFile);
 
             //htmlToPdf.ConvertHtmlToFile(physicsReportContent, null, physicsSourceFile);
         }
@@ -94,14 +112,14 @@ namespace StanfordPlanningReport
          * 
          * Updated: JB 6/18/18
          */
-        public void CreateFile(string reportContent, string physicsReportContent)
+        public void CreateFile(string reportContent)
         {
             reportSourceFile = System.IO.Path.Combine(sourcePath, reportFileName);
             reportDestFile = System.IO.Path.Combine(targetPath, reportFileName);
             physicsSourceFile = System.IO.Path.Combine(sourcePath, physicsReportFileName);
             physicsDestFile = System.IO.Path.Combine(targetPath, physicsReportFileName);
 
-            this.createPDF(reportContent, physicsReportContent);
+            this.createPDF(reportContent);
 
             // To copy a folder's contents to a new location: Create a new target folder, if necessary.
             if (!System.IO.Directory.Exists(targetPath))
@@ -120,10 +138,10 @@ namespace StanfordPlanningReport
          * 
          * Updated: JB 6/18/18
          */
-        public void CreateReports(string reportContent, string physicsReportContent)
+        public void CreateReports(string reportContent)
         {
 
-            this.CreateFile(reportContent, physicsReportContent);
+            this.CreateFile(reportContent);
             // To copy a file to another location and overwrite the destination file if it already exists.
             try
             {
@@ -137,7 +155,7 @@ namespace StanfordPlanningReport
                 reportFileName = courseId + planId + "-Report" + timeUpdated + ".pdf";
                 physicsReportFileName = courseId + planId + "-Check" + timeUpdated + ".pdf";
 
-                this.CreateFile(reportContent, physicsReportContent);
+                this.CreateFile(reportContent);
 
                 System.IO.File.Copy(reportSourceFile, reportDestFile, true);
                 System.IO.File.Delete(reportSourceFile);
@@ -164,17 +182,28 @@ namespace StanfordPlanningReport
          * 
          * Updated: JB 6/18/18
          */
-        public string FormatTestResultHTML(List<TestCase> results)
+        public string FormatTestResultHTML()
         {
-            string phyTestLayout = @"<div style = \""text - align: left;\""><TABLE><TH></TH>";
-            int checkCnter = 0;
-            foreach (TestCase test in results)
+            checkCnter = 0;
+
+            var physicsReportHTML = new HtmlAgilityPack.HtmlDocument();
+            physicsReportHTML.Load(physicsReportHTMLPath);
+
+            foreach (TestCase test in testResults)
             {
                 if (test.GetResult() == TestCase.PASS)
                 {
-                    phyTestLayout = phyTestLayout + @"<TR><TD>" + test.GetName() 
-                        + @": </TD><TD><font color=""green"">PASS</font></TD><TD>Description:</TD><TD>" 
-                            + test.GetDescription() + @"</TD></TR>"; 
+                    var tableNode = physicsReportHTML.DocumentNode.SelectSingleNode("//body/div/header/div/table");
+
+                    string tableRowNodeStr = @"<tr>
+                                                                    <td>" + test.GetName() + "</td>" +
+                                                                   "<td id=\"pass\">PASS</td>" +
+                                                                   "<td id=\"des\">Description: " + test.GetDescription() + "</td>" +
+                                                             "</tr>";
+                                                                   
+                    var tableRowNode = HtmlAgilityPack.HtmlNode.CreateNode(tableRowNodeStr);
+
+                    tableNode.AppendChild(tableRowNode);
 
                     // Added by SL 03/22/2018
                     string resultFailedString = test.GetName().ToString();
@@ -183,9 +212,17 @@ namespace StanfordPlanningReport
                 }
                 if (test.GetResult() == TestCase.FAIL)
                 {
-                    phyTestLayout = phyTestLayout + @"<TR><TD>" + test.GetName() 
-                        + @": </TD><TD><font color=""red"">WARN</font></TD><TD>Description:</TD><TD>" 
-                            + test.GetDescription() + @"</TD></TR>"; 
+                    var tableNode = physicsReportHTML.DocumentNode.SelectSingleNode("//body/div/header/div/table");
+
+                    string tableRowNodeStr = @"<tr>
+                                                                    <td>" + test.GetName() + "</td>" +
+                                                                   "<td id=\"fail\">WARN</td>" +
+                                                                   "<td id=\"des\">Description: " + test.GetDescription() + "</td>" +
+                                                             "</tr>";
+
+                    var tableRowNode = HtmlAgilityPack.HtmlNode.CreateNode(tableRowNodeStr);
+
+                    tableNode.AppendChild(tableRowNode);
 
                     // Added by SL 03/22/2018
                     string resultPassedString = test.GetName();
@@ -195,9 +232,11 @@ namespace StanfordPlanningReport
                 checkCnter++;
             }
 
-            phyTestLayout = phyTestLayout + @"</TABLE></div>";
+            var h2 = physicsReportHTML.DocumentNode.SelectSingleNode("//body/div/header/h2");
+            h2.InnerHtml = patient.FirstName.ToString() + patient.MiddleName.ToString() + patient.LastName.ToString()
+                                        + "（" + patient.Id.ToString() + ")" + " - " + course.Id.ToString();
 
-            return phyTestLayout;
+            return physicsReportHTML.DocumentNode.SelectSingleNode("//html").OuterHtml;
         }
         
     }

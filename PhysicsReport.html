@@ -5,8 +5,11 @@
     <meta charset="utf-8" />
     <title>PhysicsReport</title>
     <style>
+        body {
+            width: 100%;
+        }
         div.container {
-            width: 1800px;
+            width: 100%;
             border: 1px solid gray;
             background-color: snow;
         }
@@ -45,9 +48,29 @@
         }
         table {
             border-spacing: 10px 0;
+            white-space: nowrap;
+            margin: auto;
         }
         .tab {
             margin-left: 35px;
+        }
+        #testList {
+            text-align: left;
+        }
+        .td {
+            font: 300;
+        }
+        #pass {
+            color: forestgreen;
+        }
+        #fail {
+            color: red;
+        }
+        .tr {
+            text-align: center;
+        }
+        #des {
+            font: bold;
         }
     </style>
 </head>
@@ -58,7 +81,10 @@
             <h1>External Beam Treatment - Physics 2nd Check Report</h1>
             <h2>{PATIENT_FIRST_NAME} {PATIENT_MIDDLE_NAME} {PATIENT_LAST_NAME} ({PATIENT_ID}) - {PLAN_ID}</h2>
             <hr noshade, size=1>
-            {PHYSICS_INFO}
+            <div id="testList">
+                <table>
+                </table>
+            </div>
         </header>
     </div>
 

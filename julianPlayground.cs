@@ -349,76 +349,6 @@ namespace StanfordPlanningReport
                                                 </body>
                                                 </html>";
 
-            string PhysicsReportContent = @"<!DOCTYPE html>
-                                                <html>
-                                                <head>
-                                                <style>
-                                                div.container {
-                                                    width: 1800px;
-                                                    border: 1px solid gray;
-                                                    background-color: snow;
-                                                }
-
-                                                header, footer {
-                                                    padding: 1em;
-                                                    color: black;
-                                                    background-color: snow;
-                                                    clear: left;
-                                                    text-align: left;
-                                                }
-
-                                                nav {
-                                                    float: left;
-                                                    max-width: 200px;
-                                                    margin: 0;
-                                                    padding: 1em;
-                                                    background-color: snow;
-                                                    border: none;
-                                                }
-
-                                                nav ul {
-                                                    list-style-type: none;
-                                                    padding: 0;
-                                                    background-color: snow;
-                                                    border: none;
-                                                }
-   
-                                                nav ul a {
-                                                    text-decoration: none;
-                                                    background-color: snow;
-                                                    border: none;
-                                                }
-
-                                                article {
-                                                    margin-left: 200px;
-                                                    border-left: 1px solid gray;
-                                                    padding: 1em;
-                                                    overflow: hidden;
-                                                    background-color: snow;
-                                                }
-                                                table {
-                                                    border-spacing: 10px 0;
-                                                }
-                                                </style>
-
-                                                <style type=""text/css"">
-                                                .tab { margin-left: 35px; }
-                                                </style>
-
-                                                </head>
-                                                <body>
-
-                                                <div class=""container"">
-
-                                                <header>
-                                                <h1>External Beam Treatment - Physics 2nd Check Report</h1> 
-                                                <h2>{PATIENT_FIRST_NAME} {PATIENT_MIDDLE_NAME} {PATIENT_LAST_NAME} ({PATIENT_ID}) - {PLAN_ID}</h2>
-                                                <hr noshade, size =""1"">
-                                                {PHYSICS_INFO}
-                                                </header>
-                                                </body>
-                                                </html>";
-
 
             Patient p = app.OpenPatientById(PID);
 
@@ -947,52 +877,17 @@ namespace StanfordPlanningReport
 
 
                             PhysicsCheck physics = new PhysicsCheck(CurrentPlan);
-
-                            string tmpString = @"<div style = \""text - align: left;\""><TABLE><TH></TH>";
-
-                            // Added by SL 03/22/2018 Get all the passed and failed checking items in one loop (efficient)
-                            List<string> failedItems = new List<string>(); List<string> passedItems = new List<string>();
-                            List<int> failedIndices = new List<int>(); List<int> passedIndices = new List<int>();
-                            int checkCnter = 0;
-                            foreach (TestCase chk in physics.Results)
-                            {
-                                if (chk.GetResult())
-                                {
-                                    tmpString = tmpString + @"<TR><TD>" + chk.GetName() + @": </TD><TD><font color=""green"">PASS</font></TD><TD>Description:</TD><TD>" + chk.GetDescription() + @"</TD></TR>"; // Karl original
-
-                                    // Added by SL 03/22/2018
-                                    string resultFailedString = chk.GetName().ToString();
-                                    failedItems.Add(resultFailedString);
-                                    failedIndices.Add(checkCnter);
-                                }
-                                if (!chk.GetResult())
-                                {
-                                    tmpString = tmpString + @"<TR><TD>" + chk.GetName() + @": </TD><TD><font color=""red"">WARN</font></TD><TD>Description:</TD><TD>" + chk.GetDescription() + @"</TD></TR>"; // Karl original
-
-                                    // Added by SL 03/22/2018
-                                    string resultPassedString = chk.GetName();
-                                    passedItems.Add(resultPassedString);
-                                    passedIndices.Add(checkCnter);
-                                }
-                                checkCnter++;
-                            }
-
-                            tmpString = tmpString + @"</TABLE></div>";
-
-                            PhysicsReportContent = PhysicsReportContent.Replace("{PATIENT_FIRST_NAME}", p.FirstName.ToString());
-                            PhysicsReportContent = PhysicsReportContent.Replace("{PATIENT_MIDDLE_NAME}", p.MiddleName.ToString());
-                            PhysicsReportContent = PhysicsReportContent.Replace("{PATIENT_LAST_NAME}", p.LastName.ToString());
-                            PhysicsReportContent = PhysicsReportContent.Replace("{PATIENT_ID}", p.Id.ToString());
-                            PhysicsReportContent = PhysicsReportContent.Replace("{PHYSICS_INFO}", tmpString.ToString());
-                            PhysicsReportContent = PhysicsReportContent.Replace("{PLAN_ID}", CurrentPlan.Id.ToString());
+                         
 
                             // PDF CREATION
                             Report report = new Report(c.Patient, c, CurrentPlan);
+                            report.TestResults = physics.Results;
 
-                            report.CreateReports(ReportContent, PhysicsReportContent);
+                            report.CreateReports(ReportContent);
 
                             // Show the PDF
                             report.showReports();
+                            
 
                             /////////////////////////////////////////////////////////////////////////////////
                             // Added by SL 03/20/2018 - for research purposes, collecting error data
@@ -1035,14 +930,14 @@ namespace StanfordPlanningReport
                                     worKsheeT.Name = "GoodCatches";
                                     worKsheeT.Cells[1, 1] = "Failed checks"; worKsheeT.Cells[1, 2] = "Passed checks";
 
-                                    int rowf = 2, rowp = 2, rowindexf = checkCnter + 3, rowindexp = checkCnter + 3;
-                                    foreach (object item in failedItems) { worKsheeT.Cells[rowf, 1] = item.ToString(); rowf++; }
-                                    foreach (object item in passedItems) { worKsheeT.Cells[rowp, 2] = item.ToString(); rowp++; }
-                                    foreach (object item in failedIndices) { worKsheeT.Cells[rowindexf, 1] = item.ToString(); rowindexf++; }
-                                    foreach (object item in passedIndices) { worKsheeT.Cells[rowindexp, 2] = item.ToString(); rowindexp++; }
+                                    int rowf = 2, rowp = 2, rowindexf = Report.checkCnter + 3, rowindexp = Report.checkCnter + 3;
+                                    foreach (object item in Report.failedItems) { worKsheeT.Cells[rowf, 1] = item.ToString(); rowf++; }
+                                    foreach (object item in Report.passedItems) { worKsheeT.Cells[rowp, 2] = item.ToString(); rowp++; }
+                                    foreach (object item in Report.failedIndices) { worKsheeT.Cells[rowindexf, 1] = item.ToString(); rowindexf++; }
+                                    foreach (object item in Report.passedIndices) { worKsheeT.Cells[rowindexp, 2] = item.ToString(); rowindexp++; }
 
                                     // cumstomize excel style
-                                    celLrangE = worKsheeT.Range[worKsheeT.Cells[1, 1], worKsheeT.Cells[passedItems.Count() + 1, 2]];
+                                    celLrangE = worKsheeT.Range[worKsheeT.Cells[1, 1], worKsheeT.Cells[Report.passedItems.Count() + 1, 2]];
                                     celLrangE.EntireColumn.AutoFit();
 
                                     // save the excel
@@ -1066,11 +961,11 @@ namespace StanfordPlanningReport
                                     int lastRowIndex = ur.Rows.Count;
                                     worKsheeT.Cells[1, lastColIndex + 1] = "Failed checks"; worKsheeT.Cells[1, lastColIndex + 2] = "Passed checks";
 
-                                    int rowf = 2, rowp = 2, rowindexf = checkCnter + 3, rowindexp = checkCnter + 3;
-                                    foreach (object item in failedItems) { worKsheeT.Cells[rowf, lastColIndex + 1] = item.ToString(); rowf++; }
-                                    foreach (object item in passedItems) { worKsheeT.Cells[rowp, lastColIndex + 2] = item.ToString(); rowp++; }
-                                    foreach (object item in failedIndices) { worKsheeT.Cells[rowindexf, lastColIndex + 1] = item.ToString(); rowindexf++; }
-                                    foreach (object item in passedIndices) { worKsheeT.Cells[rowindexp, lastColIndex + 2] = item.ToString(); rowindexp++; }
+                                    int rowf = 2, rowp = 2, rowindexf = Report.checkCnter + 3, rowindexp = Report.checkCnter + 3;
+                                    foreach (object item in Report.failedItems) { worKsheeT.Cells[rowf, lastColIndex + 1] = item.ToString(); rowf++; }
+                                    foreach (object item in Report.passedItems) { worKsheeT.Cells[rowp, lastColIndex + 2] = item.ToString(); rowp++; }
+                                    foreach (object item in Report.failedIndices) { worKsheeT.Cells[rowindexf, lastColIndex + 1] = item.ToString(); rowindexf++; }
+                                    foreach (object item in Report.passedIndices) { worKsheeT.Cells[rowindexp, lastColIndex + 2] = item.ToString(); rowindexp++; }
 
                                     celLrangE = worKsheeT.Range[worKsheeT.Cells[1, 1], worKsheeT.Cells[lastRowIndex, lastColIndex + 2]];
                                     celLrangE.EntireColumn.AutoFit(); Microsoft.Office.Interop.Excel.Borders border = celLrangE.Borders;
@@ -1137,19 +1032,19 @@ namespace StanfordPlanningReport
                                     // Update the last run with the newest result
                                     if (lastColIndex == 2) // run 1st time
                                     {
-                                        for (int i = 0; i < passedIndices.Count(); i++) { var cellValue = ((Excel.Range)wsM.Cells[passedIndices[i] + 2, 2]).Value; wsM.Cells[passedIndices[i] + 2, 2] = cellValue + 1; }
-                                        for (int i = 0; i < failedIndices.Count(); i++) { var cellValue = ((Excel.Range)wsM.Cells[failedIndices[i] + 2, 3]).Value; wsM.Cells[failedIndices[i] + 2, 3] = cellValue + 1; }
+                                        for (int i = 0; i < Report.passedIndices.Count(); i++) { var cellValue = ((Excel.Range)wsM.Cells[Report.passedIndices[i] + 2, 2]).Value; wsM.Cells[Report.passedIndices[i] + 2, 2] = cellValue + 1; }
+                                        for (int i = 0; i < Report.failedIndices.Count(); i++) { var cellValue = ((Excel.Range)wsM.Cells[Report.failedIndices[i] + 2, 3]).Value; wsM.Cells[Report.failedIndices[i] + 2, 3] = cellValue + 1; }
                                     }
                                     else if (lastColIndex == 4)  // run 2nd time
                                     {
-                                        for (int i = 0; i < passedIndices.Count(); i++) { var cellValue = ((Excel.Range)wsM.Cells[passedIndices[i] + 2, 4]).Value; wsM.Cells[passedIndices[i] + 2, 4] = cellValue + 1; }
-                                        for (int i = 0; i < failedIndices.Count(); i++) { var cellValue = ((Excel.Range)wsM.Cells[failedIndices[i] + 2, 5]).Value; wsM.Cells[failedIndices[i] + 2, 5] = cellValue + 1; }
+                                        for (int i = 0; i < Report.passedIndices.Count(); i++) { var cellValue = ((Excel.Range)wsM.Cells[Report.passedIndices[i] + 2, 4]).Value; wsM.Cells[Report.passedIndices[i] + 2, 4] = cellValue + 1; }
+                                        for (int i = 0; i < Report.failedIndices.Count(); i++) { var cellValue = ((Excel.Range)wsM.Cells[Report.failedIndices[i] + 2, 5]).Value; wsM.Cells[Report.failedIndices[i] + 2, 5] = cellValue + 1; }
                                     }
                                     else if (lastColIndex > 4) // run more than twice, will update the final counter
                                     {
                                         // collect current plan's last time run's info (2nd last run's last two columns in wsCur)
                                         List<int> failedIndices2nd = new List<int>(); List<int> passedIndices2nd = new List<int>();
-                                        for (int j = checkCnter + 3; j <= lastRowIndex; j++)
+                                        for (int j = Report.checkCnter + 3; j <= lastRowIndex; j++)
                                         {
                                             var cellValueF = ((Excel.Range)wsCur.Cells[j, lastColIndex - 3]).Value;
                                             var cellValueP = ((Excel.Range)wsCur.Cells[j, lastColIndex - 2]).Value;
@@ -1158,9 +1053,9 @@ namespace StanfordPlanningReport
                                         }
 
                                         // deal with 2nd and last failed indices
-                                        IEnumerable<int> unfixedItems = failedIndices2nd.Intersect(failedIndices).ToList();
-                                        List<int> fixedItems = failedIndices2nd.Except(failedIndices).ToList();
-                                        List<int> newlyErrorItems = failedIndices.Except(failedIndices2nd).ToList();
+                                        IEnumerable<int> unfixedItems = failedIndices2nd.Intersect(Report.failedIndices).ToList();
+                                        List<int> fixedItems = failedIndices2nd.Except(Report.failedIndices).ToList();
+                                        List<int> newlyErrorItems = Report.failedIndices.Except(failedIndices2nd).ToList();
 
                                         // update failed items counter
                                         for (int i = 0; i < fixedItems.Count(); i++)
