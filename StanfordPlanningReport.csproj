@@ -82,12 +82,14 @@
     <Reference Include="Microsoft.CSharp" />
     <Reference Include="System.Core" />
     <Reference Include="System.Data.DataSetExtensions" />
+    <Reference Include="System.Drawing" />
     <Reference Include="System.Net.Http, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
       <HintPath>packages\Microsoft.Net.Http.2.0.20505.0\lib\net40\System.Net.Http.dll</HintPath>
     </Reference>
     <Reference Include="System.Net.Http.WebRequest, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
       <HintPath>packages\Microsoft.Net.Http.2.0.20505.0\lib\net40\System.Net.Http.WebRequest.dll</HintPath>
     </Reference>
+    <Reference Include="System.Windows.Forms" />
     <Reference Include="System.Xml" />
     <Reference Include="VMS.TPS.Common.Model.API, Version=13.6.32.20182, Culture=neutral, processorArchitecture=AMD64">
       <SpecificVersion>False</SpecificVersion>
@@ -102,6 +104,8 @@
     <Reference Include="PresentationFramework" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="HTTPServer.cs" />
+    <Compile Include="frontend\InteractiveReport.cs" />
     <Compile Include="Report.cs" />
     <Compile Include="FieldTest.cs" />
     <Compile Include="TestCase.cs" />
@@ -112,6 +116,84 @@
     <None Include="App.config">
       <SubType>Designer</SubType>
     </None>
+    <None Include="frontend\fonts\font-awesome-4.7.0\fonts\fontawesome-webfont.eot" />
+    <None Include="frontend\fonts\font-awesome-4.7.0\fonts\fontawesome-webfont.ttf" />
+    <None Include="frontend\fonts\font-awesome-4.7.0\fonts\fontawesome-webfont.woff" />
+    <None Include="frontend\fonts\font-awesome-4.7.0\fonts\fontawesome-webfont.woff2" />
+    <None Include="frontend\fonts\font-awesome-4.7.0\fonts\FontAwesome.otf" />
+    <None Include="frontend\fonts\font-awesome-4.7.0\less\animated.less" />
+    <None Include="frontend\fonts\font-awesome-4.7.0\less\bordered-pulled.less" />
+    <None Include="frontend\fonts\font-awesome-4.7.0\less\core.less" />
+    <None Include="frontend\fonts\font-awesome-4.7.0\less\fixed-width.less" />
+    <None Include="frontend\fonts\font-awesome-4.7.0\less\font-awesome.less" />
+    <None Include="frontend\fonts\font-awesome-4.7.0\less\icons.less" />
+    <None Include="frontend\fonts\font-awesome-4.7.0\less\larger.less" />
+    <None Include="frontend\fonts\font-awesome-4.7.0\less\list.less" />
+    <None Include="frontend\fonts\font-awesome-4.7.0\less\mixins.less" />
+    <None Include="frontend\fonts\font-awesome-4.7.0\less\path.less" />
+    <None Include="frontend\fonts\font-awesome-4.7.0\less\rotated-flipped.less" />
+    <None Include="frontend\fonts\font-awesome-4.7.0\less\screen-reader.less" />
+    <None Include="frontend\fonts\font-awesome-4.7.0\less\stacked.less" />
+    <None Include="frontend\fonts\font-awesome-4.7.0\less\variables.less" />
+    <None Include="frontend\fonts\font-awesome-4.7.0\scss\font-awesome.scss" />
+    <None Include="frontend\fonts\font-awesome-4.7.0\scss\_animated.scss" />
+    <None Include="frontend\fonts\font-awesome-4.7.0\scss\_bordered-pulled.scss" />
+    <None Include="frontend\fonts\font-awesome-4.7.0\scss\_core.scss" />
+    <None Include="frontend\fonts\font-awesome-4.7.0\scss\_fixed-width.scss" />
+    <None Include="frontend\fonts\font-awesome-4.7.0\scss\_icons.scss" />
+    <None Include="frontend\fonts\font-awesome-4.7.0\scss\_larger.scss" />
+    <None Include="frontend\fonts\font-awesome-4.7.0\scss\_list.scss" />
+    <None Include="frontend\fonts\font-awesome-4.7.0\scss\_mixins.scss" />
+    <None Include="frontend\fonts\font-awesome-4.7.0\scss\_path.scss" />
+    <None Include="frontend\fonts\font-awesome-4.7.0\scss\_rotated-flipped.scss" />
+    <None Include="frontend\fonts\font-awesome-4.7.0\scss\_screen-reader.scss" />
+    <None Include="frontend\fonts\font-awesome-4.7.0\scss\_stacked.scss" />
+    <None Include="frontend\fonts\font-awesome-4.7.0\scss\_variables.scss" />
+    <None Include="frontend\fonts\Lato\Lato-Black.ttf" />
+    <None Include="frontend\fonts\Lato\Lato-BlackItalic.ttf" />
+    <None Include="frontend\fonts\Lato\Lato-Bold.ttf" />
+    <None Include="frontend\fonts\Lato\Lato-BoldItalic.ttf" />
+    <None Include="frontend\fonts\Lato\Lato-Hairline.ttf" />
+    <None Include="frontend\fonts\Lato\Lato-HairlineItalic.ttf" />
+    <None Include="frontend\fonts\Lato\Lato-Italic.ttf" />
+    <None Include="frontend\fonts\Lato\Lato-Light.ttf" />
+    <None Include="frontend\fonts\Lato\Lato-LightItalic.ttf" />
+    <None Include="frontend\fonts\Lato\Lato-Regular.ttf" />
+    <None Include="frontend\fonts\montserrat\Montserrat-Black.ttf" />
+    <None Include="frontend\fonts\montserrat\Montserrat-BlackItalic.ttf" />
+    <None Include="frontend\fonts\montserrat\Montserrat-Bold.ttf" />
+    <None Include="frontend\fonts\montserrat\Montserrat-BoldItalic.ttf" />
+    <None Include="frontend\fonts\montserrat\Montserrat-ExtraBold.ttf" />
+    <None Include="frontend\fonts\montserrat\Montserrat-ExtraBoldItalic.ttf" />
+    <None Include="frontend\fonts\montserrat\Montserrat-ExtraLight.ttf" />
+    <None Include="frontend\fonts\montserrat\Montserrat-ExtraLightItalic.ttf" />
+    <None Include="frontend\fonts\montserrat\Montserrat-Italic.ttf" />
+    <None Include="frontend\fonts\montserrat\Montserrat-Light.ttf" />
+    <None Include="frontend\fonts\montserrat\Montserrat-LightItalic.ttf" />
+    <None Include="frontend\fonts\montserrat\Montserrat-Medium.ttf" />
+    <None Include="frontend\fonts\montserrat\Montserrat-MediumItalic.ttf" />
+    <None Include="frontend\fonts\montserrat\Montserrat-Regular.ttf" />
+    <None Include="frontend\fonts\montserrat\Montserrat-SemiBold.ttf" />
+    <None Include="frontend\fonts\montserrat\Montserrat-SemiBoldItalic.ttf" />
+    <None Include="frontend\fonts\montserrat\Montserrat-Thin.ttf" />
+    <None Include="frontend\fonts\montserrat\Montserrat-ThinItalic.ttf" />
+    <None Include="frontend\fonts\OpenSans\OpenSans-Bold.ttf" />
+    <None Include="frontend\fonts\OpenSans\OpenSans-BoldItalic.ttf" />
+    <None Include="frontend\fonts\OpenSans\OpenSans-ExtraBold.ttf" />
+    <None Include="frontend\fonts\OpenSans\OpenSans-ExtraBoldItalic.ttf" />
+    <None Include="frontend\fonts\OpenSans\OpenSans-Italic.ttf" />
+    <None Include="frontend\fonts\OpenSans\OpenSans-Light.ttf" />
+    <None Include="frontend\fonts\OpenSans\OpenSans-LightItalic.ttf" />
+    <None Include="frontend\fonts\OpenSans\OpenSans-Regular.otf" />
+    <None Include="frontend\fonts\OpenSans\OpenSans-Regular.ttf" />
+    <None Include="frontend\fonts\OpenSans\OpenSans-SemiBold.ttf" />
+    <None Include="frontend\fonts\OpenSans\OpenSans-SemiBoldItalic.ttf" />
+    <None Include="frontend\vendor\bootstrap\css\bootstrap-grid.css.map" />
+    <None Include="frontend\vendor\bootstrap\css\bootstrap-grid.min.css.map" />
+    <None Include="frontend\vendor\bootstrap\css\bootstrap-reboot.css.map" />
+    <None Include="frontend\vendor\bootstrap\css\bootstrap-reboot.min.css.map" />
+    <None Include="frontend\vendor\bootstrap\css\bootstrap.css.map" />
+    <None Include="frontend\vendor\bootstrap\css\bootstrap.min.css.map" />
     <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
@@ -132,6 +214,35 @@
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
+    <Content Include="frontend\css\main.css" />
+    <Content Include="frontend\css\util.css" />
+    <Content Include="frontend\fonts\font-awesome-4.7.0\css\font-awesome.css" />
+    <Content Include="frontend\fonts\font-awesome-4.7.0\css\font-awesome.min.css" />
+    <Content Include="frontend\fonts\font-awesome-4.7.0\fonts\fontawesome-webfont.svg" />
+    <Content Include="frontend\fonts\font-awesome-4.7.0\HELP-US-OUT.txt" />
+    <Content Include="frontend\fonts\Lato\OFL.txt" />
+    <Content Include="frontend\fonts\montserrat\OFL.txt" />
+    <Content Include="frontend\testResultsIndex.html" />
+    <Content Include="frontend\js\main.js" />
+    <Content Include="frontend\vendor\animate\animate.css" />
+    <Content Include="frontend\vendor\bootstrap\css\bootstrap-grid.css" />
+    <Content Include="frontend\vendor\bootstrap\css\bootstrap-grid.min.css" />
+    <Content Include="frontend\vendor\bootstrap\css\bootstrap-reboot.css" />
+    <Content Include="frontend\vendor\bootstrap\css\bootstrap-reboot.min.css" />
+    <Content Include="frontend\vendor\bootstrap\css\bootstrap.css" />
+    <Content Include="frontend\vendor\bootstrap\css\bootstrap.min.css" />
+    <Content Include="frontend\vendor\bootstrap\js\bootstrap.js" />
+    <Content Include="frontend\vendor\bootstrap\js\bootstrap.min.js" />
+    <Content Include="frontend\vendor\bootstrap\js\popper.js" />
+    <Content Include="frontend\vendor\bootstrap\js\popper.min.js" />
+    <Content Include="frontend\vendor\bootstrap\js\tooltip.js" />
+    <Content Include="frontend\vendor\jquery\jquery-3.2.1.min.js" />
+    <Content Include="frontend\vendor\perfect-scrollbar\perfect-scrollbar.css" />
+    <Content Include="frontend\vendor\perfect-scrollbar\perfect-scrollbar.min.js" />
+    <Content Include="frontend\vendor\select2\select2.css" />
+    <Content Include="frontend\vendor\select2\select2.js" />
+    <Content Include="frontend\vendor\select2\select2.min.css" />
+    <Content Include="frontend\vendor\select2\select2.min.js" />
     <Content Include="PhysicsReport.html" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

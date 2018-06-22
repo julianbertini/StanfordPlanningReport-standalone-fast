@@ -185,8 +185,9 @@ namespace StanfordPlanningReport
         public string FormatTestResultHTML()
         {
             checkCnter = 0;
-
+       
             var physicsReportHTML = new HtmlAgilityPack.HtmlDocument();
+
             physicsReportHTML.Load(physicsReportHTMLPath);
 
             foreach (TestCase test in testResults)

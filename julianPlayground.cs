@@ -41,13 +41,28 @@ namespace StanfordPlanningReport
         static void Main(string[] args)
         {
             var options = new Options();
+            
             if (CommandLine.Parser.Default.ParseArguments(args, options))
             {
                 try
                 {
                     using (Application app = Application.CreateApplication("SysAdmin", "SysAdmin2"))
                     {
-                        Execute(app, options.PatientID);
+                        const string testResultsHTMLPath = @"Z:\\Users\\Jbertini\\ESAPI\\StanfordPlanningReport-standalone-fast\\frontend\\testResultsIndex.html";
+                        var importedDoc = new HtmlAgilityPack.HtmlDocument();
+                        importedDoc.Load(testResultsHTMLPath);
+
+                        HTTPServer s = new HTTPServer(importedDoc);
+                        s.Start("http://localhost/", "http://localhost/update/");
+                        InteractiveReport r = new InteractiveReport(s);
+                        while(true)
+                        {
+
+                        }
+
+
+
+                        // Execute(app, options.PatientID);
                     }
                 }
                 catch (Exception e)
