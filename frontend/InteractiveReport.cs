@@ -9,7 +9,7 @@ namespace StanfordPlanningReport
     class InteractiveReport
     {
         private const string testResultsHTMLPath = @"Z:\\Users\\Jbertini\\ESAPI\\StanfordPlanningReport-standalone-fast\\frontend\\testResultsIndex.html";
-        private const string testResultsURL = @"http://localhost/testResultsIndex.html";
+        private const string testResultsURL = @"http://localhost/";
 
         private HtmlAgilityPack.HtmlDocument importedDoc;
         private System.Windows.Forms.HtmlDocument testResultsHTML;

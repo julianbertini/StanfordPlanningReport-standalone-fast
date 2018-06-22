@@ -104,6 +104,7 @@
     <Reference Include="PresentationFramework" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Route.cs" />
     <Compile Include="HTTPServer.cs" />
     <Compile Include="frontend\InteractiveReport.cs" />
     <Compile Include="Report.cs" />

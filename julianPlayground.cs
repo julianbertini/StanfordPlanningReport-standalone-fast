@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Net;
 using System.Linq;
 using System.Text;
 using System.Collections.Generic;
@@ -35,8 +36,27 @@ namespace StanfordPlanningReport
             [ParserState]
             public IParserState LastParserState { get; set; }
         }
-        
-        
+
+
+        public static string RouteCallbackUpdate(HttpListenerContext context)
+        {
+            HttpListenerResponse response = context.Response;
+
+            int status = response.StatusCode;
+
+            Console.WriteLine(status);
+
+            return null;
+        }
+        public static string RouteCallbackIndex(HttpListenerContext context)
+        {
+            HttpListenerResponse response = context.Response;
+
+            int status = response.StatusCode;
+
+            return "testResultsIndex.html";
+        }
+
         [STAThread]
         static void Main(string[] args)
         {
@@ -52,14 +72,25 @@ namespace StanfordPlanningReport
                         var importedDoc = new HtmlAgilityPack.HtmlDocument();
                         importedDoc.Load(testResultsHTMLPath);
 
+
+
                         HTTPServer s = new HTTPServer(importedDoc);
-                        s.Start("http://localhost/", "http://localhost/update/");
+                        Route routes = new Route();
+
+                        
+
+                        routes.RoutesList.Add("/update", RouteCallbackUpdate);
+                        routes.RoutesList.Add("/", RouteCallbackIndex);
+
+                        s.Routes = routes;
+                        s.ServeResources = true;
+
+                        s.Start("http://localhost/");
                         InteractiveReport r = new InteractiveReport(s);
                         while(true)
                         {
 
                         }
-
 
 
                         // Execute(app, options.PatientID);

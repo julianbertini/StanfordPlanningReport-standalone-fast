@@ -29,7 +29,7 @@ var updateTestSettings = function () {
 
     console.log("Making post request...");
     
-    const url = "/update?name=me"; 
+    const url = "/update?name=test123&result=PASS"; 
     const method = "GET";
     var postData = "hello world!";
     var async = true;
