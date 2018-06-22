@@ -18,7 +18,7 @@ namespace StanfordPlanningReport
 
         private const string testResultsHTMLPath = @"Z:\\Users\\Jbertini\\ESAPI\\StanfordPlanningReport-standalone-fast\\frontend\\testResultsIndex.html";
 
-        public HTTPServer(HtmlDocument htmlDoc = null)
+        public HTTPServer()
         {
             _listener = null;
             ServeResources = false;

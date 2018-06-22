@@ -38,24 +38,7 @@ namespace StanfordPlanningReport
         }
 
 
-        public static string RouteCallbackUpdate(HttpListenerContext context)
-        {
-            HttpListenerResponse response = context.Response;
 
-            int status = response.StatusCode;
-
-            Console.WriteLine(status);
-
-            return null;
-        }
-        public static string RouteCallbackIndex(HttpListenerContext context)
-        {
-            HttpListenerResponse response = context.Response;
-
-            int status = response.StatusCode;
-
-            return "testResultsIndex.html";
-        }
 
         [STAThread]
         static void Main(string[] args)
@@ -71,27 +54,14 @@ namespace StanfordPlanningReport
                         const string testResultsHTMLPath = @"Z:\\Users\\Jbertini\\ESAPI\\StanfordPlanningReport-standalone-fast\\frontend\\testResultsIndex.html";
                         var importedDoc = new HtmlAgilityPack.HtmlDocument();
                         importedDoc.Load(testResultsHTMLPath);
-
-
-
-                        HTTPServer s = new HTTPServer(importedDoc);
-                        Route routes = new Route();
-
                         
-
-                        routes.RoutesList.Add("/update", RouteCallbackUpdate);
-                        routes.RoutesList.Add("/", RouteCallbackIndex);
-
-                        s.Routes = routes;
-                        s.ServeResources = true;
-
-                        s.Start("http://localhost/");
-                        InteractiveReport r = new InteractiveReport(s);
+                        InteractiveReport r = new InteractiveReport();
+                        r.LaunchInteractiveReport();
+                        // to keep the server alive ... so that as they make edits it will respond.
+                        // probably break out of tihs loop when they export document
                         while(true)
                         {
-
                         }
-
 
                         // Execute(app, options.PatientID);
                     }
