@@ -189,6 +189,10 @@
     <None Include="frontend\fonts\OpenSans\OpenSans-Regular.ttf" />
     <None Include="frontend\fonts\OpenSans\OpenSans-SemiBold.ttf" />
     <None Include="frontend\fonts\OpenSans\OpenSans-SemiBoldItalic.ttf" />
+    <None Include="frontend\fonts\simple-font\Simple-light.ttf" />
+    <None Include="frontend\fonts\simple-font\Simple-regular.ttf" />
+    <None Include="frontend\fonts\simple-font\__MACOSX\._Simple-light.ttf" />
+    <None Include="frontend\fonts\simple-font\__MACOSX\._Simple-regular.ttf" />
     <None Include="frontend\vendor\bootstrap\css\bootstrap-grid.css.map" />
     <None Include="frontend\vendor\bootstrap\css\bootstrap-grid.min.css.map" />
     <None Include="frontend\vendor\bootstrap\css\bootstrap-reboot.css.map" />
@@ -223,6 +227,7 @@
     <Content Include="frontend\fonts\font-awesome-4.7.0\HELP-US-OUT.txt" />
     <Content Include="frontend\fonts\Lato\OFL.txt" />
     <Content Include="frontend\fonts\montserrat\OFL.txt" />
+    <Content Include="frontend\testResultsIndex%281%29.html" />
     <Content Include="frontend\testResultsIndex.html" />
     <Content Include="frontend\js\main.js" />
     <Content Include="frontend\vendor\animate\animate.css" />

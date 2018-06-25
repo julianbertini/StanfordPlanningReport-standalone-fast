@@ -53,11 +53,11 @@ namespace StanfordPlanningReport
                     {
 
                         Patient p = app.OpenPatientById(options.PatientID);
-                        Course c = p.Courses.First();
-                        PhysicsCheck physics = new PhysicsCheck(c.PlanSetups.First());
+                        Course c = p.Courses.Last();
+
+                        PhysicsCheck physics = new PhysicsCheck(c.PlanSetups.Last());
                         
-                        InteractiveReport r = new InteractiveReport();
-                        r.TestResults = physics.Results;
+                        InteractiveReport r = new InteractiveReport(physics.Results);
 
                         r.LaunchInteractiveReport();
                         // to keep the server alive ... so that as they make edits it will respond.

@@ -18,9 +18,9 @@ namespace StanfordPlanningReport
 
         public List<TestCase> TestResults { get; set; }
 
-        public InteractiveReport()
+        public InteractiveReport(List<TestCase> results)
         {
-            TestResults = new List<TestCase>();
+            TestResults = results;
 
             importedDoc = new HtmlDocument();
             importedDoc.Load(testResultsHTMLPath);
@@ -49,10 +49,10 @@ namespace StanfordPlanningReport
             {
                 if (test.GetResult() == TestCase.PASS)
                 {
-                    string tableRowNodeStr = "<tr class=\"row100 body\" class=\"pass\">" +
+                    string tableRowNodeStr = "<tr class=\"row100 body pass\">" +
                                                                "<td class=\"cell100 column1\">" + test.GetName() + "</td>" +
                                                                "<td class=\"cell100 column2\">" + test.GetDescription() + "</td>" +
-                                                               "<td class=\"cell100 column3\">" + test.GetResult() + "</td>" +
+                                                               "<td class=\"cell100 column3\">PASS</td>" +
                                                            "</tr>";
 
                     var tableRowNode = HtmlAgilityPack.HtmlNode.CreateNode(tableRowNodeStr);
@@ -60,10 +60,10 @@ namespace StanfordPlanningReport
                 }
                 else
                 {
-                    string tableRowNodeStr = "<tr class=\"row100 body\" class=\"fail\">" +
+                    string tableRowNodeStr = "<tr class=\"row100 body fail\">" +
                                                                "<td class=\"cell100 column1\">" + test.GetName() + "</td>" +
                                                                "<td class=\"cell100 column2\">" + test.GetDescription() + "</td>" +
-                                                               "<td class=\"cell100 column3\">" + test.GetResult() + "</td>" +
+                                                               "<td class=\"cell100 column3\">WARNING</td>" +
                                                           "</tr>";
 
                     var tableRowNode = HtmlAgilityPack.HtmlNode.CreateNode(tableRowNodeStr);
@@ -71,6 +71,16 @@ namespace StanfordPlanningReport
                 }
                
             }
+            try {
+                string path = System.IO.Path.GetDirectoryName(testResultsHTMLPath);
+                string newFile = System.IO.Path.Combine(path, "testResultsIndex(1).html");
+                importedDoc.Save(newFile);
+            }
+            catch
+            {
+                Console.WriteLine("Error - Could not create formatted HTML document.");
+            }
+            
 
         }
 
@@ -97,7 +107,7 @@ namespace StanfordPlanningReport
 
             int status = response.StatusCode;
 
-            return "testResultsIndex.html";
+            return "testResultsIndex(1).html";
         }
 
 
