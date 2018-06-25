@@ -54,7 +54,6 @@ ul, li {
 	list-style-type: none;
 }
 
-
 /* ------------------------------------ */
 input {
   display: block;
@@ -326,4 +325,19 @@ th, td {
 
 .table100.ver5 .ps__rail-y .ps__thumb-y::before {
   background-color: #cccccc;
+}
+
+/*---------------------------------------------*/
+
+.detailsButton {
+    padding: 5px;
+    background-color: #79d2a6;
+    border-radius: 5px;
+    width: auto;
+    margin-top: 20px;
+    margin: 5px;
+}
+
+.detailsButton#p-app {
+    background-color: #ffe066;
 }

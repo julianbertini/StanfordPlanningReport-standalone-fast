@@ -2,6 +2,8 @@
 using System.Net;
 using System.Collections.Generic;
 using HtmlAgilityPack;
+using Patient = VMS.TPS.Common.Model.API.Patient;
+using PlanSetup = VMS.TPS.Common.Model.API.PlanSetup;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -15,11 +17,15 @@ namespace StanfordPlanningReport
 
         private HtmlDocument importedDoc;
         private HTTPServer server;
+        private Patient patient;
+        private PlanSetup currentPlan;
 
         public List<TestCase> TestResults { get; set; }
 
-        public InteractiveReport(List<TestCase> results)
+        public InteractiveReport(Patient p, PlanSetup plan, List<TestCase> results)
         {
+            patient = p;
+            currentPlan = plan;
             TestResults = results;
 
             importedDoc = new HtmlDocument();
@@ -43,6 +49,13 @@ namespace StanfordPlanningReport
             var divNode = importedDoc.DocumentNode.SelectSingleNode("//body/div/div/div/div");
             HtmlNode nextDiv = divNode.NextSibling.NextSibling;
             var node = divNode.SelectSingleNode("//table//tbody");
+
+            // Set the title with patient information
+            var title = importedDoc.DocumentNode.SelectSingleNode("//h2");
+            title.InnerHtml = patient.FirstName.ToString() + " " + patient.MiddleName.ToString() 
+                                                                                + " " + patient.LastName.ToString()
+                                                                                + " (" + patient.Id.ToString() + ") - " 
+                                                                                + currentPlan.Id.ToString();
 
             // add physics report tests here in a loop
             foreach (TestCase test in TestResults)

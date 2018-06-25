@@ -57,7 +57,7 @@ namespace StanfordPlanningReport
 
                         PhysicsCheck physics = new PhysicsCheck(c.PlanSetups.Last());
                         
-                        InteractiveReport r = new InteractiveReport(physics.Results);
+                        InteractiveReport r = new InteractiveReport(p, c.PlanSetups.Last(), physics.Results);
 
                         r.LaunchInteractiveReport();
                         // to keep the server alive ... so that as they make edits it will respond.

@@ -20,15 +20,18 @@
     <link rel="stylesheet" type="text/css" href="css/util.css">
     <link rel="stylesheet" type="text/css" href="css/main.css">
     <!--===============================================================================================-->
+    <link href="lib/jBox-0.4.9//jBox-0.4.9/Source//jBox.css" rel="stylesheet">
+    <!--===============================================================================================-->
+    <link rel="h" type="text/css" href="vendor/select2/select2.min.css">
+    <!--===============================================================================================-->
+    <link rel="import" href="DetailsModal.html">
 </head>
 <body>
     <div class="limiter">
         <div class="container-table100">
             <div class="wrap-table100">
                 <div>
-                    <h2 style="font-family: Arial">
-                        Test Results for: Patient x ID: askda slkda
-                    </h2>
+                    <h2 style="font-family: Arial"></h2>
                 </div>
                 <div class="table100 ver5 m-b-110">
                     <div class="table100-head">
@@ -45,15 +48,19 @@
 
                     <div class="table100-body js-pscroll">
                         <table>
-                            <tbody>
-
-                            </tbody>
+                            <tbody></tbody>
                         </table>
                     </div>
                 </div>
             </div>
         </div>
     </div>
+    <div id="grabMe">
+        <p> This will include more detailed information regarding why the test failed.</p>
+        <button class="detailsButton">Override</button>
+        <button class="detailsButton" id="p-app">Needs Physician Approval</button>
+    </div>
+
     <!--===============================================================================================-->
     <script src="vendor/jquery/jquery-3.2.1.min.js"></script>
     <!--===============================================================================================-->
@@ -61,14 +68,17 @@
     <script src="vendor/bootstrap/js/bootstrap.min.js"></script>
     <!--===============================================================================================-->
     <script src="vendor/perfect-scrollbar/perfect-scrollbar.min.js"></script>
-    <script>
-		$('.js-pscroll').each(function(){
-			var ps = new PerfectScrollbar(this);
+    <!--===============================================================================================-->
+    <script src="lib/jBox-0.4.9//jBox-0.4.9/Source/jBox.min.js"></script>
 
-			$(window).on('resize', function(){
-				ps.update();
-			})
-		});
+    <script>
+        $('.js-pscroll').each(function () {
+            var ps = new PerfectScrollbar(this);
+
+            $(window).on('resize', function () {
+                ps.update();
+            })
+        });
 
 
     </script>

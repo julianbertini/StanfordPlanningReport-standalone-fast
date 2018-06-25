@@ -1,4 +1,23 @@
-﻿console.log("before window.onload");
+﻿$(document).ready(function () {
+
+    updateTestSettings();
+
+    handleModal();
+
+})
+
+var handleModal = function () {
+
+
+    new jBox('Modal', {
+        attach: '.row100',
+        title: 'Test Details',
+        content: $('#grabMe'),
+        overlay: false,
+        draggable: true
+    });
+
+}
 
 var updateTestSettings = function () {
 
@@ -32,5 +51,3 @@ var updateTestSettings = function () {
     console.log("data sent");
     
 }
-
-window.onload = updateTestSettings;
