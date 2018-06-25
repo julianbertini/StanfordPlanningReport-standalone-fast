@@ -51,11 +51,14 @@ namespace StanfordPlanningReport
                 {
                     using (Application app = Application.CreateApplication("SysAdmin", "SysAdmin2"))
                     {
-                        const string testResultsHTMLPath = @"Z:\\Users\\Jbertini\\ESAPI\\StanfordPlanningReport-standalone-fast\\frontend\\testResultsIndex.html";
-                        var importedDoc = new HtmlAgilityPack.HtmlDocument();
-                        importedDoc.Load(testResultsHTMLPath);
+
+                        Patient p = app.OpenPatientById(options.PatientID);
+                        Course c = p.Courses.First();
+                        PhysicsCheck physics = new PhysicsCheck(c.PlanSetups.First());
                         
                         InteractiveReport r = new InteractiveReport();
+                        r.TestResults = physics.Results;
+
                         r.LaunchInteractiveReport();
                         // to keep the server alive ... so that as they make edits it will respond.
                         // probably break out of tihs loop when they export document
