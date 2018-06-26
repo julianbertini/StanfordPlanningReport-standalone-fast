@@ -229,6 +229,7 @@ th, td {
 [ Ver5 ]*/
 .table100.ver5 {
   margin-right: -30px;
+  margin-bottom: 30px;
 }
 
 .table100.ver5 .table100-head {
@@ -254,13 +255,18 @@ th, td {
     text-align: center;
 }
 
-.table100.ver5 tr.fail td {
-    background-color: #ff8080;
-    text-align: center;
-}
+    .table100.ver5 tr.fail td {
+        background-color: #f7f7f7;
+        text-align: center;
+        color: #ff6666;
+    }
 
 .table100.ver5 tr.pass td.column3 {
     color: #79d2a6;
+    text-align: center;
+}
+.table100.ver5 tr.fail td.column3 {
+    color: #ff6666;
     text-align: center;
 }
 
@@ -340,4 +346,12 @@ th, td {
 
 .detailsButton#p-app {
     background-color: #ffe066;
+}
+.modalTextarea {
+    width: 90%;
+    margin: auto;
+    padding: 10px;
+    border-radius: 10px;
+    margin-top: 10px;
+    margin-bottom: 10px;
 }

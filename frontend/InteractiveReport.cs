@@ -39,7 +39,8 @@ namespace StanfordPlanningReport
             server.Routes = routes;
             routes.RoutesList.Add("/update", RouteCallbackUpdate);
             routes.RoutesList.Add("/", RouteCallbackIndex);
-
+            routes.RoutesList.Add("/details", RouteCallbackDetails);
+            routes.RoutesList.Add("/prescriptionAlert", RouteCallbackPrescriptionAlert);
            
 
         }
@@ -47,8 +48,8 @@ namespace StanfordPlanningReport
         public void FormatHtmlWithResults()
         {
             var divNode = importedDoc.DocumentNode.SelectSingleNode("//body/div/div/div/div");
-            HtmlNode nextDiv = divNode.NextSibling.NextSibling;
-            var node = divNode.SelectSingleNode("//table//tbody");
+            var passedNode = divNode.SelectSingleNode("//table//tbody[contains(@class, 'passed-tests')]");
+            var failedNode = divNode.SelectSingleNode("//table//tbody[contains(@class, 'failed-tests')]");
 
             // Set the title with patient information
             var title = importedDoc.DocumentNode.SelectSingleNode("//h2");
@@ -69,7 +70,7 @@ namespace StanfordPlanningReport
                                                            "</tr>";
 
                     var tableRowNode = HtmlAgilityPack.HtmlNode.CreateNode(tableRowNodeStr);
-                    node.AppendChild(tableRowNode);
+                    passedNode.AppendChild(tableRowNode);
                 }
                 else
                 {
@@ -80,7 +81,7 @@ namespace StanfordPlanningReport
                                                           "</tr>";
 
                     var tableRowNode = HtmlAgilityPack.HtmlNode.CreateNode(tableRowNodeStr);
-                    node.AppendChild(tableRowNode);
+                    failedNode.AppendChild(tableRowNode);
                 }
                
             }
@@ -123,6 +124,22 @@ namespace StanfordPlanningReport
             return "testResultsIndex(1).html";
         }
 
+        public string RouteCallbackDetails(HttpListenerContext context)
+        {
+            return "detailsModal.html";
+        }
+
+        public string RouteCallbackPrescriptionAlert(HttpListenerContext context)
+        {
+            foreach (TestCase test in TestResults)
+            {
+                if (test.GetName().ToUpper().Contains("PRESCRIPTION") && test.GetResult() == TestCase.FAIL)
+                {
+                    return "prescriptionAlert.html";
+                }
+            }
+            return null;
+        }
 
     }
 }

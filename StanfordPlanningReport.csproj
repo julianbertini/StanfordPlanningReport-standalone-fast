@@ -104,6 +104,7 @@
     <Reference Include="PresentationFramework" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="PhysicsCheck.cs" />
     <Compile Include="Route.cs" />
     <Compile Include="HTTPServer.cs" />
     <Compile Include="frontend\InteractiveReport.cs" />
@@ -304,6 +305,8 @@
     <Content Include="frontend\vendor\select2\select2.js" />
     <Content Include="frontend\vendor\select2\select2.min.css" />
     <Content Include="frontend\vendor\select2\select2.min.js" />
+    <Content Include="frontend\detailsModal.html" />
+    <Content Include="frontend\prescriptionAlert.html" />
     <Content Include="PhysicsReport.html" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
