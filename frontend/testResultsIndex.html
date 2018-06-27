@@ -24,55 +24,180 @@
     <!--===============================================================================================-->
     <link rel="h" type="text/css" href="vendor/select2/select2.min.css">
     <!--===============================================================================================-->
-    <link rel="import" href="DetailsModal.html">
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+    <!--===============================================================================================-->
 </head>
 <body>
-    <div class="limiter">
-        <div class="container-table100">
-            <div class="wrap-table100">
-                <div>
-                    <h2 style="font-family: Arial"></h2>
+    <div id="mySidenav" class="sidenav">
+        <a href="javascript:void(0)" class="closebtn" onclick="closeNav()">&times;</a>
+        <a href="#">General Tests</a>
+        <a href="#">Electron</a>
+        <a href="#">Skin</a>
+        <a href="#">Other</a>
+    </div>
+    <div id="main">
+        <div class="limiter">
+            <div class="container-table100">
+                <div class="wrap-table100">
+                    <div>
+                        <h2 id="patientTitle" style="font-family: Arial" class="display-2"></h2>
+                        <h3 class="header" id="testResultsType">General Test Results</h3>
+                    </div>
+                    <h2 class="header display-4">
+                        <span id="testNavToggle" style="font-size:30px;cursor:pointer" onclick="openNav()">View</span>
+                        other test results
+                    </h2>
+
                 </div>
-                <div class="table100 ver5 m-b-110">
-                    <div class="table100-head">
-                        <table>
-                            <thead>
-                                <tr class="row100 head">
-                                    <th class="cell100 column1">Test Name</th>
-                                    <th class="cell100 column2">Description</th>
-                                    <th class="cell100 column3">Result</th>
-                                </tr>
-                            </thead>
-                        </table>
-                    </div>
-                    <div class="table100-body js-pscroll">
-                        <table>
-                            <tbody class="failed-tests"></tbody>
-                        </table>
+            </div>
+        </div>
+        <div id="testResultsContainer">
+            <div class="container">
+                <h2 id="failedTestsHeader" class="display-4">Failed Tests</h2>
+                <div class="panel-group">
+                    <div class="panel panel-default">
+                        <div class="panel-heading">
+                            <h4 class="panel-title">
+                                <a class="dropdownTitle" data-toggle="collapse" href="#collapse1">Failed Tests</a>
+                            </h4>
+                            <h4 class="testIndex" id="failedTestIndex"></h4>
+                        </div>
+                        <div id="collapse1" class="panel-collapse collapse">
+                            <div class="panel-body">
+                                <div class="table100 ver5 m-b-110">
+                                    <div class="table100-head">
+                                        <table>
+                                            <thead>
+                                                <tr class="row100 head">
+                                                    <th class="cell100 column1">Test Name</th>
+                                                    <th class="cell100 column2">Description</th>
+                                                    <th class="cell100 column3">Result</th>
+                                                </tr>
+                                            </thead>
+                                        </table>
+                                    </div>
+                                    <div class="table100-body js-pscroll">
+                                        <table>
+                                            <tbody class="failed-tests"></tbody>
+                                        </table>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="panel-footer">Scroll to see more</div>
+                        </div>
                     </div>
                 </div>
-                <div class="table100 ver5 m-b-110">
-                    <div class="table100-head">
-                        <table>
-                            <thead>
-                                <tr class="row100 head">
-                                    <th class="cell100 column1">Test Name</th>
-                                    <th class="cell100 column2">Description</th>
-                                    <th class="cell100 column3">Result</th>
-                                </tr>
-                            </thead>
-                        </table>
+            </div>
+            <div class="container">
+                <h2 id="warningsHeader" class="display-4">Warnings</h2>
+                <div class="panel-group">
+                    <div class="panel panel-default">
+                        <div class="panel-heading">
+                            <h4 class="panel-title">
+                                <a class="dropdownTitle" data-toggle="collapse" href="#collapse2">Warnings</a>
+                            </h4>
+                            <h4 class="testIndex" id="warningsIndex"></h4>
+                        </div>
+                        <div id="collapse2" class="panel-collapse collapse">
+                            <div class="panel-body">
+                                <div class="table100 ver5 m-b-110">
+                                    <div class="table100-head">
+                                        <table>
+                                            <thead>
+                                                <tr class="row100 head">
+                                                    <th class="cell100 column1">Test Name</th>
+                                                    <th class="cell100 column2">Description</th>
+                                                    <th class="cell100 column3">Result</th>
+                                                </tr>
+                                            </thead>
+                                        </table>
+                                    </div>
+                                    <div class="table100-body js-pscroll">
+                                        <table>
+                                            <tbody class="warnings"></tbody>
+                                        </table>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="panel-footer">Scroll to see more</div>
+                        </div>
                     </div>
-                    <div class="table100-body js-pscroll">
-                        <table>
-                            <tbody class="passed-tests"></tbody>
-                        </table>
+                </div>
+            </div>
+            <div class="container">
+                <h2 id="acknowledgedHeader" class="display-4">Acknowledged Tests</h2>
+                <div class="panel-group">
+                    <div class="panel panel-default">
+                        <div class="panel-heading">
+                            <h4 class="panel-title">
+                                <a class="dropdownTitle" data-toggle="collapse" href="#collapse3">Acknowledged Tests</a>
+                            </h4>
+                            <h4 class="testIndex" id="ackTestIndex"></h4>
+                        </div>
+                        <div id="collapse3" class="panel-collapse collapse">
+                            <div class="panel-body">
+                                <div class="table100 ver5 m-b-110">
+                                    <div class="table100-head">
+                                        <table>
+                                            <thead>
+                                                <tr class="row100 head">
+                                                    <th class="cell100 column1">Test Name</th>
+                                                    <th class="cell100 column2">Description</th>
+                                                    <th class="cell100 column3">Result</th>
+                                                </tr>
+                                            </thead>
+                                        </table>
+                                    </div>
+                                    <div class="table100-body js-pscroll">
+                                        <table>
+                                            <tbody class="acknowledged-tests"></tbody>
+                                        </table>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="panel-footer">Scroll to see more</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="container">
+                <h2 id="passedTestsHeader" class="display-4">Passed tests</h2>
+                <div class="panel-group">
+                    <div class="panel panel-default">
+                        <div class="panel-heading">
+                            <h4 class="panel-title">
+                                <a class="dropdownTitle" data-toggle="collapse" href="#collapse4">Passed Tests</a>
+                            </h4>
+                            <h4 class="testIndex" id="passedTestIndex"></h4>
+                        </div>
+                        <div id="collapse4" class="panel-collapse collapse">
+                            <div class="panel-body">
+                                <div class="table100 ver5 m-b-110">
+                                    <div class="table100-head">
+                                        <table>
+                                            <thead>
+                                                <tr class="row100 head">
+                                                    <th class="cell100 column1">Test Name</th>
+                                                    <th class="cell100 column2">Description</th>
+                                                    <th class="cell100 column3">Result</th>
+                                                </tr>
+                                            </thead>
+                                        </table>
+                                    </div>
+                                    <div class="table100-body js-pscroll">
+                                        <table>
+                                            <tbody class="passed-tests"></tbody>
+                                        </table>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="panel-footer">Scroll to see more</div>
+                        </div>
                     </div>
                 </div>
             </div>
         </div>
     </div>
-
     <!--===============================================================================================-->
     <script src="vendor/jquery/jquery-3.2.1.min.js"></script>
     <!--===============================================================================================-->

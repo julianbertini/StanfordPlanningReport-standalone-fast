@@ -283,9 +283,10 @@
     <Content Include="frontend\lib\jBox-0.4.9\jBox-0.4.9\Source\themes\TooltipError.css" />
     <Content Include="frontend\lib\jBox-0.4.9\jBox-0.4.9\Source\themes\TooltipSmall.css" />
     <Content Include="frontend\lib\jBox-0.4.9\jBox-0.4.9\Source\themes\TooltipSmallGray.css" />
-    <Content Include="frontend\testResultsIndex%281%29.html" />
     <Content Include="frontend\testResultsIndex.html" />
     <Content Include="frontend\js\main.js" />
+    <Content Include="frontend\testResultsIndexOut.html" />
+    <Content Include="frontend\updatedTestResultsOut.html" />
     <Content Include="frontend\vendor\animate\animate.css" />
     <Content Include="frontend\vendor\bootstrap\css\bootstrap-grid.css" />
     <Content Include="frontend\vendor\bootstrap\css\bootstrap-grid.min.css" />
@@ -307,6 +308,8 @@
     <Content Include="frontend\vendor\select2\select2.min.js" />
     <Content Include="frontend\detailsModal.html" />
     <Content Include="frontend\prescriptionAlert.html" />
+    <Content Include="frontend\FailedCount.html" />
+    <Content Include="frontend\updatedTestResults.html" />
     <Content Include="PhysicsReport.html" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

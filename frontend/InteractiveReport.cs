@@ -30,7 +30,7 @@ namespace StanfordPlanningReport
 
             importedDoc = new HtmlDocument();
             importedDoc.Load(testResultsHTMLPath);
-            FormatHtmlWithResults();
+            FormatHtmlWithResults("testResultsIndexOut.html");
 
             server = new HTTPServer();
 
@@ -41,54 +41,65 @@ namespace StanfordPlanningReport
             routes.RoutesList.Add("/", RouteCallbackIndex);
             routes.RoutesList.Add("/details", RouteCallbackDetails);
             routes.RoutesList.Add("/prescriptionAlert", RouteCallbackPrescriptionAlert);
+            routes.RoutesList.Add("/acknowledge", RouteCallbackAcknowledge);
            
 
         }
 
-        public void FormatHtmlWithResults()
+        public void FormatHtmlWithResults(string filename, bool reformat = false)
         {
-            var divNode = importedDoc.DocumentNode.SelectSingleNode("//body/div/div/div/div");
-            var passedNode = divNode.SelectSingleNode("//table//tbody[contains(@class, 'passed-tests')]");
-            var failedNode = divNode.SelectSingleNode("//table//tbody[contains(@class, 'failed-tests')]");
-
-            // Set the title with patient information
-            var title = importedDoc.DocumentNode.SelectSingleNode("//h2");
-            title.InnerHtml = patient.FirstName.ToString() + " " + patient.MiddleName.ToString() 
-                                                                                + " " + patient.LastName.ToString()
-                                                                                + " (" + patient.Id.ToString() + ") - " 
-                                                                                + currentPlan.Id.ToString();
-
-            // add physics report tests here in a loop
-            foreach (TestCase test in TestResults)
+            try
             {
-                if (test.GetResult() == TestCase.PASS)
-                {
-                    string tableRowNodeStr = "<tr class=\"row100 body pass\">" +
-                                                               "<td class=\"cell100 column1\">" + test.GetName() + "</td>" +
-                                                               "<td class=\"cell100 column2\">" + test.GetDescription() + "</td>" +
-                                                               "<td class=\"cell100 column3\">PASS</td>" +
-                                                           "</tr>";
+                var passedNode = importedDoc.DocumentNode.SelectSingleNode("//table//tbody[contains(@class, 'passed-tests')]");
+                var failedNode = importedDoc.DocumentNode.SelectSingleNode("//table//tbody[contains(@class, 'failed-tests')]");
 
-                    var tableRowNode = HtmlAgilityPack.HtmlNode.CreateNode(tableRowNodeStr);
-                    passedNode.AppendChild(tableRowNode);
-                }
-                else
+                // Set the title with patient information
+                var title = importedDoc.DocumentNode.SelectSingleNode("//h2");
+                
+                if (!reformat)
                 {
-                    string tableRowNodeStr = "<tr class=\"row100 body fail\">" +
-                                                               "<td class=\"cell100 column1\">" + test.GetName() + "</td>" +
-                                                               "<td class=\"cell100 column2\">" + test.GetDescription() + "</td>" +
-                                                               "<td class=\"cell100 column3\">WARNING</td>" +
-                                                          "</tr>";
-
-                    var tableRowNode = HtmlAgilityPack.HtmlNode.CreateNode(tableRowNodeStr);
-                    failedNode.AppendChild(tableRowNode);
+                    title.InnerHtml = patient.FirstName.ToString() + " " + patient.MiddleName.ToString()
+                                                                               + " " + patient.LastName.ToString()
+                                                                               + " (" + patient.Id.ToString() + ") - "
+                                                                               + currentPlan.Id.ToString();
                 }
-               
+                
+                // add physics report tests here in a loop
+                foreach (TestCase test in TestResults)
+                {
+                    if (test.GetResult() == TestCase.PASS)
+                    {
+                        string tableRowNodeStr = "<tr class=\"row100 body pass\">" +
+                                                                   "<td class=\"cell100 column1\">" + test.GetName() + "</td>" +
+                                                                   "<td class=\"cell100 column2\">" + test.GetDescription() + "</td>" +
+                                                                   "<td class=\"cell100 column3\">PASS</td>" +
+                                                               "</tr>";
+
+                        var tableRowNode = HtmlAgilityPack.HtmlNode.CreateNode(tableRowNodeStr);
+                        passedNode.AppendChild(tableRowNode);
+                    }
+                    else
+                    {
+                        string tableRowNodeStr = "<tr class=\"row100 body fail\">" +
+                                                                   "<td class=\"cell100 column1\">" + test.GetName() + "</td>" +
+                                                                   "<td class=\"cell100 column2\">" + test.GetDescription() + "</td>" +
+                                                                   "<td class=\"cell100 column3\">WARNING</td>" +
+                                                              "</tr>";
+
+                        var tableRowNode = HtmlAgilityPack.HtmlNode.CreateNode(tableRowNodeStr);
+                        failedNode.AppendChild(tableRowNode);
+                    }
+
+                }
             }
+            catch
+            {
+                Console.WriteLine("Error formatting html test results");
+            }
+
+
             try {
-                string path = System.IO.Path.GetDirectoryName(testResultsHTMLPath);
-                string newFile = System.IO.Path.Combine(path, "testResultsIndex(1).html");
-                importedDoc.Save(newFile);
+                importedDoc.Save(getPath(filename));
             }
             catch
             {
@@ -103,6 +114,29 @@ namespace StanfordPlanningReport
             server.ServeResources = true;
             server.Start("http://localhost/");
             System.Diagnostics.Process.Start(IndexUrl);
+        }
+
+        public string RouteCallbackAcknowledge(HttpListenerContext context)
+        {
+            bool reformat = true;
+            HttpListenerRequest request = context.Request;
+            string testName = request.QueryString.Get("testName");
+
+            TestCase t = TestResults.Find(test => test.GetName() == testName);
+            t.SetResult(TestCase.PASS);
+
+            importedDoc.Load(getPath("updatedTestResults.html"));
+            FormatHtmlWithResults("updatedTestResultsOut.html", reformat);
+            importedDoc.Load(getPath("updatedTestResultsOut.html"));
+            string updatedTestResultsHTML = importedDoc.DocumentNode.OuterHtml;
+
+            importedDoc.Load(getPath("testResultsIndexOut.html"));
+            var updatedNode = importedDoc.DocumentNode.SelectSingleNode("//div[contains(@id,'testResultsContainer')]");
+
+            updatedNode.InnerHtml = updatedTestResultsHTML;
+            importedDoc.Save(getPath("testResultsIndexOut.html"));
+
+            return "updatedTestResultsOut.html";
         }
 
         public string RouteCallbackUpdate(HttpListenerContext context)
@@ -121,7 +155,7 @@ namespace StanfordPlanningReport
 
             int status = response.StatusCode;
 
-            return "testResultsIndex(1).html";
+            return "testResultsIndexOut.html";
         }
 
         public string RouteCallbackDetails(HttpListenerContext context)
@@ -139,6 +173,13 @@ namespace StanfordPlanningReport
                 }
             }
             return null;
+        }
+
+        private string getPath(string filename)
+        {
+            string path = System.IO.Path.GetDirectoryName(testResultsHTMLPath);
+            string newFile = System.IO.Path.Combine(path, filename);
+            return newFile;
         }
 
     }
