@@ -6,12 +6,14 @@ namespace StanfordPlanningReport
 {
     public class TestCase : IEquatable<TestCase>
     {
-        public const bool PASS = true;
-        public const bool FAIL = false;
+        public const string PASS = "pass";
+        public const string FAIL = "fail";
+        public const string ACK = "ack";
+        public const string WARN = "warn";
 
         private string name;
         private string description;
-        private bool result;
+        private string result;
 
         /* Constructor for the TestResult struct. Initializes struct attributes. 
          * 
@@ -25,7 +27,7 @@ namespace StanfordPlanningReport
          *      
          * Updated: JB 6/13/18
          */
-        public TestCase(string nm, string desc, bool res)
+        public TestCase(string nm, string desc, string res)
         {
             name = nm;
             description = desc;
@@ -44,11 +46,11 @@ namespace StanfordPlanningReport
         {
             this.description = description;
         }
-        public void SetResult(bool result)
+        public void SetResult(string result)
         {
             this.result = result;
         }
-        public bool GetResult()
+        public string GetResult()
         {
             return this.result;
         }
@@ -76,7 +78,7 @@ namespace StanfordPlanningReport
 
         public void AddToListOnFail(List<TestCase> resultList, List<TestCase> inventory)
         {
-            if (this.result == false && !resultList.Contains(this))
+            if (this.result == TestCase.FAIL && !resultList.Contains(this))
             {
                 resultList.Add(this);
                 inventory.Remove(this);

@@ -4,9 +4,6 @@ using System.Collections.Generic;
 using HtmlAgilityPack;
 using Patient = VMS.TPS.Common.Model.API.Patient;
 using PlanSetup = VMS.TPS.Common.Model.API.PlanSetup;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace StanfordPlanningReport
 {
@@ -52,12 +49,14 @@ namespace StanfordPlanningReport
             {
                 var passedNode = importedDoc.DocumentNode.SelectSingleNode("//table//tbody[contains(@class, 'passed-tests')]");
                 var failedNode = importedDoc.DocumentNode.SelectSingleNode("//table//tbody[contains(@class, 'failed-tests')]");
+                var ackNode = importedDoc.DocumentNode.SelectSingleNode("//table//tbody[contains(@class, 'acknowledged-tests')]");
+                var warnNode = importedDoc.DocumentNode.SelectSingleNode("//table/tbody[contains(@class, 'warnings')]");
 
-                // Set the title with patient information
-                var title = importedDoc.DocumentNode.SelectSingleNode("//h2");
-                
+                // Set the title with patient information only if it's being rendered for first time
                 if (!reformat)
                 {
+                    var title = importedDoc.DocumentNode.SelectSingleNode("//h2");
+
                     title.InnerHtml = patient.FirstName.ToString() + " " + patient.MiddleName.ToString()
                                                                                + " " + patient.LastName.ToString()
                                                                                + " (" + patient.Id.ToString() + ") - "
@@ -78,7 +77,7 @@ namespace StanfordPlanningReport
                         var tableRowNode = HtmlAgilityPack.HtmlNode.CreateNode(tableRowNodeStr);
                         passedNode.AppendChild(tableRowNode);
                     }
-                    else
+                    else if (test.GetResult() == TestCase.FAIL)
                     {
                         string tableRowNodeStr = "<tr class=\"row100 body fail\">" +
                                                                    "<td class=\"cell100 column1\">" + test.GetName() + "</td>" +
@@ -88,6 +87,10 @@ namespace StanfordPlanningReport
 
                         var tableRowNode = HtmlAgilityPack.HtmlNode.CreateNode(tableRowNodeStr);
                         failedNode.AppendChild(tableRowNode);
+                    }
+                    else if (test.GetResult() == TestCase.ACK)
+                    {
+
                     }
 
                 }

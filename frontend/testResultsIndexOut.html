@@ -51,152 +51,153 @@
                 </div>
             </div>
         </div>
-        <div id="testResultsContainer"><div class="container">
-    <h2 id="failedTestsHeader" class="display-4">Failed Tests</h2>
-    <div class="panel-group">
-        <div class="panel panel-default">
-            <div class="panel-heading">
-                <h4 class="panel-title">
-                    <a class="dropdownTitle" data-toggle="collapse" href="#collapse1">Failed Tests</a>
-                </h4>
-                <h4 class="testIndex" id="failedTestIndex"></h4>
-            </div>
-            <div id="collapse1" class="panel-collapse collapse">
-                <div class="panel-body">
-                    <div class="table100 ver5 m-b-110">
-                        <div class="table100-head">
-                            <table>
-                                <thead>
-                                    <tr class="row100 head">
-                                        <th class="cell100 column1">Test Name</th>
-                                        <th class="cell100 column2">Description</th>
-                                        <th class="cell100 column3">Result</th>
-                                    </tr>
-                                </thead>
-                            </table>
+        <div id="testResultsContainer">
+            <div class="container">
+                <h2 id="failedTestsHeader" class="display-4">Failed Tests</h2>
+                <div class="panel-group">
+                    <div class="panel panel-default">
+                        <div class="panel-heading">
+                            <h4 class="panel-title">
+                                <a class="dropdownTitle" data-toggle="collapse" href="#collapse1">Failed Tests</a>
+                            </h4>
+                            <h4 class="testIndex" id="failedTestIndex"></h4>
                         </div>
-                        <div class="table100-body js-pscroll">
-                            <table>
-                                <tbody class="failed-tests"><tr class="row100 body fail"><td class="cell100 column1">Arc Field Name Check</td><td class="cell100 column2">(VMAT) Test performed to ensure ARC field names is consistent with direction (CW vs. CCW).</td><td class="cell100 column3">WARNING</td></tr><tr class="row100 body fail"><td class="cell100 column1">Setup Field Angle Test</td><td class="cell100 column2">Test performed to enture 4 cardinal angle setup fields are provided.</td><td class="cell100 column3">WARNING</td></tr><tr class="row100 body fail"><td class="cell100 column1">Prescription Approval Check</td><td class="cell100 column2">Test performed to check that prescription is approved by MD.</td><td class="cell100 column3">WARNING</td></tr><tr class="row100 body fail"><td class="cell100 column1">User Origin Check</td><td class="cell100 column2">Test performed to ensure user origin is not set to (0.0, 0.0, 0.0).</td><td class="cell100 column3">WARNING</td></tr><tr class="row100 body fail"><td class="cell100 column1">Image Date Check</td><td class="cell100 column2">Test performed to ensure date of image is within 14 days of the date the plan was created.</td><td class="cell100 column3">WARNING</td></tr><tr class="row100 body fail"><td class="cell100 column1">Couch Check</td><td class="cell100 column2">(VMAT) Test performed to ensure correct couch is included in plan.</td><td class="cell100 column3">WARNING</td></tr><tr class="row100 body fail"><td class="cell100 column1">Planning Approval Check</td><td class="cell100 column2">Test performed to ensure plan was planning approved by an approved person (faculty).</td><td class="cell100 column3">WARNING</td></tr><tr class="row100 body fail"><td class="cell100 column1">Short Treatment Time Check</td><td class="cell100 column2">Test performed to ensure minimum treatment time is met.</td><td class="cell100 column3">WARNING</td></tr><tr class="row100 body fail"><td class="cell100 column1">Course name check</td><td class="cell100 column2">Verifies that course names are not blank after the 'C' character.</td><td class="cell100 column3">WARNING</td></tr></tbody>
-                            </table>
-                        </div>
-                    </div>
-                </div>
-                <div class="panel-footer">Scroll to see more</div>
-            </div>
-        </div>
-    </div>
-</div>
-<div class="container">
-    <h2 id="warningsHeader" class="display-4">Warnings</h2>
-    <div class="panel-group">
-        <div class="panel panel-default">
-            <div class="panel-heading">
-                <h4 class="panel-title">
-                    <a class="dropdownTitle" data-toggle="collapse" href="#collapse2">Warnings</a>
-                </h4>
-                <h4 class="testIndex" id="warningsIndex"></h4>
-            </div>
-            <div id="collapse2" class="panel-collapse collapse">
-                <div class="panel-body">
-                    <div class="table100 ver5 m-b-110">
-                        <div class="table100-head">
-                            <table>
-                                <thead>
-                                    <tr class="row100 head">
-                                        <th class="cell100 column1">Test Name</th>
-                                        <th class="cell100 column2">Description</th>
-                                        <th class="cell100 column3">Result</th>
-                                    </tr>
-                                </thead>
-                            </table>
-                        </div>
-                        <div class="table100-body js-pscroll">
-                            <table>
-                                <tbody class="warnings"></tbody>
-                            </table>
+                        <div id="collapse1" class="panel-collapse collapse">
+                            <div class="panel-body">
+                                <div class="table100 ver5 m-b-110">
+                                    <div class="table100-head">
+                                        <table>
+                                            <thead>
+                                                <tr class="row100 head">
+                                                    <th class="cell100 column1">Test Name</th>
+                                                    <th class="cell100 column2">Description</th>
+                                                    <th>Result</th>
+                                                </tr>
+                                            </thead>
+                                        </table>
+                                    </div>
+                                    <div class="table100-body js-pscroll">
+                                        <table>
+                                            <tbody class="failed-tests"><tr class="row100 body fail"><td class="cell100 column1">DRR Check</td><td class="cell100 column2">Test performed to ensure that high resolution DRRs are present for all fields.</td><td class="cell100 column3">WARNING</td></tr><tr class="row100 body fail"><td class="cell100 column1">Arc Field Name Check</td><td class="cell100 column2">(VMAT) Test performed to ensure ARC field names is consistent with direction (CW vs. CCW).</td><td class="cell100 column3">WARNING</td></tr><tr class="row100 body fail"><td class="cell100 column1">Setup Field Angle Test</td><td class="cell100 column2">Test performed to enture 4 cardinal angle setup fields are provided.</td><td class="cell100 column3">WARNING</td></tr><tr class="row100 body fail"><td class="cell100 column1">Prescription Approval Check</td><td class="cell100 column2">Test performed to check that prescription is approved by MD.</td><td class="cell100 column3">WARNING</td></tr><tr class="row100 body fail"><td class="cell100 column1">User Origin Check</td><td class="cell100 column2">Test performed to ensure user origin is not set to (0.0, 0.0, 0.0).</td><td class="cell100 column3">WARNING</td></tr><tr class="row100 body fail"><td class="cell100 column1">Image Date Check</td><td class="cell100 column2">Test performed to ensure date of image is within 14 days of the date the plan was created.</td><td class="cell100 column3">WARNING</td></tr><tr class="row100 body fail"><td class="cell100 column1">Couch Check</td><td class="cell100 column2">(VMAT) Test performed to ensure correct couch is included in plan.</td><td class="cell100 column3">WARNING</td></tr><tr class="row100 body fail"><td class="cell100 column1">Planning Approval Check</td><td class="cell100 column2">Test performed to ensure plan was planning approved by an approved person (faculty).</td><td class="cell100 column3">WARNING</td></tr><tr class="row100 body fail"><td class="cell100 column1">Short Treatment Time Check</td><td class="cell100 column2">Test performed to ensure minimum treatment time is met.</td><td class="cell100 column3">WARNING</td></tr><tr class="row100 body fail"><td class="cell100 column1">Course name check</td><td class="cell100 column2">Verifies that course names are not blank after the 'C' character.</td><td class="cell100 column3">WARNING</td></tr></tbody>
+                                        </table>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="panel-footer">Scroll to see more</div>
                         </div>
                     </div>
                 </div>
-                <div class="panel-footer">Scroll to see more</div>
             </div>
-        </div>
-    </div>
-</div>
-<div class="container">
-    <h2 id="acknowledgedHeader" class="display-4">Acknowledged Tests</h2>
-    <div class="panel-group">
-        <div class="panel panel-default">
-            <div class="panel-heading">
-                <h4 class="panel-title">
-                    <a class="dropdownTitle" data-toggle="collapse" href="#collapse3">Acknowledged Tests</a>
-                </h4>
-                <h4 class="testIndex" id="ackTestIndex"></h4>
-            </div>
-            <div id="collapse3" class="panel-collapse collapse">
-                <div class="panel-body">
-                    <div class="table100 ver5 m-b-110">
-                        <div class="table100-head">
-                            <table>
-                                <thead>
-                                    <tr class="row100 head">
-                                        <th class="cell100 column1">Test Name</th>
-                                        <th class="cell100 column2">Description</th>
-                                        <th class="cell100 column3">Result</th>
-                                    </tr>
-                                </thead>
-                            </table>
+            <div class="container">
+                <h2 id="warningsHeader" class="display-4">Warnings</h2>
+                <div class="panel-group">
+                    <div class="panel panel-default">
+                        <div class="panel-heading">
+                            <h4 class="panel-title">
+                                <a class="dropdownTitle" data-toggle="collapse" href="#collapse2">Warnings</a>
+                            </h4>
+                            <h4 class="testIndex" id="warningsIndex"></h4>
                         </div>
-                        <div class="table100-body js-pscroll">
-                            <table>
-                                <tbody class="acknowledged-tests"></tbody>
-                            </table>
+                        <div id="collapse2" class="panel-collapse collapse">
+                            <div class="panel-body">
+                                <div class="table100 ver5 m-b-110">
+                                    <div class="table100-head">
+                                        <table>
+                                            <thead>
+                                                <tr class="row100 head">
+                                                    <th class="cell100 column1">Test Name</th>
+                                                    <th class="cell100 column2">Description</th>
+                                                    <th class="cell100 column3">Result</th>
+                                                </tr>
+                                            </thead>
+                                        </table>
+                                    </div>
+                                    <div class="table100-body js-pscroll">
+                                        <table>
+                                            <tbody class="warnings"></tbody>
+                                        </table>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="panel-footer">Scroll to see more</div>
                         </div>
                     </div>
                 </div>
-                <div class="panel-footer">Scroll to see more</div>
             </div>
-        </div>
-    </div>
-</div>
-<div class="container">
-    <h2 id="passedTestsHeader" class="display-4">Passed tests</h2>
-    <div class="panel-group">
-        <div class="panel panel-default">
-            <div class="panel-heading">
-                <h4 class="panel-title">
-                    <a class="dropdownTitle" data-toggle="collapse" href="#collapse4">Passed Tests</a>
-                </h4>
-                <h4 class="testIndex" id="passedTestIndex"></h4>
-            </div>
-            <div id="collapse4" class="panel-collapse collapse">
-                <div class="panel-body">
-                    <div class="table100 ver5 m-b-110">
-                        <div class="table100-head">
-                            <table>
-                                <thead>
-                                    <tr class="row100 head">
-                                        <th class="cell100 column1">Test Name</th>
-                                        <th class="cell100 column2">Description</th>
-                                        <th class="cell100 column3">Result</th>
-                                    </tr>
-                                </thead>
-                            </table>
+            <div class="container">
+                <h2 id="acknowledgedHeader" class="display-4">Acknowledged Tests</h2>
+                <div class="panel-group">
+                    <div class="panel panel-default">
+                        <div class="panel-heading">
+                            <h4 class="panel-title">
+                                <a class="dropdownTitle" data-toggle="collapse" href="#collapse3">Acknowledged Tests</a>
+                            </h4>
+                            <h4 class="testIndex" id="ackTestIndex"></h4>
                         </div>
-                        <div class="table100-body js-pscroll">
-                            <table>
-                                <tbody class="passed-tests"><tr class="row100 body pass"><td class="cell100 column1">DRR Check</td><td class="cell100 column2">Test performed to ensure that high resolution DRRs are present for all fields.</td><td class="cell100 column3">PASS</td></tr><tr class="row100 body pass"><td class="cell100 column1">Setup Field Name Check</td><td class="cell100 column2">Test performed to ensure setup fields are 
+                        <div id="collapse3" class="panel-collapse collapse">
+                            <div class="panel-body">
+                                <div class="table100 ver5 m-b-110">
+                                    <div class="table100-head">
+                                        <table>
+                                            <thead>
+                                                <tr class="row100 head">
+                                                    <th class="cell100 column1">Test Name</th>
+                                                    <th class="cell100 column2">Description</th>
+                                                    <th class="cell100 column3">Result</th>
+                                                </tr>
+                                            </thead>
+                                        </table>
+                                    </div>
+                                    <div class="table100-body js-pscroll">
+                                        <table>
+                                            <tbody class="acknowledged-tests"></tbody>
+                                        </table>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="panel-footer">Scroll to see more</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="container">
+                <h2 id="passedTestsHeader" class="display-4">Passed tests</h2>
+                <div class="panel-group">
+                    <div class="panel panel-default">
+                        <div class="panel-heading">
+                            <h4 class="panel-title">
+                                <a class="dropdownTitle" data-toggle="collapse" href="#collapse4">Passed Tests</a>
+                            </h4>
+                            <h4 class="testIndex" id="passedTestIndex"></h4>
+                        </div>
+                        <div id="collapse4" class="panel-collapse collapse">
+                            <div class="panel-body">
+                                <div class="table100 ver5 m-b-110">
+                                    <div class="table100-head">
+                                        <table>
+                                            <thead>
+                                                <tr class="row100 head">
+                                                    <th class="cell100 column1">Test Name</th>
+                                                    <th class="cell100 column2">Description</th>
+                                                    <th class="cell100 column3">Result</th>
+                                                </tr>
+                                            </thead>
+                                        </table>
+                                    </div>
+                                    <div class="table100-body js-pscroll">
+                                        <table>
+                                            <tbody class="passed-tests"><tr class="row100 body pass"><td class="cell100 column1">Setup Field Name Check</td><td class="cell100 column2">Test performed to ensure setup fields are 
                                                                                  named according to convention and tests angle values.</td><td class="cell100 column3">PASS</td></tr><tr class="row100 body pass"><td class="cell100 column1">Treatment Field Name and Angle Check</td><td class="cell100 column2">(3D plan) Test performed to verify treatment field names and corresponding gantry angles.</td><td class="cell100 column3">PASS</td></tr><tr class="row100 body pass"><td class="cell100 column1">Setup Field Bolus Check</td><td class="cell100 column2">Test performed to ensure setup fields are not linked with bolus, otherwise underliverable.</td><td class="cell100 column3">PASS</td></tr><tr class="row100 body pass"><td class="cell100 column1">Prescription Fractionation Check</td><td class="cell100 column2">Test performed to ensure planned fractionation matches linked prescription.</td><td class="cell100 column3">PASS</td></tr><tr class="row100 body pass"><td class="cell100 column1">Prescription Dose Per Fraction Check</td><td class="cell100 column2">Test performed to ensure planned dose per fraction matches linked prescription.</td><td class="cell100 column3">PASS</td></tr><tr class="row100 body pass"><td class="cell100 column1">Prescription Dose Check</td><td class="cell100 column2">Test performed to ensure planned total dose matches linked prescription.</td><td class="cell100 column3">PASS</td></tr><tr class="row100 body pass"><td class="cell100 column1">Prescription Energy Check</td><td class="cell100 column2">Test performed to ensure planned energy matches linked prescription.</td><td class="cell100 column3">PASS</td></tr><tr class="row100 body pass"><td class="cell100 column1">Prescription Bolus Check</td><td class="cell100 column2">Test performed to check presence of bolus on all treatment fields if bolus included in prescription.</td><td class="cell100 column3">PASS</td></tr><tr class="row100 body pass"><td class="cell100 column1">Patient Orientation Check</td><td class="cell100 column2">Test performed to check if treatment orientation is the same as the CT image orientation.</td><td class="cell100 column3">PASS</td></tr><tr class="row100 body pass"><td class="cell100 column1">Plan Normalization Check</td><td class="cell100 column2">(VMAT) Test performed to ensure plan normalization set to: 100.00% covers 95.00% of Target Volume.</td><td class="cell100 column3">PASS</td></tr><tr class="row100 body pass"><td class="cell100 column1">Prescribed Dose Percentage Check</td><td class="cell100 column2">Test performed to ensure prescribed dose percentage is set to 100%.</td><td class="cell100 column3">PASS</td></tr><tr class="row100 body pass"><td class="cell100 column1">Dose Algorithm Check</td><td class="cell100 column2">Test performed to ensure photon dose calculation algorithm is either AAA_V13623 or AcurosXB_V13623.</td><td class="cell100 column3">PASS</td></tr><tr class="row100 body pass"><td class="cell100 column1">Machine Scale Check</td><td class="cell100 column2">Test performed to ensure machine IEC scale is used.</td><td class="cell100 column3">PASS</td></tr><tr class="row100 body pass"><td class="cell100 column1">Machine Constancy Check</td><td class="cell100 column2">Test performed to ensure all fields have the same treatment machine.</td><td class="cell100 column3">PASS</td></tr><tr class="row100 body pass"><td class="cell100 column1">Jaw Max Check</td><td class="cell100 column2">Test performed to ensure each jaw does not exceed 20.0 cm.</td><td class="cell100 column3">PASS</td></tr><tr class="row100 body pass"><td class="cell100 column1">Jaw Min Check</td><td class="cell100 column2">Test performed to ensure jaw X & Y >= 3.0 cm (3D plan) or 1.0 cm (control points for VMAT).</td><td class="cell100 column3">PASS</td></tr><tr class="row100 body pass"><td class="cell100 column1">Jaw limit Check</td><td class="cell100 column2">(VMAT) Test performed to ensure X <= 14.5cm for CLINACs; Y1 & Y2 <= 10.5cm for TrueBeam HD MLC.</td><td class="cell100 column3">PASS</td></tr><tr class="row100 body pass"><td class="cell100 column1">High MU Check</td><td class="cell100 column2">Test performed to ensure total MU is less than 4 times the prescribed dose per fraction in cGy.</td><td class="cell100 column3">PASS</td></tr><tr class="row100 body pass"><td class="cell100 column1">Table Height Check</td><td class="cell100 column2">(VMAT) Test performed to ensure table height is less than 21.0 cm.</td><td class="cell100 column3">PASS</td></tr><tr class="row100 body pass"><td class="cell100 column1">SBRT Dose Resolution</td><td class="cell100 column2">Test performed to ensure SRS ARC plans or small target volumes < 5cc use a dose resolution of less than or equal to 1.5 mm.</td><td class="cell100 column3">PASS</td></tr><tr class="row100 body pass"><td class="cell100 column1">SBRT CT Slice Thickness</td><td class="cell100 column2">Test performed to ensure SRS ARC plans or small target volumes < 5cc use a CT slice with thickness less than or equal to 2 mm.</td><td class="cell100 column3">PASS</td></tr><tr class="row100 body pass"><td class="cell100 column1">Active Course Check</td><td class="cell100 column2">Test performed to ensure all courses other than the current course are completed.</td><td class="cell100 column3">PASS</td></tr><tr class="row100 body pass"><td class="cell100 column1">Target Volume Check</td><td class="cell100 column2">Test performed to ensure target volume does not contain string TS and contains the string PTV.</td><td class="cell100 column3">PASS</td></tr><tr class="row100 body pass"><td class="cell100 column1">Dose Rate Check</td><td class="cell100 column2">Test performed to ensure maximum dose rates are set.</td><td class="cell100 column3">PASS</td></tr><tr class="row100 body pass"><td class="cell100 column1">Shift Note Journal Existence Check</td><td class="cell100 column2">Test performed to ensure that shift notes have been created for the therapists.</td><td class="cell100 column3">PASS</td></tr></tbody>
-                            </table>
+                                        </table>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="panel-footer">Scroll to see more</div>
                         </div>
                     </div>
                 </div>
-                <div class="panel-footer">Scroll to see more</div>
             </div>
         </div>
-    </div>
-</div>
-</div>
     </div>
     <!--===============================================================================================-->
     <script src="vendor/jquery/jquery-3.2.1.min.js"></script>

@@ -145,6 +145,11 @@ var countTests = function () {
 
     var nAck = $(".ack").length;
     $("#ackTestIndex").text("Count: " + nAck);
+
+    var nWarn = $(".warn").length;
+    $("#warningsIndex").text("Count: " + nWarn);
+
+
 }
 
 var acknowledgeTest = function () {

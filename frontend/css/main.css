@@ -360,7 +360,7 @@ th, td {
 
 #prescriptionAlertButton {
     padding: 5px;
-    background-color: #ffe066;
+    background-color: #ffcc66;
     border-radius: 5px;
     width: auto;
     margin-top: 20px;
@@ -398,6 +398,10 @@ th, td {
     color: #99b3ff;
 }
 
+#warningsIndex {
+    color: #ffcc66;
+}
+
 #patientTitle {
     border-bottom: solid;
     border-width: 1px;
@@ -418,6 +422,9 @@ th, td {
 }
 #acknowledgedHeader {
     color: #99b3ff;
+}
+#warningsHeader {
+    color: #ffcc66;
 }
 
 #testResultsType {
