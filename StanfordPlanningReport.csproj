@@ -306,10 +306,11 @@
     <Content Include="frontend\vendor\select2\select2.js" />
     <Content Include="frontend\vendor\select2\select2.min.css" />
     <Content Include="frontend\vendor\select2\select2.min.js" />
-    <Content Include="frontend\detailsModal.html" />
+    <Content Include="frontend\failedDetailsModal.html" />
     <Content Include="frontend\prescriptionAlert.html" />
     <Content Include="frontend\FailedCount.html" />
     <Content Include="frontend\updatedTestResults.html" />
+    <Content Include="frontend\ackDetailsModal.html" />
     <Content Include="PhysicsReport.html" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

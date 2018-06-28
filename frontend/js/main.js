@@ -1,10 +1,11 @@
 ﻿$(document).ready(function () {
 
+    onFailTestClick();
+    onAckTestClick();
+
     countTests();
 
-    updateTestSettings();
-
-    handleModal();
+    handleFailDetailsModal();
 
     notifyIfPrescriptionErrors();
 
@@ -15,7 +16,8 @@ var testState = {
     rowRef: null,
     testDetailsModal: null,
     testComments: null,
-    ackTextareaRef: null
+    ackTextareaRef: null,
+    ackDetailsModal: null
 }
 
 var notifyIfPrescriptionErrors = function () {
@@ -37,7 +39,6 @@ var notifyIfPrescriptionErrors = function () {
             var data = request.responseText; // Returned data, e.g., an HTML document.
 
             var prescriptionAlert = new jBox('Modal', {
-                attach: '#prescriptionAlertContent',
                 title: '<h4>Attention!</h4>',
                 animation: 'pulse',
                 content: data,
@@ -57,10 +58,9 @@ var notifyIfPrescriptionErrors = function () {
 
 }
 
-var handleModal = function () {
-    const url = "/details";
+var handleFailDetailsModal = function () {
+    const url = "/failDetails";
     const method = "GET";
-    var postData = "hello world!";
     var async = true;
     var request = new XMLHttpRequest();
 
@@ -75,41 +75,29 @@ var handleModal = function () {
 
             testState.testDetailsModal = new jBox('Modal', {
                 attach: '.fail',
-                title: 'Test Details',
+                title: 'Failed Test Details',
                 content: data,
                 overlay: false,
                 draggable: 'title',
                 onCreated: function () { acknowledgeTest(); }
             });
 
-            $(".row100").click(function () {
-                testState.testName = $(this).find("td:first").text();
-                testState.rowRef = $(this);
-            })
-
 
         }
     };
 
     request.setRequestHeader("Content-type", "text/html; charset=utf-8");
-    request.send(postData);
+    request.send();
 
 }
 
-var updateTestSettings = function () {
-
-    console.log("Making post request...");
-    
-    const url = "/update?name=test123&result=PASS"; 
+var handleAckDetailsModal = function () {
+    const url = "/ackDetails?testName=" + testState.testName;
     const method = "GET";
-    var postData = "hello world!";
     var async = true;
-
     var request = new XMLHttpRequest();
 
-    request.open(method, url, async);
-
-    // when the server respond
+    request.open(method, url, async)
 
     request.onreadystatechange = function () {
         if (request.readyState === 4 && request.status === 200) {
@@ -118,15 +106,33 @@ var updateTestSettings = function () {
             var status = request.status; // HTTP response status, e.g., 200 for "200 OK"
             var data = request.responseText; // Returned data, e.g., an HTML document.
 
-            console.log(status);
+            if (testState.ackDetailsModal == null) {
+                testState.ackDetailsModal = new jBox('Modal', {
+                    title: '<h4>Comments</h4>',
+                    maxWidth: 700,
+                    content: data,
+                    overlay: false,
+                    draggable: 'title',
+                    onInit: function () { this.open(); }
+                });
+            } else {
+                testState.ackDetailsModal.setContent(data);
+                testState.ackDetailsModal.open();
+            }
+            handleDismiss()
+
         }
     };
 
     request.setRequestHeader("Content-type", "text/html; charset=utf-8");
+    request.send();
 
-    request.send(postData);
-    console.log("data sent");
-    
+}
+
+var handleDismiss = function () {
+    $("#ackDismissButton").click(function () {
+        flushCommentsModal();
+    });
 }
 
 var closePresAlertButton = function (prescriptionAlert) {
@@ -155,7 +161,6 @@ var countTests = function () {
 
 var acknowledgeTest = function () {
 
-    
     const method = "GET";
     var postData = "";
     var async = true;
@@ -201,6 +206,13 @@ var flushAckModal = function () {
     testState.testDetailsModal.close();
 }
 
+var flushCommentsModal = function () {
+    // to make sure there isn't more than one listener 
+    $("#ackDismissButton").unbind('click');
+
+    testState.ackDetailsModal.close();
+}
+
 var updateTables = function () {
     testState.rowRef.remove();
     testState.rowRef.removeClass("fail");
@@ -208,6 +220,26 @@ var updateTables = function () {
     testState.rowRef.find("td:nth-child(3)").text("ACK");
     $(".acknowledged-tests").prepend(testState.rowRef);
     countTests();
+    onAckTestClick();
+}
+
+var onAckTestClick = function () {
+
+    //To prevent duplicate events every time this function is called;
+    $(".ack").unbind('click');
+
+    $(".ack").click(function () {
+        console.log("here");
+        testState.testName = $(this).find("td:first").text();
+        handleAckDetailsModal();
+    })
+}
+
+var onFailTestClick = function() {
+    $(".fail").click(function () {
+        testState.testName = $(this).find("td:first").text();
+        testState.rowRef = $(this);
+    })
 }
 
 function openNav() {

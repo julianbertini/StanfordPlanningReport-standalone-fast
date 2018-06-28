@@ -344,9 +344,19 @@ th, td {
 /*---------------------------------------------*/
 
 #detailsButton {
-    padding: 5px;
+    padding: 7px;
     background-color: #99b3ff;
-    border-radius: 5px;
+    border-radius: 10px;
+    width: auto;
+    margin-top: 20px;
+    margin: 5px;
+    color: #fbfbfb;
+    font-size: 18px;
+}
+#ackDismissButton {
+    padding: 7px;
+    background-color: #8585ad;
+    border-radius: 10px;
     width: auto;
     margin-top: 20px;
     margin: 5px;
@@ -361,7 +371,7 @@ th, td {
 #prescriptionAlertButton {
     padding: 5px;
     background-color: #ffcc66;
-    border-radius: 5px;
+    border-radius: 10px;
     width: auto;
     margin-top: 20px;
     margin: 5px;
@@ -486,4 +496,17 @@ th, td {
     .sidenav a {
         font-size: 18px;
     }
+}
+
+#exportPdfButton {
+    padding: 10px;
+    background-color: #8585ad;
+    font-size: 18px;
+    border-radius: 10px;
+    color: #fbfbfb;
+}
+
+.footerButtons {
+    width: 100%;
+    text-align: center;
 }

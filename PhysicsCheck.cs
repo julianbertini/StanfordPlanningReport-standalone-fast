@@ -27,18 +27,12 @@ namespace StanfordPlanningReport
 
         public PhysicsCheck(PlanSetup CurrentPlan)
         {
-            TestCase PrescriptionApprovalTestCase = PrescriptionApprovalCheck(CurrentPlan);
-            TestCase PrescriptionFractionationTestCase = PrescriptionFractionationCheck(CurrentPlan);
-            TestCase PrescriptionDosePerFractionTestCase = PrescriptionDosePerFractionCheck(CurrentPlan);
-            TestCase PrescriptionDoseTestCase = PrescriptionDoseCheck(CurrentPlan);
-            TestCase PrescriptionEnergyTestCase = PrescriptionEnergyCheck(CurrentPlan);
-            TestCase PrescriptionBolusTestCase = PrescriptionBolusCheck(CurrentPlan);   // Added by SL 03/02/2018
+
             TestCase UserOriginTestCase = UserOriginCheck(CurrentPlan);
             TestCase ImageDateTestCase = ImageDateCheck(CurrentPlan);
             TestCase PatientOrientationTestCase = PatientOrientationCheck(CurrentPlan);
             TestCase CouchTestCase = CouchCheck(CurrentPlan);
             TestCase PlanNormalizationTestCase = PlanNormalizationCheck(CurrentPlan);
-            TestCase PrescribedDosePercentageTestCase = PrescribedDosePercentageCheck(CurrentPlan);
             TestCase DoseAlgorithmTestCase = DoseAlgorithmCheck(CurrentPlan);
             TestCase MachineScaleTestCase = MachineScaleCheck(CurrentPlan); // Added checking IEC scale 06/01/2018
             TestCase MachineIdTestCase = MachineIdCheck(CurrentPlan); // Added checking machine constancy for all beams 06/01/2018
@@ -55,25 +49,22 @@ namespace StanfordPlanningReport
             TestCase TargetVolumeTestCase = TargetVolumeCheck(CurrentPlan);
             TestCase DoseRateTestCase = DoseRateCheck(CurrentPlan);
             TestCase CourseNameNotTestCase = CourseNameNotEmptyCheck(CurrentPlan);
-
-            FieldTest fieldTest = new FieldTest(CurrentPlan);
-            fieldTest.ExecuteFieldChecks();
-            Results.AddRange(fieldTest.GetTestResults());
-
             TestCase ShiftNotesJournalTestCase = ShiftNotesJournalCheck(CurrentPlan);  // Added by SL 03/02/2018
 
-            Results.Add(PrescriptionApprovalTestCase);
-            Results.Add(PrescriptionFractionationTestCase);
-            Results.Add(PrescriptionDosePerFractionTestCase);
-            Results.Add(PrescriptionDoseTestCase);
-            Results.Add(PrescriptionEnergyTestCase);
-            Results.Add(PrescriptionBolusTestCase); // Added by SL 03/12/2018
+            GeneralPrescriptionTests generalPrescriptionTests = new GeneralPrescriptionTests(CurrentPlan, docs);
+            generalPrescriptionTests.ExecuteGeneralPrescriptionTests();
+            Results.AddRange(generalPrescriptionTests.GetTestResults());
+
+            GeneralFieldTests fieldTest = new GeneralFieldTests(CurrentPlan);
+            fieldTest.ExecuteGeneralFieldTests();
+            Results.AddRange(fieldTest.GetTestResults());
+
+            
             Results.Add(UserOriginTestCase);
             Results.Add(ImageDateTestCase);
             Results.Add(PatientOrientationTestCase);
             Results.Add(CouchTestCase);
             Results.Add(PlanNormalizationTestCase);
-            Results.Add(PrescribedDosePercentageTestCase);
             Results.Add(DoseAlgorithmTestCase);
             Results.Add(MachineScaleTestCase);  // Added checking IEC scale 06/01/2018
             Results.Add(MachineIdTestCase);   // Added checking machine constancy for all beams 06/01/2018
@@ -92,196 +83,6 @@ namespace StanfordPlanningReport
             Results.Add(CourseNameNotTestCase);
             Results.Add(ShiftNotesJournalTestCase);    // Added by SL 03/02/2018
 
-        }
-
-
-        // Added by SL 03/10/2018  
-        public TestCase PrescriptionApprovalCheck(PlanSetup CurrentPlan)
-        {
-            TestCase ch = new TestCase("Prescription Approval Check", "Test performed to check that prescription is approved by MD.", TestCase.PASS);
-
-            string rx_status = null;
-            using (var aria = new AriaS())
-            {
-                try
-                {
-                    var patient = aria.Patients.Where(tmp => tmp.PatientId == CurrentPlan.Course.Patient.Id);
-                    if (patient.Any())
-                    {
-                        var patientSer = patient.First().PatientSer;
-                        var course = aria.Courses.Where(tmp => (tmp.PatientSer == patientSer && tmp.CourseId == CurrentPlan.Course.Id));
-                        if (course.Any())
-                        {
-                            var courseSer = course.First().CourseSer;
-                            // Note that we need to get the correct prescriptionser we need to have the plan id, not just course id (in case two more Rx in 1 course)
-                            var prescription = aria.PlanSetups.Where(tmp => (tmp.CourseSer == courseSer && tmp.PlanSetupId == CurrentPlan.Id));
-                            if (prescription.Any())
-                            {
-                                var prescriptionSer = prescription.First().PrescriptionSer;
-                                var status = aria.Prescriptions.Where(tmp => (tmp.PrescriptionSer == prescriptionSer));
-                                if (status.Any())
-                                {
-                                    rx_status = status.First().Status;
-                                }
-                            }
-                        }
-                    }
-
-                    if (docs.Contains(CurrentPlan.RTPrescription.HistoryUserName) && rx_status.ToString().ToUpper().Contains("APPROVED"))
-                    { ch.SetResult(TestCase.PASS); return ch; }
-                    else { ch.SetResult(TestCase.FAIL); return ch; }
-                }
-                catch { ch.SetResult(TestCase.FAIL); return ch; }
-            }
-        }
-
-        public TestCase PrescriptionFractionationCheck(PlanSetup CurrentPlan)
-        {
-            TestCase ch = new TestCase("Prescription Fractionation Check", "Test performed to ensure planned fractionation matches linked prescription.", TestCase.PASS);
-
-            try
-            {
-                foreach (RTPrescriptionTarget t in CurrentPlan.RTPrescription.Targets)
-                {
-                    if (t.NumberOfFractions == CurrentPlan.UniqueFractionation.NumberOfFractions) { ch.SetResult(TestCase.PASS); return ch; }
-                }
-                ch.SetResult(TestCase.FAIL); return ch;
-            }
-            catch { ch.SetResult(TestCase.FAIL); return ch; }
-        }
-
-        public TestCase PrescriptionDosePerFractionCheck(PlanSetup CurrentPlan)
-        {
-            TestCase ch = new TestCase("Prescription Dose Per Fraction Check", "Test performed to ensure planned dose per fraction matches linked prescription.", TestCase.PASS);
-
-            try
-            {
-                foreach (RTPrescriptionTarget t in CurrentPlan.RTPrescription.Targets)
-                {
-                    if ((t.DosePerFraction.Dose - CurrentPlan.UniqueFractionation.PrescribedDosePerFraction.Dose) <= CurrentPlan.UniqueFractionation.PrescribedDosePerFraction.Dose * 0.01) { ch.SetResult(TestCase.PASS); return ch; }
-                }
-                ch.SetResult(TestCase.FAIL); return ch;
-            }
-            catch { ch.SetResult(TestCase.FAIL); return ch; }
-        }
-
-        public TestCase PrescriptionDoseCheck(PlanSetup CurrentPlan)
-        {
-            TestCase ch = new TestCase("Prescription Dose Check", "Test performed to ensure planned total dose matches linked prescription.", TestCase.PASS);
-
-            try
-            {
-                foreach (RTPrescriptionTarget t in CurrentPlan.RTPrescription.Targets)
-                {
-                    if (Math.Abs(t.DosePerFraction.Dose * t.NumberOfFractions - CurrentPlan.UniqueFractionation.PrescribedDosePerFraction.Dose * CurrentPlan.UniqueFractionation.NumberOfFractions.Value) <= 0.1) { ch.SetResult(TestCase.PASS); return ch; }
-                }
-                ch.SetResult(TestCase.FAIL); return ch;
-            }
-            catch { ch.SetResult(TestCase.FAIL); return ch; }
-        }
-
-        public TestCase PrescriptionEnergyCheck(PlanSetup CurrentPlan)
-        {
-            TestCase ch = new TestCase("Prescription Energy Check", "Test performed to ensure planned energy matches linked prescription.", TestCase.PASS);
-
-            try
-            {
-                List<string> planEnergyList = new List<string>();
-                foreach (Beam b in CurrentPlan.Beams)
-                {
-                    if (!b.IsSetupField)
-                    {
-                        planEnergyList.Add(Regex.Replace(b.EnergyModeDisplayName.ToString(), "[A-Za-z.-]", "").Replace(" ", ""));
-                        string value = Regex.Replace(b.EnergyModeDisplayName.ToString(), "[A-Za-z.-]", "").Replace(" ", "");
-
-                        if (!CurrentPlan.RTPrescription.Energies.Any(l => l.Contains(value)))
-                        {
-                            ch.SetResult(TestCase.FAIL); return ch;
-                        }
-                    }
-                }
-                foreach (var e in CurrentPlan.RTPrescription.Energies)
-                {
-                    if (!planEnergyList.Any(l => l.Contains(Regex.Replace(e.ToString(), "[A-Za-z.-]", "").Replace(" ", ""))))
-                    {
-                        ch.SetResult(TestCase.FAIL); return ch;
-                    }
-                }
-            }
-            catch { ch.SetResult(TestCase.FAIL); return ch; }
-            ch.SetResult(TestCase.PASS); return ch;
-        }
-
-        /* Verifies that the existence of bolus in Rx matches the existence of bolus in treatment fields.
-            * 
-            * Params: 
-            *          CurrentPlan - the current plan being considered
-            * Returns: 
-            *          A failed test if bolus indications do not match
-            *          A passed test if bolus indications match 
-            * 
-            * Updated: JB 6/14/18
-            */
-        public TestCase PrescriptionBolusCheck(PlanSetup CurrentPlan)
-        {
-            TestCase ch = new TestCase("Prescription Bolus Check", "Test performed to check presence of bolus on all treatment fields if bolus included in prescription.", TestCase.PASS);
-
-            string bolusFreq = null, bolusThickness = null;
-
-            using (var aria = new AriaS())
-            {
-                try
-                {
-                    var patient = aria.Patients.Where(tmp => tmp.PatientId == CurrentPlan.Course.Patient.Id);
-                    if (patient.Any())
-                    {
-                        var patientSer = patient.First().PatientSer;
-                        var course = aria.Courses.Where(tmp => (tmp.PatientSer == patientSer && tmp.CourseId == CurrentPlan.Course.Id));
-                        if (course.Any())
-                        {
-                            var courseSer = course.First().CourseSer;
-                            // Note that we need to get the correct prescriptionser we need to have the plan id, not just course id (in case two more Rx in 1 course)
-                            var prescription = aria.PlanSetups.Where(tmp => (tmp.CourseSer == courseSer && tmp.PlanSetupId == CurrentPlan.Id));
-                            if (prescription.Any())
-                            {
-                                var prescriptionSer = prescription.First().PrescriptionSer;
-                                var bolus = aria.Prescriptions.Where(tmp => (tmp.PrescriptionSer == prescriptionSer));
-                                if (bolus.Any())
-                                {
-                                    bolusFreq = bolus.First().BolusFrequency;
-                                    bolusThickness = bolus.First().BolusThickness;
-                                }
-                            }
-                        }
-                    }
-
-                    foreach (Beam b in CurrentPlan.Beams)
-                    {
-                        if (!b.IsSetupField)
-                        {
-                            if (b.Boluses.Count() == 0 && bolusFreq != null && bolusThickness != null)
-                            {
-                                ch.SetResult(TestCase.FAIL); return ch;
-                            }
-                            if (b.Boluses.Count() != 0 && bolusFreq == null && bolusThickness == null)
-                            {
-                                ch.SetResult(TestCase.FAIL); return ch;
-                            }
-                        }
-                    }
-                    return ch;
-                }
-                catch (Exception ex)
-                {
-                    var st = new StackTrace(ex, true);
-                    var frame = st.GetFrame(0);
-                    var line = frame.GetFileLineNumber();
-                    string output = String.Format("# ERROR! Line {0}: {1}", line, frame);
-                    Console.WriteLine(output);
-
-                    ch.SetResult(TestCase.FAIL); return ch;
-                }
-            }
         }
 
         public TestCase UserOriginCheck(PlanSetup CurrentPlan)
@@ -381,18 +182,6 @@ namespace StanfordPlanningReport
                     }
                 }
                 return ch;
-            }
-            catch { ch.SetResult(TestCase.FAIL); return ch; }
-        }
-
-        public TestCase PrescribedDosePercentageCheck(PlanSetup CurrentPlan)
-        {
-            TestCase ch = new TestCase("Prescribed Dose Percentage Check", "Test performed to ensure prescribed dose percentage is set to 100%.", TestCase.PASS);
-
-            try
-            {
-                if (CurrentPlan.PrescribedPercentage != 1.0) { ch.SetResult(TestCase.FAIL); return ch; }
-                else { ch.SetResult(TestCase.PASS); return ch; }
             }
             catch { ch.SetResult(TestCase.FAIL); return ch; }
         }

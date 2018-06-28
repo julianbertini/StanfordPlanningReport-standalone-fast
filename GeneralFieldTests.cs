@@ -1,12 +1,14 @@
 ﻿using System;
 using System.Linq;
+using AriaSysSmall;
+using System.Text.RegularExpressions;
 using System.Collections.Generic;
 using VMS.TPS.Common.Model.API;
 using PlanSetup = VMS.TPS.Common.Model.API.PlanSetup;
 
 namespace StanfordPlanningReport
 {
-    public class FieldTest
+    public class GeneralFieldTests
     {
         private PlanSetup currentPlan;
         private List<TestCase> fieldTestResults = new List<TestCase>();
@@ -19,12 +21,14 @@ namespace StanfordPlanningReport
         private TestCase DRRAllFieldsTest;
         private TestCase arcFieldNameTest;
         private TestCase SetupFieldBolusTest;
+        private TestCase PrescriptionEnergyTestCase;
+        private TestCase PrescriptionBolusTestCase;
 
         /* Constructor for FieldTest class to initialize the current plan object
          *
          * Updated: JB 6/13/18
          */
-        public FieldTest(PlanSetup cPlan)
+        public GeneralFieldTests(PlanSetup cPlan)
         {
             currentPlan = cPlan;
 
@@ -46,6 +50,10 @@ namespace StanfordPlanningReport
 
             SetupFieldBolusTest = new TestCase("Setup Field Bolus Check", "Test performed to ensure setup fields are not linked with bolus, otherwise underliverable.", TestCase.PASS);
             this.fieldTests.Add(SetupFieldBolusTest);
+
+            PrescriptionEnergyTestCase = new TestCase("Prescription Energy Check", "Test performed to ensure planned energy matches linked prescription.", TestCase.PASS);
+
+            PrescriptionBolusTestCase = new TestCase("Prescription Bolus Check", "Test performed to check presence of bolus on all treatment fields if bolus included in prescription.", TestCase.PASS);
         }
 
         /* Getter method for List of field test results
@@ -68,16 +76,17 @@ namespace StanfordPlanningReport
          *          
          * Updated: JB 6/13/18
          */
-        public void ExecuteFieldChecks()
+        public void ExecuteGeneralFieldTests()
         {
             foreach (Beam b in this.currentPlan.Beams)
             {
+                PrescriptionBolusCheck(b).AddToListOnFail(this.fieldTestResults, this.fieldTests);
+                PrescriptionEnergyCheck(b).AddToListOnFail(this.fieldTestResults, this.fieldTests);
                 SetupFieldNameCheck(b).AddToListOnFail(this.fieldTestResults, this.fieldTests);
                 TreatmentFieldNameCheck(b).AddToListOnFail(this.fieldTestResults, this.fieldTests);
                 DRRAllFieldsCheck(b).AddToListOnFail(this.fieldTestResults, this.fieldTests);
                 ArcFieldNameCheck(b).AddToListOnFail(this.fieldTestResults, this.fieldTests);
                 SetupFieldBolusCheck(b).AddToListOnFail(this.fieldTestResults, this.fieldTests);
-
             }
             SetupFieldAngleCheck().AddToListOnFail(this.fieldTestResults, this.fieldTests);
             
@@ -353,5 +362,99 @@ namespace StanfordPlanningReport
                 return arcFieldNameTest.HandleTestError(arcFieldNameTest, ex);
             }
         }
+
+        /* Verifies that the existence of bolus in Rx matches the existence of bolus in treatment fields.
+        * 
+        * Params: 
+        *          CurrentPlan - the current plan being considered
+        * Returns: 
+        *          A failed test if bolus indications do not match
+        *          A passed test if bolus indications match 
+        * 
+        * Updated: JB 6/14/18
+        */
+        public TestCase PrescriptionBolusCheck(Beam b)
+        {
+
+            string bolusFreq = null, bolusThickness = null;
+
+            using (var aria = new AriaS())
+            {
+                try
+                {
+                    var patient = aria.Patients.Where(tmp => tmp.PatientId == currentPlan.Course.Patient.Id);
+                    if (patient.Any())
+                    {
+                        var patientSer = patient.First().PatientSer;
+                        var course = aria.Courses.Where(tmp => (tmp.PatientSer == patientSer && tmp.CourseId == currentPlan.Course.Id));
+                        if (course.Any())
+                        {
+                            var courseSer = course.First().CourseSer;
+                            // Note that we need to get the correct prescriptionser we need to have the plan id, not just course id (in case two more Rx in 1 course)
+                            var prescription = aria.PlanSetups.Where(tmp => (tmp.CourseSer == courseSer && tmp.PlanSetupId == currentPlan.Id));
+                            if (prescription.Any())
+                            {
+                                var prescriptionSer = prescription.First().PrescriptionSer;
+                                var bolus = aria.Prescriptions.Where(tmp => (tmp.PrescriptionSer == prescriptionSer));
+                                if (bolus.Any())
+                                {
+                                    bolusFreq = bolus.First().BolusFrequency;
+                                    bolusThickness = bolus.First().BolusThickness;
+                                }
+                            }
+                        }
+                    }
+
+                    if (!b.IsSetupField)
+                    {
+                        if (b.Boluses.Count() == 0 && bolusFreq != null && bolusThickness != null)
+                        {
+                            PrescriptionBolusTestCase.SetResult(TestCase.FAIL); return PrescriptionBolusTestCase;
+                        }
+                        if (b.Boluses.Count() != 0 && bolusFreq == null && bolusThickness == null)
+                        {
+                            PrescriptionBolusTestCase.SetResult(TestCase.FAIL); return PrescriptionBolusTestCase;
+                        }
+                    }
+                    
+                    return PrescriptionBolusTestCase;
+
+                }
+                catch (Exception ex)
+                {
+                    return PrescriptionBolusTestCase.HandleTestError(PrescriptionBolusTestCase, ex);
+                }
+            }
+        }
+
+        public TestCase PrescriptionEnergyCheck(Beam b)
+        {
+
+            try
+            {
+                List<string> planEnergyList = new List<string>();
+
+                if (!b.IsSetupField)
+                {
+                    string value = Regex.Replace(b.EnergyModeDisplayName.ToString(), "[A-Za-z.-]", "").Replace(" ", "");
+
+                    if (!currentPlan.RTPrescription.Energies.Any(l => l.Contains(value)))
+                    {
+                        PrescriptionEnergyTestCase.SetResult(TestCase.FAIL); return PrescriptionEnergyTestCase;
+                    }
+                    else
+                    {
+                        return PrescriptionEnergyTestCase;
+                    }
+                }
+                return PrescriptionEnergyTestCase;
+
+            }
+            catch (Exception ex)
+            {
+                return PrescriptionEnergyTestCase.HandleTestError(PrescriptionEnergyTestCase, ex);
+            }
+        }
+
     }
 }

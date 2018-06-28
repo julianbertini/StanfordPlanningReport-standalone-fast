@@ -36,7 +36,8 @@ namespace StanfordPlanningReport
             server.Routes = routes;
             routes.RoutesList.Add("/update", RouteCallbackUpdate);
             routes.RoutesList.Add("/", RouteCallbackIndex);
-            routes.RoutesList.Add("/details", RouteCallbackDetails);
+            routes.RoutesList.Add("/failDetails", RouteCallbackFailDetails);
+            routes.RoutesList.Add("/ackDetails", RouteCallbackAckDetails);
             routes.RoutesList.Add("/prescriptionAlert", RouteCallbackPrescriptionAlert);
             routes.RoutesList.Add("/acknowledge", RouteCallbackAcknowledge);
            
@@ -185,9 +186,9 @@ namespace StanfordPlanningReport
             return "testResultsIndexOut.html";
         }
 
-        public string RouteCallbackDetails(HttpListenerContext context)
+        public string RouteCallbackFailDetails(HttpListenerContext context)
         {
-            return "detailsModal.html";
+            return "failedDetailsModal.html";
         }
 
         public string RouteCallbackPrescriptionAlert(HttpListenerContext context)
@@ -200,6 +201,26 @@ namespace StanfordPlanningReport
                 }
             }
             return null;
+        }
+
+        public string RouteCallbackAckDetails(HttpListenerContext context)
+        {
+            HttpListenerRequest request = context.Request;
+
+            string testName = request.QueryString.Get("testName");
+            TestCase t = TestResults.Find(test => test.GetName() == testName);
+
+            string tableRowNodeStr = "<div>" +
+                                                          "<p>" + t.Comments + "</p>" +
+                                                        "<button id=\"ackDismissButton\" > Dismiss </button>" +
+                                                   "</div>";
+
+
+            importedDoc.LoadHtml(tableRowNodeStr);
+
+            importedDoc.Save(GetPath("ackDetailsModal.html"));
+
+            return "ackDetailsModal.html";
         }
 
         private string GetPath(string filename)
