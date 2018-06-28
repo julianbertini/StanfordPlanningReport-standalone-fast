@@ -372,7 +372,7 @@ th, td {
 .detailsButton#p-app {
     background-color: #ffe066;
 }
-.modalTextarea {
+#acknowledgeModalComments {
     width: 90%;
     margin: auto;
     padding: 10px;

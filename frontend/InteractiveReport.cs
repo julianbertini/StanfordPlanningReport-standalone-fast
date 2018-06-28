@@ -71,7 +71,7 @@ namespace StanfordPlanningReport
                         string tableRowNodeStr = "<tr class=\"row100 body pass\">" +
                                                                    "<td class=\"cell100 column1\">" + test.GetName() + "</td>" +
                                                                    "<td class=\"cell100 column2\">" + test.GetDescription() + "</td>" +
-                                                                   "<td class=\"cell100 column3\">PASS</td>" +
+                                                                   "<td class=\"cell100 column3\">" + TestCase.PASS +  "</td>" +
                                                                "</tr>";
 
                         var tableRowNode = HtmlAgilityPack.HtmlNode.CreateNode(tableRowNodeStr);
@@ -82,7 +82,7 @@ namespace StanfordPlanningReport
                         string tableRowNodeStr = "<tr class=\"row100 body fail\">" +
                                                                    "<td class=\"cell100 column1\">" + test.GetName() + "</td>" +
                                                                    "<td class=\"cell100 column2\">" + test.GetDescription() + "</td>" +
-                                                                   "<td class=\"cell100 column3\">WARNING</td>" +
+                                                                   "<td class=\"cell100 column3\">" + TestCase.FAIL + "</td>" +
                                                               "</tr>";
 
                         var tableRowNode = HtmlAgilityPack.HtmlNode.CreateNode(tableRowNodeStr);
@@ -90,7 +90,25 @@ namespace StanfordPlanningReport
                     }
                     else if (test.GetResult() == TestCase.ACK)
                     {
+                        string tableRowNodeStr = "<tr class=\"row100 body ack\">" +
+                                                                   "<td class=\"cell100 column1\">" + test.GetName() + "</td>" +
+                                                                   "<td class=\"cell100 column2\">" + test.GetDescription() + "</td>" +
+                                                                   "<td class=\"cell100 column3\">" + TestCase.ACK + "</td>" +
+                                                              "</tr>";
 
+                        var tableRowNode = HtmlAgilityPack.HtmlNode.CreateNode(tableRowNodeStr);
+                        ackNode.AppendChild(tableRowNode);
+                    }
+                    else if (test.GetResult() == TestCase.WARN)
+                    {
+                        string tableRowNodeStr = "<tr class=\"row100 body warn\">" +
+                                                                    "<td class=\"cell100 column1\">" + test.GetName() + "</td>" +
+                                                                    "<td class=\"cell100 column2\">" + test.GetDescription() + "</td>" +
+                                                                    "<td class=\"cell100 column3\">" + TestCase.WARN + "</td>" +
+                                                                "</tr>";
+
+                        var tableRowNode = HtmlAgilityPack.HtmlNode.CreateNode(tableRowNodeStr);
+                        warnNode.AppendChild(tableRowNode);
                     }
 
                 }
@@ -102,7 +120,7 @@ namespace StanfordPlanningReport
 
 
             try {
-                importedDoc.Save(getPath(filename));
+                importedDoc.Save(GetPath(filename));
             }
             catch
             {
@@ -123,21 +141,27 @@ namespace StanfordPlanningReport
         {
             bool reformat = true;
             HttpListenerRequest request = context.Request;
+
             string testName = request.QueryString.Get("testName");
+            string testComments = request.QueryString.Get("testComments");
 
+            // find the test that needs to be updated
             TestCase t = TestResults.Find(test => test.GetName() == testName);
-            t.SetResult(TestCase.PASS);
+            t.SetResult(TestCase.ACK);
 
-            importedDoc.Load(getPath("updatedTestResults.html"));
+            // grab the comment made by user and save it
+            t.Comments = testComments;
+
+            importedDoc.Load(GetPath("updatedTestResults.html"));
             FormatHtmlWithResults("updatedTestResultsOut.html", reformat);
-            importedDoc.Load(getPath("updatedTestResultsOut.html"));
+            importedDoc.Load(GetPath("updatedTestResultsOut.html"));
             string updatedTestResultsHTML = importedDoc.DocumentNode.OuterHtml;
 
-            importedDoc.Load(getPath("testResultsIndexOut.html"));
+            importedDoc.Load(GetPath("testResultsIndexOut.html"));
             var updatedNode = importedDoc.DocumentNode.SelectSingleNode("//div[contains(@id,'testResultsContainer')]");
 
             updatedNode.InnerHtml = updatedTestResultsHTML;
-            importedDoc.Save(getPath("testResultsIndexOut.html"));
+            importedDoc.Save(GetPath("testResultsIndexOut.html"));
 
             return "updatedTestResultsOut.html";
         }
@@ -178,7 +202,7 @@ namespace StanfordPlanningReport
             return null;
         }
 
-        private string getPath(string filename)
+        private string GetPath(string filename)
         {
             string path = System.IO.Path.GetDirectoryName(testResultsHTMLPath);
             string newFile = System.IO.Path.Combine(path, filename);

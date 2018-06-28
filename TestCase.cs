@@ -6,14 +6,15 @@ namespace StanfordPlanningReport
 {
     public class TestCase : IEquatable<TestCase>
     {
-        public const string PASS = "pass";
-        public const string FAIL = "fail";
-        public const string ACK = "ack";
-        public const string WARN = "warn";
+        public const string PASS = "PASS";
+        public const string FAIL = "FAIL";
+        public const string ACK = "ACK";
+        public const string WARN = "WARN";
 
         private string name;
         private string description;
         private string result;
+        public string Comments { get; set; }
 
         /* Constructor for the TestResult struct. Initializes struct attributes. 
          * 
@@ -27,11 +28,12 @@ namespace StanfordPlanningReport
          *      
          * Updated: JB 6/13/18
          */
-        public TestCase(string nm, string desc, string res)
+        public TestCase(string nm, string desc, string res, string comments = null)
         {
             name = nm;
             description = desc;
             result = res;
+            comments = null;
         }
 
         /* Getter and setter methods for TestCase attributes.

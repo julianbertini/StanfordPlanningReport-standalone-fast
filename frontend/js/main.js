@@ -13,7 +13,9 @@
 var testState = {
     testName: "",
     rowRef: null,
-    testDetailsModal: null
+    testDetailsModal: null,
+    testComments: null,
+    ackTextareaRef: null
 }
 
 var notifyIfPrescriptionErrors = function () {
@@ -72,7 +74,7 @@ var handleModal = function () {
             var data = request.responseText; // Returned data, e.g., an HTML document.
 
             testState.testDetailsModal = new jBox('Modal', {
-                attach: '.row100',
+                attach: '.fail',
                 title: 'Test Details',
                 content: data,
                 overlay: false,
@@ -149,7 +151,6 @@ var countTests = function () {
     var nWarn = $(".warn").length;
     $("#warningsIndex").text("Count: " + nWarn);
 
-
 }
 
 var acknowledgeTest = function () {
@@ -162,7 +163,11 @@ var acknowledgeTest = function () {
 
     $("#detailsButton").click(function () {
 
-        const url = "/acknowledge?testName=" + testState.testName;
+        // get textarea comments and update state
+        testState.ackTextareaRef = $("#acknowledgeModalComments");
+        testState.testComments = testState.ackTextareaRef.val();
+
+        const url = "/acknowledge?testName=" + testState.testName + "&testComments=" + testState.testComments;
 
         request.open(method, url, async);
 
@@ -175,8 +180,9 @@ var acknowledgeTest = function () {
                 var data = request.responseText; // Returned data, e.g., an HTML document.
                 console.log(testState.testName);
                 console.log("test: " + testState.testName + " acknowledge received");
-                console.log(testState);
-                testState.testDetailsModal.close();
+
+                flushAckModal();
+
 
                 updateTables();
 
@@ -188,6 +194,11 @@ var acknowledgeTest = function () {
         request.send(postData);
 
     })
+}
+
+var flushAckModal = function () {
+    testState.ackTextareaRef.val("");
+    testState.testDetailsModal.close();
 }
 
 var updateTables = function () {
