@@ -30,36 +30,35 @@ namespace StanfordPlanningReport
 
             TestCase UserOriginTestCase = UserOriginCheck(CurrentPlan);
             TestCase ImageDateTestCase = ImageDateCheck(CurrentPlan);
-            TestCase PatientOrientationTestCase = PatientOrientationCheck(CurrentPlan);
-            TestCase CouchTestCase = CouchCheck(CurrentPlan);
-            TestCase PlanNormalizationTestCase = PlanNormalizationCheck(CurrentPlan);
-            TestCase DoseAlgorithmTestCase = DoseAlgorithmCheck(CurrentPlan);
-            TestCase MachineScaleTestCase = MachineScaleCheck(CurrentPlan); // Added checking IEC scale 06/01/2018
-            TestCase MachineIdTestCase = MachineIdCheck(CurrentPlan); // Added checking machine constancy for all beams 06/01/2018
-            TestCase JawMaxTestCase = JawMaxCheck(CurrentPlan);
-            TestCase JawMinTestCase = JawMinCheck(CurrentPlan);  // Added jaw min test on 5/30/2018
-            TestCase JawLimitTestCase = JawLimitCheck(CurrentPlan);  // Added Arc field x jaw size < 15cm on 5/30/2018
-            TestCase HighMUTestCase = HighMUCheck(CurrentPlan);
-            TestCase TableHeightTestCase = TableHeightCheck(CurrentPlan);
-            TestCase SBRTDoseResolutionResult = SBRTDoseResolution(CurrentPlan);
-            TestCase SBRTCTSliceThicknessTestCase = SBRTCTSliceThickness(CurrentPlan);  // Added SBRT CT slice thickness 06/05/2018
+
+
+
             TestCase PlanningApprovalTestCase = PlanningApprovalCheck(CurrentPlan);
             TestCase AcitveCourseTestCase = AcitveCourseCheck(CurrentPlan);
-            TestCase ShortTreatmentTimeTestCase = ShortTreatmentTimeCheck(CurrentPlan);
             TestCase TargetVolumeTestCase = TargetVolumeCheck(CurrentPlan);
-            TestCase DoseRateTestCase = DoseRateCheck(CurrentPlan);
-            TestCase CourseNameNotTestCase = CourseNameNotEmptyCheck(CurrentPlan);
+            TestCase PatientOrientationTestCase = PatientOrientationCheck(CurrentPlan);
+            TestCase CourseNameNotEmptyTestCase = CourseNameNotEmptyCheck(CurrentPlan);
             TestCase ShiftNotesJournalTestCase = ShiftNotesJournalCheck(CurrentPlan);  // Added by SL 03/02/2018
 
+
             GeneralPrescriptionTests generalPrescriptionTests = new GeneralPrescriptionTests(CurrentPlan, docs);
-            generalPrescriptionTests.ExecuteGeneralPrescriptionTests();
-            Results.AddRange(generalPrescriptionTests.GetTestResults());
-
             GeneralFieldTests fieldTest = new GeneralFieldTests(CurrentPlan);
-            fieldTest.ExecuteGeneralFieldTests();
-            Results.AddRange(fieldTest.GetTestResults());
 
-            
+            // run all tests that loop through all beams
+            bool runPerBeam = true;
+            foreach (Beam b in CurrentPlan.Beams)
+            {
+                generalPrescriptionTests.ExecuteTests(runPerBeam, b);
+                fieldTest.ExecuteTests(runPerBeam, b);
+            }
+            // run remainder of tests that don't rely on beams or have to be standalone 
+            runPerBeam = false;
+            generalPrescriptionTests.ExecuteTests(runPerBeam);
+            fieldTest.ExecuteTests(runPerBeam);
+
+
+            Results.AddRange(generalPrescriptionTests.GetTestResults());
+            Results.AddRange(fieldTest.GetTestResults());
             Results.Add(UserOriginTestCase);
             Results.Add(ImageDateTestCase);
             Results.Add(PatientOrientationTestCase);
@@ -80,7 +79,7 @@ namespace StanfordPlanningReport
             Results.Add(ShortTreatmentTimeTestCase);
             Results.Add(TargetVolumeTestCase);
             Results.Add(DoseRateTestCase);
-            Results.Add(CourseNameNotTestCase);
+            Results.Add(CourseNameNotEmptyTestCase);
             Results.Add(ShiftNotesJournalTestCase);    // Added by SL 03/02/2018
 
         }
@@ -121,304 +120,7 @@ namespace StanfordPlanningReport
             catch { ch.SetResult(TestCase.FAIL); return ch; }
         }
 
-        public TestCase CouchCheck(PlanSetup CurrentPlan)
-        {
-            TestCase ch = new TestCase("Couch Check", "(VMAT) Test performed to ensure correct couch is included in plan.", TestCase.PASS);
-
-            try
-            {
-                ch.SetResult(TestCase.FAIL);
-
-                foreach (Beam b in CurrentPlan.Beams)
-                {
-                    if (!b.IsSetupField && b.MLCPlanType.ToString().ToUpper() == "VMAT")
-                    {
-
-                        foreach (Structure s in CurrentPlan.StructureSet.Structures)
-                        {
-                            if (b.TreatmentUnit.Id == "LA-12" || b.TreatmentUnit.Id == "LA-11")
-                            {
-                                if (s.Name.Contains("Exact Couch with Unipanel")) { ch.SetResult(TestCase.PASS); }
-                            }
-                            else if (b.TreatmentUnit.Id == "SB_LA_1")
-                            {
-                                if (s.Name.Contains("Exact Couch with Flat panel")) { ch.SetResult(TestCase.PASS); }
-                            }
-                            else
-                            {
-                                if (s.Name.Contains("Exact IGRT")) { ch.SetResult(TestCase.PASS); }
-                            }
-                        }
-                    }
-
-                    else if (!b.IsSetupField && !(b.MLCPlanType.ToString().ToUpper() == "VMAT"))
-                    {
-                        ch.SetResult(TestCase.PASS);
-                    }
-                }
-                return ch;
-            }
-            catch { ch.SetResult(TestCase.FAIL); return ch; }
-        }
-
-        public TestCase PlanNormalizationCheck(PlanSetup CurrentPlan)
-        {
-            TestCase ch = new TestCase("Plan Normalization Check", "(VMAT) Test performed to ensure plan normalization set to: 100.00% covers 95.00% of Target Volume.", TestCase.PASS);
-
-            try
-            {
-                ch.SetResult(TestCase.FAIL);
-
-                foreach (Beam b in CurrentPlan.Beams)
-                {
-                    if (!b.IsSetupField && b.MLCPlanType.ToString() == "VMAT")
-                    {
-                        if (CurrentPlan.PlanNormalizationMethod.ToString() != "100.00% covers 95.00% of Target Volume") { ch.SetResult(TestCase.FAIL); return ch; }
-                        else { ch.SetResult(TestCase.PASS); return ch; }
-                    }
-                    else if (!b.IsSetupField && !(b.MLCPlanType.ToString().ToUpper() == "VMAT"))
-                    {
-                        ch.SetResult(TestCase.PASS);
-                    }
-                }
-                return ch;
-            }
-            catch { ch.SetResult(TestCase.FAIL); return ch; }
-        }
-
-        public TestCase DoseAlgorithmCheck(PlanSetup CurrentPlan)
-        {
-            TestCase ch = new TestCase("Dose Algorithm Check", "Test performed to ensure photon dose calculation algorithm is either AAA_V13623 or AcurosXB_V13623.", TestCase.PASS);
-            try
-            {
-                foreach (Beam b in CurrentPlan.Beams)
-                {
-                    if (!b.IsSetupField)
-                    {
-                        if (b.EnergyModeDisplayName.ToString() == "6X" || b.EnergyModeDisplayName.ToString() == "15X" || b.EnergyModeDisplayName.ToString() == "6X-FFF" || b.EnergyModeDisplayName.ToString() == "10X-FFF")
-                        {
-                            if (CurrentPlan.PhotonCalculationModel.ToString() != "AAA_V13623" && CurrentPlan.PhotonCalculationModel.ToString() != "AcurosXB_V13623") { ch.SetResult(TestCase.FAIL); return ch; }
-                        }
-                        else if (b.EnergyModeDisplayName.ToString().Contains("E"))
-                        {
-                            if (CurrentPlan.ElectronCalculationModel.ToString() != "EMC_V13623") { ch.SetResult(TestCase.FAIL); return ch; }
-                        }
-                    }
-                }
-                ch.SetResult(TestCase.PASS); return ch;
-            }
-            catch { ch.SetResult(TestCase.FAIL); return ch; }
-        }
-
-        // Added machine scale check IEC61217 SL 06/01/2018
-        public TestCase MachineScaleCheck(PlanSetup CurrentPlan)
-        {
-            TestCase ch = new TestCase("Machine Scale Check", "Test performed to ensure machine IEC scale is used.", TestCase.PASS);
-            try
-            {
-                foreach (Beam b in CurrentPlan.Beams)
-                {
-#pragma warning disable 0618
-                    // This one is okay
-                    if (b.ExternalBeam.MachineScaleDisplayName.ToString() != "IEC61217") { ch.SetResult(TestCase.FAIL); return ch; }
-                }
-                ch.SetResult(TestCase.PASS); return ch;
-            }
-            catch { ch.SetResult(TestCase.FAIL); return ch; }
-        }
-
-        // Added machine consistency SL 06/01/2018
-        public TestCase MachineIdCheck(PlanSetup CurrentPlan)
-        {
-            TestCase ch = new TestCase("Machine Constancy Check", "Test performed to ensure all fields have the same treatment machine.", TestCase.PASS);
-
-            try
-            {
-                string machine_name = "";
-                foreach (Beam b in CurrentPlan.Beams)
-                {
-                    if (!b.IsSetupField)
-                    {
-                        machine_name = b.TreatmentUnit.Id.ToString();
-                        break;
-                    }
-                }
-                foreach (Beam b in CurrentPlan.Beams)
-                {
-                    if (b.TreatmentUnit.Id.ToString() != machine_name) { ch.SetResult(TestCase.FAIL); return ch; }
-                }
-                ch.SetResult(TestCase.PASS); return ch;
-            }
-            catch { ch.SetResult(TestCase.FAIL); return ch; }
-        }
-
-        public TestCase JawMaxCheck(PlanSetup CurrentPlan)
-        {
-            TestCase ch = new TestCase("Jaw Max Check", "Test performed to ensure each jaw does not exceed 20.0 cm.", TestCase.PASS);
-
-            try
-            {
-                foreach (Beam b in CurrentPlan.Beams)
-                {
-                    if (!b.IsSetupField)
-                    {
-                        foreach (ControlPoint ctr in b.ControlPoints)
-                        {
-                            if (((ctr.JawPositions.X1 / 10.0) <= -20.01) || ((ctr.JawPositions.Y1 / 10.0) <= -20.01) || ((ctr.JawPositions.X2 / 10.0) >= 20.01) || ((ctr.JawPositions.Y2 / 10.0) >= 20.01)) { ch.SetResult(TestCase.FAIL); return ch; }
-                        }
-                    }
-                }
-                ch.SetResult(TestCase.PASS); return ch;
-            }
-            catch { ch.SetResult(TestCase.FAIL); return ch; }
-        }
-
-        // Added jaw min test on 5/30/2018
-        public TestCase JawMinCheck(PlanSetup CurrentPlan)
-        {
-            TestCase ch = new TestCase("Jaw Min Check", "Test performed to ensure jaw X & Y >= 3.0 cm (3D plan) or 1.0 cm (control points for VMAT).", TestCase.PASS);
-
-            try
-            {
-                foreach (Beam b in CurrentPlan.Beams)
-                {
-                    if (!b.IsSetupField)
-                    {
-                        foreach (ControlPoint ctr in b.ControlPoints)
-                        {
-                            if (b.MLCPlanType.ToString().ToUpper().Contains("STATIC")) // 3D plans
-                            {
-                                if ((Math.Abs(ctr.JawPositions.X1 - ctr.JawPositions.X2) / 10.0) < 3.0 || (Math.Abs(ctr.JawPositions.Y1 - ctr.JawPositions.Y2) / 10.0) < 3.0) { ch.SetResult(TestCase.FAIL); return ch; }
-                            }
-                            else if (b.TreatmentUnit.MachineModel.ToString().ToUpper().Contains("TDS") && CurrentPlan.OptimizationSetup.UseJawTracking)  // TrueBeams with jaw tracking
-                            {
-                                if ((Math.Abs(ctr.JawPositions.X1 - ctr.JawPositions.X2) / 10.0) < 1.0 || (Math.Abs(ctr.JawPositions.Y1 - ctr.JawPositions.Y2) / 10.0) < 1.0) { ch.SetResult(TestCase.FAIL); return ch; }
-                            }
-                        }
-                    }
-                }
-                ch.SetResult(TestCase.PASS); return ch;
-            }
-            catch { ch.SetResult(TestCase.FAIL); return ch; }
-        }
-
-        // Added Arc field X jaw size < 14.5cm on 5/30/2018
-        public TestCase JawLimitCheck(PlanSetup CurrentPlan)
-        {
-            TestCase ch = new TestCase("Jaw limit Check", "(VMAT) Test performed to ensure X <= 14.5cm for CLINACs; Y1 & Y2 <= 10.5cm for TrueBeam HD MLC.", TestCase.PASS);
-
-            try
-            {
-                foreach (Beam b in CurrentPlan.Beams)
-                {
-                    if (!b.IsSetupField)
-                    {
-                        if (b.MLCPlanType.ToString().ToUpper().Contains("VMAT") || b.MLCPlanType.ToString().ToUpper().Contains("ARC") || b.Technique.Id.ToString().Contains("SRS ARC"))  // VMAT and Conformal Arc
-                        {
-                            if (b.TreatmentUnit.MachineModel.ToString().ToUpper().Contains("TDS"))  // TrueBeam
-                            {
-                                foreach (ControlPoint ctr in b.ControlPoints)
-                                {
-                                    if (ctr.JawPositions.Y1 / 10.0 < -10.5 && ctr.JawPositions.Y2 / 10.0 > 10.5) { ch.SetResult(TestCase.FAIL); return ch; } // Y jaw
-                                    if (!CurrentPlan.OptimizationSetup.UseJawTracking && (Math.Abs(ctr.JawPositions.X1 - ctr.JawPositions.X2) / 10.0) > 14.5) { ch.SetResult(TestCase.FAIL); return ch; }  // X jaw if not using jaw tracking
-                                }
-                            }
-                            else    // Clinac
-                            {
-                                foreach (ControlPoint ctr in b.ControlPoints)
-                                {
-                                    if ((Math.Abs(ctr.JawPositions.X1 - ctr.JawPositions.X2) / 10.0) > 14.5) { ch.SetResult(TestCase.FAIL); return ch; } // X jaw
-                                }
-                            }
-                        }
-                    }
-                }
-                ch.SetResult(TestCase.PASS); return ch;
-            }
-            catch { ch.SetResult(TestCase.FAIL); return ch; }
-        }
-
-        public TestCase HighMUCheck(PlanSetup CurrentPlan)
-        {
-            TestCase ch = new TestCase("High MU Check", "Test performed to ensure total MU is less than 4 times the prescribed dose per fraction in cGy.", TestCase.PASS);
-
-            double MUSum = 0.0;
-            try
-            {
-                foreach (Beam b in CurrentPlan.Beams)
-                {
-                    if (!b.IsSetupField)
-                    {
-                        MUSum = MUSum + b.Meterset.Value;
-                    }
-                }
-                if (MUSum >= 4.0 * CurrentPlan.UniqueFractionation.PrescribedDosePerFraction.Dose) { ch.SetResult(TestCase.FAIL); return ch; }
-                else { ch.SetResult(TestCase.PASS); return ch; }
-            }
-            catch { ch.SetResult(TestCase.FAIL); return ch; }
-        }
-
-        public TestCase TableHeightCheck(PlanSetup CurrentPlan)
-        {
-            TestCase ch = new TestCase("Table Height Check", "(VMAT) Test performed to ensure table height is less than 21.0 cm.", TestCase.PASS);
-
-            try
-            {
-                foreach (Beam b in CurrentPlan.Beams)
-                {
-                    if (!b.IsSetupField && b.MLCPlanType.ToString() == "VMAT")
-                    {
-                        foreach (ControlPoint ctr in b.ControlPoints)
-                        {
-                            if (Math.Abs(ctr.TableTopLateralPosition / 10.0) >= 4.0 && (Math.Abs(ctr.TableTopVerticalPosition / 10.0) >= 21.0 || Math.Abs(ctr.TableTopVerticalPosition / 10.0) <= 4.0)) { ch.SetResult(TestCase.FAIL); return ch; }
-                            if (Math.Abs(ctr.TableTopVerticalPosition / 10.0) >= 22.0) { ch.SetResult(TestCase.FAIL); return ch; }
-                            if (ctr.TableTopVerticalPosition / 10.0 >= 0.0) { ch.SetResult(TestCase.FAIL); return ch; }
-
-                            // Need to consider partial arc? - SL 04/26/2018
-                        }
-                    }
-                }
-                ch.SetResult(TestCase.PASS); return ch;
-            }
-            catch { ch.SetResult(TestCase.FAIL); return ch; }
-        }
-
-        public TestCase SBRTDoseResolution(PlanSetup CurrentPlan)
-        {
-            TestCase ch = new TestCase("SBRT Dose Resolution", "Test performed to ensure SRS ARC plans or small target volumes < 5cc use a dose resolution of less than or equal to 1.5 mm.", TestCase.PASS);
-            double TargetVolume = 0.0;
-
-            try
-            {
-                if (CurrentPlan.TargetVolumeID != null && CurrentPlan.TargetVolumeID != "")
-                {
-                    foreach (Structure s in CurrentPlan.StructureSet.Structures)
-                    {
-                        if (s.Id.ToString() == CurrentPlan.TargetVolumeID.ToString()) { TargetVolume = s.Volume; break; }  // in cc
-                    }
-
-                    ch.SetResult(TestCase.PASS);
-                    foreach (Beam b in CurrentPlan.Beams)
-                    {
-                        if (!b.IsSetupField)
-                        {
-                            if (b.Technique.Id.ToString().Contains("SRS ARC") || TargetVolume <= 5.0)
-                            {
-                                if (CurrentPlan.Dose.XRes >= 1.51) { ch.SetResult(TestCase.FAIL); return ch; }
-                                else if (CurrentPlan.Dose.YRes >= 1.51) { ch.SetResult(TestCase.FAIL); return ch; }
-                                //else if (CurrentPlan.Dose.ZRes >= 2.01) { ch.SetResult(TestCase.FAIL); return ch; }
-                            }
-                        }
-                    }
-                    return ch;
-                }
-                else
-                {
-                    ch.SetResult(TestCase.PASS); return ch;
-                }
-            }
-            catch { ch.SetResult(TestCase.FAIL); return ch; }
-        }
+        
 
         // Added SBRT CT slice thickness
         public TestCase SBRTCTSliceThickness(PlanSetup CurrentPlan)
