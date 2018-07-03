@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Linq;
-
 using System.Collections.Generic;
 using VMS.TPS.Common.Model.API;
 using PlanSetup = VMS.TPS.Common.Model.API.PlanSetup;
@@ -9,7 +8,11 @@ namespace StanfordPlanningReport
 {
     public class GeneralFieldTests
     {
+        
+        public Dictionary<string, TestCase.Test> testMethods = new Dictionary<string, TestCase.Test>();
+
         private PlanSetup currentPlan;
+
         private List<TestCase> fieldTestResults = new List<TestCase>();
         private List<TestCase> fieldTests = new List<TestCase>();
 
@@ -30,24 +33,31 @@ namespace StanfordPlanningReport
         {
             currentPlan = cPlan;
 
+            // standalone tests
             setupFieldAngleTest = new TestCase("Setup Field Angle Test", "Test performed to enture 4 cardinal angle setup fields are provided.", TestCase.PASS);
             this.fieldTests.Add(setupFieldAngleTest);
 
+            // per Beam tests
             setupFieldNameTest = new TestCase("Setup Field Name Check", @"Test performed to ensure setup fields are 
                                                                                  named according to convention and tests angle values.", TestCase.PASS);
             this.fieldTests.Add(setupFieldNameTest);
+            this.testMethods.Add(setupFieldNameTest.GetName(),SetupFieldNameCheck);
 
             treatmentFieldNameTest = new TestCase("Treatment Field Name and Angle Check", "(3D plan) Test performed to verify treatment field names and corresponding gantry angles.", TestCase.PASS);
             this.fieldTests.Add(treatmentFieldNameTest);
+            this.testMethods.Add(treatmentFieldNameTest.GetName(), TreatmentFieldNameCheck);
 
             DRRAllFieldsTest = new TestCase("DRR Check", "Test performed to ensure that high resolution DRRs are present for all fields.", TestCase.PASS);
             this.fieldTests.Add(DRRAllFieldsTest);
+            this.testMethods.Add(DRRAllFieldsTest.GetName(), DRRAllFieldsCheck);
 
             arcFieldNameTest = new TestCase("Arc Field Name Check", "(VMAT) Test performed to ensure ARC field names is consistent with direction (CW vs. CCW).", TestCase.PASS);
             this.fieldTests.Add(arcFieldNameTest);
+            this.testMethods.Add(arcFieldNameTest.GetName(), ArcFieldNameCheck);
 
             SetupFieldBolusTest = new TestCase("Setup Field Bolus Check", "Test performed to ensure setup fields are not linked with bolus, otherwise underliverable.", TestCase.PASS);
             this.fieldTests.Add(SetupFieldBolusTest);
+            this.testMethods.Add(SetupFieldBolusTest.GetName(),SetupFieldBolusCheck);
         }
 
         /* Getter method for List of field test results
@@ -74,19 +84,16 @@ namespace StanfordPlanningReport
         {
             if (runPerBeam)
             {
-                SetupFieldNameCheck(b).AddToListOnFail(this.fieldTestResults, this.fieldTests);
-                TreatmentFieldNameCheck(b).AddToListOnFail(this.fieldTestResults, this.fieldTests);
-                DRRAllFieldsCheck(b).AddToListOnFail(this.fieldTestResults, this.fieldTests);
-                ArcFieldNameCheck(b).AddToListOnFail(this.fieldTestResults, this.fieldTests);
-                SetupFieldBolusCheck(b).AddToListOnFail(this.fieldTestResults, this.fieldTests);
+                foreach(KeyValuePair<string, TestCase.Test> test in testMethods)
+                {
+                    test.Value(b).AddToListOnFail(this.fieldTestResults, this.fieldTests, this.testMethods);
+                }
             }
-            else
+            else //standalone tests
             {
                 SetupFieldAngleCheck().AddToListOnFail(this.fieldTestResults, this.fieldTests);
-
-                fieldTestResults.AddRange(this.fieldTests);
             }
-
+            fieldTestResults.AddRange(this.fieldTests);
         }
 
         //Added by SL 03/02/2018 - SetupFieldBolusCheck
@@ -102,13 +109,13 @@ namespace StanfordPlanningReport
             }
             catch (Exception ex)
             {
-                return setupFieldAngleTest.HandleTestError(setupFieldAngleTest, ex);
+                return setupFieldAngleTest.HandleTestError(ex);
             }
         }
 
 
         //TODO: documentation
-        public TestCase SetupFieldAngleCheck()
+        public TestCase SetupFieldAngleCheck(Beam beam = null)
         {
             bool zero = false, ninety = false, oneEighty = false, twoSeventy = false;
             try
@@ -142,7 +149,7 @@ namespace StanfordPlanningReport
             }
             catch (Exception ex)
             {
-                return setupFieldAngleTest.HandleTestError(setupFieldAngleTest, ex);
+                return setupFieldAngleTest.HandleTestError(ex);
             }
 
         }
@@ -213,7 +220,7 @@ namespace StanfordPlanningReport
             }
             catch (Exception ex)
             {
-                return setupFieldNameTest.HandleTestError(setupFieldNameTest, ex);
+                return setupFieldNameTest.HandleTestError(ex);
             }
 
         }
@@ -292,7 +299,7 @@ namespace StanfordPlanningReport
             }
             catch (Exception ex)
             {
-                return treatmentFieldNameTest.HandleTestError(treatmentFieldNameTest, ex);
+                return treatmentFieldNameTest.HandleTestError(ex);
             }
         }
 
@@ -310,7 +317,7 @@ namespace StanfordPlanningReport
             }
             catch (Exception ex)
             {
-                return DRRAllFieldsTest.HandleTestError(DRRAllFieldsTest, ex);
+                return DRRAllFieldsTest.HandleTestError(ex);
             }
         }
 
@@ -355,7 +362,7 @@ namespace StanfordPlanningReport
             }
             catch (Exception ex)
             {
-                return arcFieldNameTest.HandleTestError(arcFieldNameTest, ex);
+                return arcFieldNameTest.HandleTestError(ex);
             }
         }
 

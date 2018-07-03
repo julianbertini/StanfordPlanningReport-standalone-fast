@@ -1,18 +1,12 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using PlanSetup = VMS.TPS.Common.Model.API.PlanSetup;
 using VMS.TPS.Common.Model.API;
 
 namespace StanfordPlanningReport
 {
-    class GeneralTests
+    public class GeneralTests: SharedTests
     {
-
-        private PlanSetup CurrentPlan;
-
         // All depend on a Beams loop
         private TestCase PlanNormalizationTestCase; 
         private TestCase CouchTestCase; 
@@ -22,29 +16,104 @@ namespace StanfordPlanningReport
         private TestCase JawMaxTestCase;
         private TestCase JawMinTestCase;  // Added jaw min test on 5/30/2018
         private TestCase JawLimitTestCase; // Added Arc field x jaw size < 15cm on 5/30/2018
-        private TestCase DoseRateTestCase; = DoseRateCheck(CurrentPlan);
+        private TestCase DoseRateTestCase;
         private TestCase HighMUTestCase; 
         private TestCase TableHeightTestCase; 
-        private TestCase SBRTDoseResolutionResult;
-        private TestCase SBRTCTSliceThicknessTestCase; = SBRTCTSliceThickness(CurrentPlan);  // Added SBRT CT slice thickness 06/05/2018
-        private TestCase ShortTreatmentTimeTestCase; = ShortTreatmentTimeCheck(CurrentPlan);
+        private TestCase SBRTDoseResolutionTestCase;
+        private TestCase SBRTCTSliceThicknessTestCase;
+        private TestCase ShortTreatmentTimeTestCase;
+
+        private string MachineName;
+        private double TargetVolume;
 
 
-        public GeneralTests()
+        public GeneralTests(PlanSetup cPlan) : base(cPlan)
         {
+
+            // per Beam tests
             CouchTestCase = new TestCase("Couch Check", "(VMAT) Test performed to ensure correct couch is included in plan.", TestCase.PASS);
+            this.fieldTests.Add(CouchTestCase);
+            this.testMethods.Add(CouchTestCase.GetName(), CouchCheck);
+
             PlanNormalizationTestCase = new TestCase("Plan Normalization Check", "(VMAT) Test performed to ensure plan normalization set to: 100.00% covers 95.00% of Target Volume.", TestCase.PASS);
+            this.fieldTests.Add(PlanNormalizationTestCase);
+            this.testMethods.Add(PlanNormalizationTestCase.GetName(), PlanNormalizationCheck);
+
             DoseAlgorithmTestCase = new TestCase("Dose Algorithm Check", "Test performed to ensure photon dose calculation algorithm is either AAA_V13623 or AcurosXB_V13623.", TestCase.PASS);
+            this.fieldTests.Add(DoseAlgorithmTestCase);
+            this.testMethods.Add(DoseAlgorithmTestCase.GetName(), DoseAlgorithmCheck);
+
             MachineScaleTestCase = new TestCase("Machine Scale Check", "Test performed to ensure machine IEC scale is used.", TestCase.PASS);
+            this.fieldTests.Add(MachineScaleTestCase);
+            this.testMethods.Add(MachineScaleTestCase.GetName(), MachineScaleCheck);
+
             MachineIdTestCase = new TestCase("Machine Constancy Check", "Test performed to ensure all fields have the same treatment machine.", TestCase.PASS);
+            this.fieldTests.Add(MachineIdTestCase);
+            this.testMethods.Add(MachineIdTestCase.GetName(), MachineIdCheck);
+
             JawMaxTestCase = new TestCase("Jaw Max Check", "Test performed to ensure each jaw does not exceed 20.0 cm.", TestCase.PASS);
+            this.fieldTests.Add(JawMaxTestCase);
+            this.testMethods.Add(JawMaxTestCase.GetName(), JawMaxCheck);
+
             JawMinTestCase = new TestCase("Jaw Min Check", "Test performed to ensure jaw X & Y >= 3.0 cm (3D plan) or 1.0 cm (control points for VMAT).", TestCase.PASS);
+            this.fieldTests.Add(JawMinTestCase);
+            this.testMethods.Add(JawMinTestCase.GetName(), JawMinCheck);
+
             JawLimitTestCase = new TestCase("Jaw limit Check", "(VMAT) Test performed to ensure X <= 14.5cm for CLINACs; Y1 & Y2 <= 10.5cm for TrueBeam HD MLC.", TestCase.PASS);
+            this.fieldTests.Add(JawLimitTestCase);
+            this.testMethods.Add(JawLimitTestCase.GetName(), JawLimitCheck);
+
             TableHeightTestCase = new TestCase("Table Height Check", "(VMAT) Test performed to ensure table height is less than 21.0 cm.", TestCase.PASS);
-            SBRTDoseResolutionResult = new TestCase("SBRT Dose Resolution", "Test performed to ensure SRS ARC plans or small target volumes < 5cc use a dose resolution of less than or equal to 1.5 mm.", TestCase.PASS);
+            this.fieldTests.Add(TableHeightTestCase);
+            this.testMethods.Add(TableHeightTestCase.GetName(), TableHeightCheck);
+
+            SBRTDoseResolutionTestCase = new TestCase("SBRT Dose Resolution", "Test performed to ensure SRS ARC plans or small target volumes < 5cc use a dose resolution of less than or equal to 1.5 mm.", TestCase.PASS);
+            this.fieldTests.Add(SBRTDoseResolutionTestCase);
+            this.testMethods.Add(SBRTDoseResolutionTestCase.GetName(), SBRTDoseResolutionCheck);
+
+            SBRTCTSliceThicknessTestCase = new TestCase("SBRT CT Slice Thickness", "Test performed to ensure SRS ARC plans or small target volumes < 5cc use a CT slice with thickness less than or equal to 2 mm.", TestCase.PASS);
+            this.fieldTests.Add(SBRTCTSliceThicknessTestCase);
+            this.testMethods.Add(SBRTCTSliceThicknessTestCase.GetName(), SBRTCTSliceThicknessCheck);
+
+            ShortTreatmentTimeTestCase = new TestCase("Short Treatment Time Check", "Test performed to ensure minimum treatment time is met.", TestCase.PASS);
+            this.fieldTests.Add(ShortTreatmentTimeTestCase);
+            this.testMethods.Add(ShortTreatmentTimeTestCase.GetName(), ShortTreatmentTimeCheck);
+
+            DoseRateTestCase = new TestCase("Dose Rate Check", "Test performed to ensure maximum dose rates are set.", TestCase.PASS);
+            this.fieldTests.Add(DoseRateTestCase);
+            this.testMethods.Add(DoseRateTestCase.GetName(), DoseRateCheck);
 
             //standalone 
             HighMUTestCase = new TestCase("High MU Check", "Test performed to ensure total MU is less than 4 times the prescribed dose per fraction in cGy.", TestCase.PASS);
+            this.fieldTests.Add(HighMUTestCase);
+
+        }
+
+        /* Iterates through each beam in the current plan and runs all field tests for each beam.
+        * It modifies the fieldTestResults List to include the resulting test cases. 
+        * It's organized such that failed tests will come before passed tests in the list (useful for later formatting).
+        * 
+        * Params: 
+        *          None
+        * Returns: 
+        *          None
+        *          
+        * Updated: JB 6/13/18
+        */
+        public void ExecuteTests(bool runPerBeam, Beam b = null)
+        {
+            if (runPerBeam)
+            {
+                foreach (KeyValuePair<string, TestCase.Test> test in testMethods)
+                {
+                    test.Value(b).AddToListOnFail(this.fieldTestResults, this.fieldTests, this.testMethods);
+                }
+            }
+            else //standalone tests
+            {
+                HighMUCheck().AddToListOnFail(this.fieldTestResults, this.fieldTests);
+            }
+            fieldTestResults.AddRange(this.fieldTests);
         }
 
         public TestCase CouchCheck(Beam b)
@@ -127,20 +196,6 @@ namespace StanfordPlanningReport
             catch { DoseAlgorithmTestCase.SetResult(TestCase.FAIL); return DoseAlgorithmTestCase; }
         }
 
-        // Added machine scale check IEC61217 SL 06/01/2018
-        public TestCase MachineScaleCheck(Beam b)
-        {
-            try
-            {
-                #pragma warning disable 0618
-                // This one is okay
-                if (b.ExternalBeam.MachineScaleDisplayName.ToString() != "IEC61217") { MachineScaleTestCase.SetResult(TestCase.FAIL); return MachineScaleTestCase; }
-
-                return MachineScaleTestCase;
-            }
-            catch { MachineScaleTestCase.SetResult(TestCase.FAIL); return MachineScaleTestCase; }
-        }
-
         private string FindMachineName()
         {
             string machineName = "";
@@ -156,12 +211,11 @@ namespace StanfordPlanningReport
         }
 
         // Added machine consistency SL 06/01/2018
-        public TestCase MachineIdCheck(Beam b, string machineName)
+        public TestCase MachineIdCheck(Beam b)
         {
             try
             {
-
-                if (b.TreatmentUnit.Id.ToString() != machineName) { MachineIdTestCase.SetResult(TestCase.FAIL); return MachineIdTestCase; }
+                if (b.TreatmentUnit.Id.ToString() != MachineName) { MachineIdTestCase.SetResult(TestCase.FAIL); return MachineIdTestCase; }
 
                 return MachineIdTestCase;
             }
@@ -277,7 +331,7 @@ namespace StanfordPlanningReport
             return targetVolume;
         }
 
-        public TestCase SBRTDoseResolution(Beam b, double targetVolume)
+        public TestCase SBRTDoseResolutionCheck(Beam b)
         {
             try
             {
@@ -285,22 +339,17 @@ namespace StanfordPlanningReport
                 {
                     if (!b.IsSetupField)
                     {
-                        if (b.Technique.Id.ToString().Contains("SRS ARC") || targetVolume <= 5.0)
+                        if (b.Technique.Id.ToString().Contains("SRS ARC") || TargetVolume <= 5.0)
                         {
-                            if (CurrentPlan.Dose.XRes >= 1.51) { SBRTDoseResolutionResult.SetResult(TestCase.FAIL); return SBRTDoseResolutionResult; }
-                            else if (CurrentPlan.Dose.YRes >= 1.51) { SBRTDoseResolutionResult.SetResult(TestCase.FAIL); return SBRTDoseResolutionResult; }
+                            if (CurrentPlan.Dose.XRes >= 1.51) { SBRTDoseResolutionTestCase.SetResult(TestCase.FAIL); return SBRTDoseResolutionTestCase; }
+                            else if (CurrentPlan.Dose.YRes >= 1.51) { SBRTDoseResolutionTestCase.SetResult(TestCase.FAIL); return SBRTDoseResolutionTestCase; }
                             //else if (CurrentPlan.Dose.ZRes >= 2.01) { ch.SetResult(TestCase.FAIL); return ch; }
                         }
                     }
-
-                    return SBRTDoseResolutionResult;
                 }
-                else
-                {
-                    return SBRTDoseResolutionResult;
-                }
+                return SBRTDoseResolutionTestCase;
             }
-            catch { SBRTDoseResolutionResult.SetResult(TestCase.FAIL); return SBRTDoseResolutionResult; }
+            catch { SBRTDoseResolutionTestCase.SetResult(TestCase.FAIL); return SBRTDoseResolutionTestCase; }
         }
 
         public TestCase HighMUCheck()
@@ -321,7 +370,46 @@ namespace StanfordPlanningReport
             catch { HighMUTestCase.SetResult(TestCase.FAIL); return HighMUTestCase; }
         }
 
+        public TestCase SBRTCTSliceThicknessCheck(Beam b)
+        {
+            try
+            {
+                if (CurrentPlan.TargetVolumeID != null && CurrentPlan.TargetVolumeID != "")
+                {
+                    if (!b.IsSetupField)
+                    {
+                        if (b.Technique.Id.ToString().Contains("SRS ARC") || TargetVolume <= 5.0)
+                        {
+                            if (CurrentPlan.Dose.ZRes >= 2.01) { SBRTCTSliceThicknessTestCase.SetResult(TestCase.FAIL); return SBRTCTSliceThicknessTestCase; }
+                        }
+                    }
+                }
+                return SBRTCTSliceThicknessTestCase;
+            }
+            catch { SBRTCTSliceThicknessTestCase.SetResult(TestCase.FAIL); return SBRTCTSliceThicknessTestCase; }
+        }
 
+        
+
+        public TestCase DoseRateCheck(Beam b)
+        {
+            try
+            {
+
+                if (!b.IsSetupField)
+                {
+                    if (b.EnergyModeDisplayName.ToString() == "6X" && b.DoseRate != 600) { DoseRateTestCase.SetResult(TestCase.FAIL); return DoseRateTestCase; }
+                    else if (b.EnergyModeDisplayName.ToString() == "10X" && b.DoseRate != 600) { DoseRateTestCase.SetResult(TestCase.FAIL); return DoseRateTestCase; }
+                    else if (b.EnergyModeDisplayName.ToString() == "15X" && b.DoseRate != 600) { DoseRateTestCase.SetResult(TestCase.FAIL); return DoseRateTestCase; }
+                    else if (b.EnergyModeDisplayName.ToString() == "6X-FFF" && b.DoseRate != 1400) { DoseRateTestCase.SetResult(TestCase.FAIL); return DoseRateTestCase; }
+                    else if (b.EnergyModeDisplayName.ToString() == "10X-FFF" && b.DoseRate != 2400) { DoseRateTestCase.SetResult(TestCase.FAIL); return DoseRateTestCase; }
+                    else if (b.EnergyModeDisplayName.ToString().Contains("E") && b.DoseRate != 600) { DoseRateTestCase.SetResult(TestCase.FAIL); return DoseRateTestCase; }
+                }
+
+                return DoseRateTestCase;
+            }
+            catch { DoseRateTestCase.SetResult(TestCase.FAIL); return DoseRateTestCase; }
+        }
 
     }
 }

@@ -1,11 +1,13 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Diagnostics;
+using VMS.TPS.Common.Model.API;
 
 namespace StanfordPlanningReport
 {
     public class TestCase : IEquatable<TestCase>
     {
+        public delegate TestCase Test(Beam b);
+
         public const string PASS = "PASS";
         public const string FAIL = "FAIL";
         public const string ACK = "ACK";
@@ -78,12 +80,16 @@ namespace StanfordPlanningReport
             return false;
         }
 
-        public void AddToListOnFail(List<TestCase> resultList, List<TestCase> inventory)
+        public void AddToListOnFail(List<TestCase> resultList, List<TestCase> inventory, Dictionary<string, Test> testMethods = null)
         {
             if (this.result == TestCase.FAIL && !resultList.Contains(this))
             {
                 resultList.Add(this);
                 inventory.Remove(this);
+                if (testMethods != null)
+                {
+                    testMethods.Remove(this.name);
+                }
             }
         }
 
@@ -98,13 +104,13 @@ namespace StanfordPlanningReport
          *      
          * Updated: JB 6/13/18
          */
-        public TestCase HandleTestError(TestCase test, Exception ex)
+        public TestCase HandleTestError(Exception ex)
         {
             Console.WriteLine(ex.ToString());
 
-            test.SetResult(TestCase.FAIL);
-            test.SetDescription("An unknown error occured while attempting to run this test. Please report it, including patient ID or other pertinent details.");
-            return test;
+            this.SetResult(TestCase.FAIL);
+            this.SetDescription("An unknown error occured while attempting to run this test. Please report it, including patient ID or other pertinent details.");
+            return this;
         }
     }
 }

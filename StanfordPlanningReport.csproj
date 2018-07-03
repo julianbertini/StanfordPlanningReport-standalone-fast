@@ -104,15 +104,21 @@
     <Reference Include="PresentationFramework" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="General\GeneralFieldTests.cs" />
+    <Compile Include="General\GeneralPrescriptionTests.cs" />
+    <Compile Include="General\GeneralTests.cs" />
     <Compile Include="PhysicsCheck.cs" />
     <Compile Include="Route.cs" />
     <Compile Include="HTTPServer.cs" />
     <Compile Include="frontend\InteractiveReport.cs" />
     <Compile Include="Report.cs" />
-    <Compile Include="FieldTest.cs" />
+    <Compile Include="Shared\SharedPrescriptionTests.cs" />
+    <Compile Include="Shared\SharedTests.cs" />
     <Compile Include="TestCase.cs" />
     <Compile Include="julianPlayground.cs" />
     <Compile Include="StanfordPlanningReport.cs" />
+    <Compile Include="TSEI\TSEITests.cs" />
+    <Compile Include="TSEI\TSEIPrescriptionTests.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config">
@@ -313,5 +319,6 @@
     <Content Include="frontend\ackDetailsModal.html" />
     <Content Include="PhysicsReport.html" />
   </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

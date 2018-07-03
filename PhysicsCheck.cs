@@ -62,23 +62,9 @@ namespace StanfordPlanningReport
             Results.Add(UserOriginTestCase);
             Results.Add(ImageDateTestCase);
             Results.Add(PatientOrientationTestCase);
-            Results.Add(CouchTestCase);
-            Results.Add(PlanNormalizationTestCase);
-            Results.Add(DoseAlgorithmTestCase);
-            Results.Add(MachineScaleTestCase);  // Added checking IEC scale 06/01/2018
-            Results.Add(MachineIdTestCase);   // Added checking machine constancy for all beams 06/01/2018
-            Results.Add(JawMaxTestCase);
-            Results.Add(JawMinTestCase);  // Added jaw min test on 5/30/2018
-            Results.Add(JawLimitTestCase);   // Added Arc field x jaw size < 15cm on 5/30/2018
-            Results.Add(HighMUTestCase);
-            Results.Add(TableHeightTestCase);
-            Results.Add(SBRTDoseResolutionResult);
-            Results.Add(SBRTCTSliceThicknessTestCase);   // Added SBRT CT slice thickness 06/05/2018
             Results.Add(PlanningApprovalTestCase);
             Results.Add(AcitveCourseTestCase);
-            Results.Add(ShortTreatmentTimeTestCase);
             Results.Add(TargetVolumeTestCase);
-            Results.Add(DoseRateTestCase);
             Results.Add(CourseNameNotEmptyTestCase);
             Results.Add(ShiftNotesJournalTestCase);    // Added by SL 03/02/2018
 
@@ -120,38 +106,6 @@ namespace StanfordPlanningReport
             catch { ch.SetResult(TestCase.FAIL); return ch; }
         }
 
-        
-
-        // Added SBRT CT slice thickness
-        public TestCase SBRTCTSliceThickness(PlanSetup CurrentPlan)
-        {
-            TestCase ch = new TestCase("SBRT CT Slice Thickness", "Test performed to ensure SRS ARC plans or small target volumes < 5cc use a CT slice with thickness less than or equal to 2 mm.", TestCase.PASS);
-            double TargetVolume = 0.0;
-
-            try
-            {
-                if (CurrentPlan.TargetVolumeID != null && CurrentPlan.TargetVolumeID != "")
-                {
-                    foreach (Structure s in CurrentPlan.StructureSet.Structures)
-                    {
-                        if (s.Id.ToString() == CurrentPlan.TargetVolumeID.ToString()) { TargetVolume = s.Volume; break; }  // in cc
-                    }
-
-                    foreach (Beam b in CurrentPlan.Beams)
-                    {
-                        if (!b.IsSetupField)
-                        {
-                            if (b.Technique.Id.ToString().Contains("SRS ARC") || TargetVolume <= 5.0)
-                            {
-                                if (CurrentPlan.Dose.ZRes >= 2.01) { ch.SetResult(TestCase.FAIL); return ch; }
-                            }
-                        }
-                    }
-                }
-                ch.SetResult(TestCase.PASS); return ch;
-            }
-            catch { ch.SetResult(TestCase.FAIL); return ch; }
-        }
 
         public TestCase PlanningApprovalCheck(PlanSetup CurrentPlan)
         {
@@ -168,88 +122,6 @@ namespace StanfordPlanningReport
             catch { ch.SetResult(TestCase.FAIL); return ch; }
         }
 
-        public TestCase AcitveCourseCheck(PlanSetup CurrentPlan)
-        {
-            TestCase ch = new TestCase("Active Course Check", "Test performed to ensure all courses other than the current course are completed.", TestCase.PASS);
-
-            try
-            {
-                foreach (Course c in CurrentPlan.Course.Patient.Courses)
-                {
-                    if (!c.CompletedDateTime.HasValue && CurrentPlan.Course.Id != c.Id) { ch.SetResult(TestCase.FAIL); return ch; }
-                }
-                ch.SetResult(TestCase.PASS); return ch;
-            }
-            catch { ch.SetResult(TestCase.FAIL); return ch; }
-        }
-
-        // Updated by SL on 05/27/2018
-        public TestCase ShortTreatmentTimeCheck(PlanSetup CurrentPlan)
-        {
-            TestCase ch = new TestCase("Short Treatment Time Check", "Test performed to ensure minimum treatment time is met.", TestCase.PASS);
-
-            try
-            {
-                foreach (Beam b in CurrentPlan.Beams)
-                {
-                    if (!b.IsSetupField)
-                    {
-                        // Change to a new scale IEC61217 -> inverse Varian scale, in order to easily calculate the gantry rotation angle
-                        double start_angle, end_angle, delta_gantry, allowed_time_Clinac, allowed_time_TrueBeam;
-                        if (b.ControlPoints.Last().GantryAngle < 180 && b.ControlPoints.Last().GantryAngle >= 0) { end_angle = b.ControlPoints.Last().GantryAngle + 180; }
-                        else { end_angle = b.ControlPoints.Last().GantryAngle - 180; }
-                        if (b.ControlPoints.First().GantryAngle < 180 && b.ControlPoints.First().GantryAngle >= 0) { start_angle = b.ControlPoints.First().GantryAngle + 180; }
-                        else { start_angle = b.ControlPoints.First().GantryAngle - 180; }
-                        delta_gantry = Math.Abs(end_angle - start_angle);
-
-                        // Minimal allowed time for Clinac (non gated)
-                        allowed_time_Clinac = 1.2 * delta_gantry * (1.25 / 360);
-                        decimal allowed_time_Clinac_decimal = Math.Round((decimal)allowed_time_Clinac, 1);   // rounding up to 1 floating point
-                                                                                                                // Minimal allowed time for TrueBeam 
-                        allowed_time_TrueBeam = 1.2 * delta_gantry * (1.0 / 360);
-                        decimal allowed_time_TrueBeam_decimal = Math.Round((decimal)allowed_time_TrueBeam, 1);
-
-                        double time_in_eclipse;
-                        decimal time_in_eclipse_decimal;
-                        if (Double.IsNaN(b.TreatmentTime) || Double.IsInfinity(b.TreatmentTime))
-                        {
-                            time_in_eclipse = 0.0; time_in_eclipse_decimal = 0;   // if Physician forgot to put in treatment time - assgin it to 0
-                        }
-                        else
-                        {
-                            time_in_eclipse = b.TreatmentTime / 60; time_in_eclipse_decimal = Math.Round((decimal)time_in_eclipse, 1);
-                        }
-
-                        if (b.EnergyModeDisplayName.ToString().ToUpper().Contains("X"))    //for Photon
-                        {
-                            if (b.MLCPlanType.ToString().ToUpper().Contains("STATIC") || b.MLCPlanType.ToString().ToUpper().Contains("DYNAMIC"))
-                            {
-                                //Console.WriteLine("{0}", Math.Round((decimal)(b.Meterset.Value / b.DoseRate * 1.19), 1));
-                                if (time_in_eclipse_decimal < Math.Round((decimal)(b.Meterset.Value / b.DoseRate * 1.19), 1)) { ch.SetResult(TestCase.FAIL); return ch; }
-                            }
-                            else if (b.MLCPlanType.ToString().ToUpper().Contains("VMAT") || b.MLCPlanType.ToString().ToUpper().Contains("ARC"))  // VMAT and Conformal Arc
-                            {
-                                if (b.TreatmentUnit.MachineModel.ToString().ToUpper().Contains("TDS"))  // TrueBeam
-                                {
-                                    if (time_in_eclipse_decimal < allowed_time_TrueBeam_decimal) { ch.SetResult(TestCase.FAIL); return ch; }
-                                }
-                                else    // Clinac
-                                {
-                                    if (time_in_eclipse_decimal < allowed_time_Clinac_decimal) { ch.SetResult(TestCase.FAIL); return ch; }
-                                }
-                            }
-                        }
-                        else if (CurrentPlan.Beams.First().EnergyModeDisplayName.ToString().ToUpper().Contains("E"))   // for Electron
-                        {
-                            if (time_in_eclipse_decimal < Math.Round((decimal)(b.Meterset.Value / b.DoseRate * 1.19), 1)) { ch.SetResult(TestCase.FAIL); return ch; }
-                        }
-                    }
-                }
-                ch.SetResult(TestCase.PASS); return ch;
-            }
-            catch { ch.SetResult(TestCase.FAIL); return ch; }
-        }
-
         public TestCase TargetVolumeCheck(PlanSetup CurrentPlan)
         {
             TestCase ch = new TestCase("Target Volume Check", "Test performed to ensure target volume does not contain string TS and contains the string PTV.", TestCase.PASS);
@@ -262,51 +134,7 @@ namespace StanfordPlanningReport
             catch { ch.SetResult(TestCase.FAIL); return ch; }
         }
 
-        public TestCase DoseRateCheck(PlanSetup CurrentPlan)
-        {
-            TestCase ch = new TestCase("Dose Rate Check", "Test performed to ensure maximum dose rates are set.", TestCase.PASS);
 
-            try
-            {
-                foreach (Beam b in CurrentPlan.Beams)
-                {
-                    if (!b.IsSetupField)
-                    {
-                        if (b.EnergyModeDisplayName.ToString() == "6X" && b.DoseRate != 600) { ch.SetResult(TestCase.FAIL); return ch; }
-                        else if (b.EnergyModeDisplayName.ToString() == "10X" && b.DoseRate != 600) { ch.SetResult(TestCase.FAIL); return ch; }
-                        else if (b.EnergyModeDisplayName.ToString() == "15X" && b.DoseRate != 600) { ch.SetResult(TestCase.FAIL); return ch; }
-                        else if (b.EnergyModeDisplayName.ToString() == "6X-FFF" && b.DoseRate != 1400) { ch.SetResult(TestCase.FAIL); return ch; }
-                        else if (b.EnergyModeDisplayName.ToString() == "10X-FFF" && b.DoseRate != 2400) { ch.SetResult(TestCase.FAIL); return ch; }
-                        else if (b.EnergyModeDisplayName.ToString().Contains("E") && b.DoseRate != 600) { ch.SetResult(TestCase.FAIL); return ch; }
-                    }
-                }
-                ch.SetResult(TestCase.PASS); return ch;
-            }
-            catch { ch.SetResult(TestCase.FAIL); return ch; }
-        }
-
-        /* Makes sure that a course has a name starting with C and is not empty after the C
-            * 
-            * Params: 
-            *          CurrentPlan - the plan under current consideration
-            * Returns:
-            *          test - the results of the test 
-            * 
-            * Updated: JB 6/15/18
-            */
-        public TestCase CourseNameNotEmptyCheck(PlanSetup CurrentPlan)
-        {
-            TestCase test = new TestCase("Course name check", "Verifies that course names are not blank after the 'C' character.", TestCase.PASS);
-
-            string name = CurrentPlan.Course.Id;
-            string result = Regex.Match(name, @"C\d+").ToString();
-            if (string.IsNullOrEmpty(result) || string.IsNullOrEmpty(name.Substring(result.Length, name.Length - result.Length)))
-            {
-                test.SetResult(TestCase.FAIL); return test;
-            }
-
-            return test;
-        }
 
         // Is there any way to check gating?
         public TestCase GatingCheck(PlanSetup CurrentPlan)
