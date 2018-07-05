@@ -16,7 +16,7 @@ namespace VMS.TPS
         private HttpListener _listener;
         public Route Routes { get; set; }
 
-        private const string testResultsHTMLPath = @"Z:\\Users\\Jbertini\\ESAPI\\VMSTPS-standalone-fast\\frontend\\testResultsIndex.html";
+        private const string ResourcesPath = @"frontend";
 
         public HTTPServer()
         {
@@ -156,7 +156,7 @@ namespace VMS.TPS
             // handle resource requests, right now only js and css files
             if (ServeResources && buffer == null && !noResources)
             { 
-                string extension = getExtension(request.Url);
+                string extension = GetExtension(request.Url);
 
                 if (extension == "css")
                 {
@@ -211,7 +211,7 @@ namespace VMS.TPS
 
         public string GetResourcePathByUri(Uri uri)
         {
-            string root = System.IO.Path.GetDirectoryName(testResultsHTMLPath);
+            string root = System.IO.Path.Combine(Environment.GetEnvironmentVariable("ROOT_PATH"), ResourcesPath);
             string relativePath = uri.AbsolutePath;
             relativePath = relativePath.Substring(1, relativePath.Length - 1);
             relativePath = relativePath.Replace("/","\\");
@@ -221,13 +221,13 @@ namespace VMS.TPS
         }
         public string GetResourcePathByName(string filename)
         {
-            string root = System.IO.Path.GetDirectoryName(testResultsHTMLPath);
+            string root = System.IO.Path.Combine(Environment.GetEnvironmentVariable("ROOT_PATH"), ResourcesPath);
             string resourcePath = System.IO.Path.Combine(root, filename);
 
             return resourcePath;
         }
 
-        public string getExtension(Uri uri)
+        public string GetExtension(Uri uri)
         {
             string relativePath = uri.AbsolutePath;
             int dotIndex = relativePath.LastIndexOf(".");

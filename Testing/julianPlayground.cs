@@ -44,6 +44,8 @@ namespace VMS.TPS
 
         static void ExecuteTestingEnv(Application app, string PID)
         {
+            // Set develpoment folder path. This is not the same path as the one used for system script. 
+            Environment.SetEnvironmentVariable("ROOT_PATH", @"Z:\\Users\\Jbertini\\ESAPI\\StanfordPlanningReport-standalone-fast");
 
             Patient patient = app.OpenPatientById(PID);
             Course course = patient.Courses.Last();

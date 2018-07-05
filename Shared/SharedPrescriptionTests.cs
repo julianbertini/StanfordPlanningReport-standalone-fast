@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using System.Linq;
 using AriaSysSmall;
-using System.Text.RegularExpressions;
 using PlanSetup = VMS.TPS.Common.Model.API.PlanSetup;
 using VMS.TPS.Common.Model.API;
 

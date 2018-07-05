@@ -1,12 +1,13 @@
 ﻿using Patient = VMS.TPS.Common.Model.API.Patient;
 using Course = VMS.TPS.Common.Model.API.Course;
 using System.Collections.Generic;
+using System;
 
 namespace VMS.TPS
 {
     class PhysicsReport
     {
-        private const string physicsReportHTMLPath = @"Z:\\Users\\Jbertini\\ESAPI\\StanfordPlanningReport-standalone-fast\\Reports\\PhysicsReport.html";
+        private  string physicsReportHTMLPath = System.IO.Path.Combine(Environment.GetEnvironmentVariable("ROOT_PATH"), @"Reports\\PhysicsReport.html");
 
         public List<TestCase> TestResults { get; set; }
 
