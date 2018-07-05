@@ -26,12 +26,13 @@ namespace VMS.TPS
         private TestCase TargetVolumeTestCase;
         private TestCase ShiftNoteJournalTestCase;
 
-        private double TargetVolume;
         private string[] Doctors;
+        private double TargetVolume;
 
         public GeneralTests(PlanSetup cPlan, string[] doctors) : base(cPlan)
         {
             Doctors = doctors;
+            TargetVolume = GetTargetVolume();
 
             // per Beam tests
             CouchTestCase = new TestCase("Couch Check", "(VMAT) Test performed to ensure correct couch is included in plan.", TestCase.PASS);
@@ -128,6 +129,9 @@ namespace VMS.TPS
                 PatientOrientationCheck().AddToListOnFail(this.TestResults, this.Tests);
                 PlanningApprovalCheck().AddToListOnFail(this.TestResults, this.Tests);
                 TargetVolumeCheck().AddToListOnFail(this.TestResults, this.Tests);
+                AcitveCourseCheck().AddToListOnFail(this.TestResults, this.Tests);
+                CourseNameTestCase.AddToListOnFail(this.TestResults, this.Tests);
+                ShiftNotesJournalCheck().AddToListOnFail(this.TestResults, this.Tests);
 
                 TestResults.AddRange(this.Tests);
             }
@@ -486,7 +490,7 @@ namespace VMS.TPS
         }
 
         // Added by SL 06/07/2018 Only check if dosi has created shift note yet
-        public TestCase ShiftNotesJournalCheck(PlanSetup CurrentPlan)
+        public TestCase ShiftNotesJournalCheck()
         {
             using (var ariaEnm = new AriaE())
             {

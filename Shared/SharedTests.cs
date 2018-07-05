@@ -11,11 +11,12 @@ namespace VMS.TPS
 {
     public abstract class SharedTests
     {
-        protected Dictionary<string, TestCase.Test> testMethods;
-        protected Dictionary<string, TestCase.Test> testMethodsCopy;
         protected PlanSetup CurrentPlan;
-        public List<TestCase> TestResults { get; set; }
+
+        protected Dictionary<string, TestCase.Test> testMethods;
         protected List<TestCase> Tests;
+        public List<TestCase> TestResults { get; set; }
+        
 
         protected TestCase MachineScaleTestCase; // Added checking IEC scale 06/01/2018
         protected TestCase MachineIdTestCase;
@@ -33,7 +34,6 @@ namespace VMS.TPS
             Tests = new List<TestCase>();
             TestResults = new List<TestCase>();
             testMethods = new Dictionary<string, TestCase.Test>();
-            testMethodsCopy = new Dictionary<string, TestCase.Test>();
 
             MachineName = FindMachineName();
 

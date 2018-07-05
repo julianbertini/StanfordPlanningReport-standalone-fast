@@ -4,7 +4,7 @@ using VMS.TPS.Common.Model.API;
 
 namespace VMS.TPS
 {
-    class TSEITests 
+    class TSEITests: SharedTests
     {
 
         public TSEITests(PlanSetup cPlan) 

@@ -1,5 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
 using AriaSysSmall;
 using PlanSetup = VMS.TPS.Common.Model.API.PlanSetup;
@@ -10,10 +9,10 @@ namespace VMS.TPS
     public abstract class SharedPrescriptionTests
     {
         protected PlanSetup CurrentPlan;
-        protected string[] _Doctors;
-        protected string[] _BolusInfo;
+
         public List<TestCase> TestResults { get; set; }
-        protected List<TestCase> FieldTests;
+        protected List<TestCase> Tests;
+        public Dictionary<string, TestCase.Test> TestMethods = new Dictionary<string, TestCase.Test>();
 
         // All field tests here
         protected TestCase PrescriptionApprovalTestCase;
@@ -23,37 +22,47 @@ namespace VMS.TPS
         protected TestCase PrescriptionEnergyTestCase;
         protected TestCase PrescriptionBolusTestCase;
 
+        protected string[] _Doctors;
+        protected string[] _BolusInfo;
+
         public SharedPrescriptionTests(PlanSetup cPlan, string[] doctors)
         {
             TestResults = new List<TestCase>();
-            FieldTests = new List<TestCase>();
+            Tests = new List<TestCase>();
             _Doctors = doctors;
             CurrentPlan = cPlan;
 
             _BolusInfo = GetBolusFreqAndThickness();
 
-            PrescriptionApprovalTestCase = new TestCase("Prescription Approval Check", "Test performed to check that prescription is approved by MD.", TestCase.PASS);
-            this.FieldTests.Add(PrescriptionApprovalTestCase);
-
-            PrescriptionFractionationTestCase = new TestCase("Prescription Fractionation Check", "Test performed to ensure planned fractionation matches linked prescription.", TestCase.PASS);
-            this.FieldTests.Add(PrescriptionFractionationTestCase);
-
-            PrescriptionDosePerFractionTestCase = new TestCase("Prescription Dose Per Fraction Check", "Test performed to ensure planned dose per fraction matches linked prescription.", TestCase.PASS);
-            this.FieldTests.Add(PrescriptionDosePerFractionTestCase);
-
-            PrescriptionDoseTestCase = new TestCase("Prescription Dose Check", "Test performed to ensure planned total dose matches linked prescription.", TestCase.PASS);
-            this.FieldTests.Add(PrescriptionDoseTestCase);
-
+            // per Beam
             PrescriptionEnergyTestCase = new TestCase("Prescription Energy Check", "Test performed to ensure planned energy matches linked prescription.", TestCase.PASS);
+            this.Tests.Add(PrescriptionEnergyTestCase);
+            this.TestMethods.Add(PrescriptionEnergyTestCase.GetName(), PrescriptionEnergyCheck);
 
             PrescriptionBolusTestCase = new TestCase("Prescription Bolus Check", "Test performed to check presence of bolus on all treatment fields if bolus included in prescription.", TestCase.PASS);
+            this.Tests.Add(PrescriptionBolusTestCase);
+            this.TestMethods.Add(PrescriptionBolusTestCase.GetName(), PrescriptionBolusCheck);
 
+            // standalone
+            PrescriptionApprovalTestCase = new TestCase("Prescription Approval Check", "Test performed to check that prescription is approved by MD.", TestCase.PASS);
+            this.Tests.Add(PrescriptionApprovalTestCase);
+
+            PrescriptionDosePerFractionTestCase = new TestCase("Prescription Dose Per Fraction Check", "Test performed to ensure planned dose per fraction matches linked prescription.", TestCase.PASS);
+            this.Tests.Add(PrescriptionDosePerFractionTestCase);
+
+
+            PrescriptionFractionationTestCase = new TestCase("Prescription Fractionation Check", "Test performed to ensure planned fractionation matches linked prescription.", TestCase.PASS);
+            this.Tests.Add(PrescriptionFractionationTestCase);
+
+            PrescriptionDoseTestCase = new TestCase("Prescription Dose Check", "Test performed to ensure planned total dose matches linked prescription.", TestCase.PASS);
+            this.Tests.Add(PrescriptionDoseTestCase);
         }
 
-        public abstract TestCase PrescriptionFractionationCheck();
-        public abstract TestCase PrescriptionDoseCheck();
         public abstract TestCase PrescriptionEnergyCheck(Beam b);
         public abstract TestCase PrescriptionBolusCheck(Beam b);
+        public abstract TestCase PrescriptionFractionationCheck();
+        public abstract TestCase PrescriptionDoseCheck();
+
 
         public string[] GetBolusFreqAndThickness()
         {

@@ -8,8 +8,6 @@ namespace VMS.TPS
 {
     public class GeneralFieldTests: SharedFieldTests
     {
-
-
         // All field tests here
         private TestCase setupFieldAngleTest;
         private TestCase setupFieldNameTest;
@@ -24,28 +22,27 @@ namespace VMS.TPS
          */
         public GeneralFieldTests(PlanSetup cPlan): base(cPlan)
         {
-
-            // standalone tests
-            setupFieldAngleTest = new TestCase("Setup Field Angle Test", "Test performed to enture 4 cardinal angle setup fields are provided.", TestCase.PASS);
-            this.FieldTests.Add(setupFieldAngleTest);
-
             // per Beam tests
             setupFieldNameTest = new TestCase("Setup Field Name Check", @"Test performed to ensure setup fields are 
                                                                                  named according to convention and tests angle values.", TestCase.PASS);
-            this.FieldTests.Add(setupFieldNameTest);
+            this.Tests.Add(setupFieldNameTest);
             this.TestMethods.Add(setupFieldNameTest.GetName(),SetupFieldNameCheck);
 
             DRRAllFieldsTest = new TestCase("DRR Check", "Test performed to ensure that high resolution DRRs are present for all fields.", TestCase.PASS);
-            this.FieldTests.Add(DRRAllFieldsTest);
+            this.Tests.Add(DRRAllFieldsTest);
             this.TestMethods.Add(DRRAllFieldsTest.GetName(), DRRAllFieldsCheck);
 
             arcFieldNameTest = new TestCase("Arc Field Name Check", "(VMAT) Test performed to ensure ARC field names is consistent with direction (CW vs. CCW).", TestCase.PASS);
-            this.FieldTests.Add(arcFieldNameTest);
+            this.Tests.Add(arcFieldNameTest);
             this.TestMethods.Add(arcFieldNameTest.GetName(), ArcFieldNameCheck);
 
             SetupFieldBolusTest = new TestCase("Setup Field Bolus Check", "Test performed to ensure setup fields are not linked with bolus, otherwise underliverable.", TestCase.PASS);
-            this.FieldTests.Add(SetupFieldBolusTest);
+            this.Tests.Add(SetupFieldBolusTest);
             this.TestMethods.Add(SetupFieldBolusTest.GetName(),SetupFieldBolusCheck);
+
+            // standalone tests
+            setupFieldAngleTest = new TestCase("Setup Field Angle Test", "Test performed to enture 4 cardinal angle setup fields are provided.", TestCase.PASS);
+            this.Tests.Add(setupFieldAngleTest);
         }
 
         /* Getter method for List of field test results
@@ -54,7 +51,7 @@ namespace VMS.TPS
          */
         public List<TestCase> GetTestResults()
         {
-            return FieldTestResults;
+            return TestResults;
         }
 
         /* Iterates through each beam in the current plan and runs all field tests for each beam.
@@ -76,7 +73,7 @@ namespace VMS.TPS
 
                 foreach(KeyValuePair<string, TestCase.Test> test in TestMethods)
                 {
-                    removedTest = test.Value(b).AddToListOnFail(this.FieldTestResults, this.FieldTests);
+                    removedTest = test.Value(b).AddToListOnFail(this.TestResults, this.Tests);
                 }
                 if (removedTest != null)
                 {
@@ -85,9 +82,9 @@ namespace VMS.TPS
             }
             else //standalone tests
             {
-                SetupFieldAngleCheck().AddToListOnFail(this.FieldTestResults, this.FieldTests);
+                SetupFieldAngleCheck().AddToListOnFail(this.TestResults, this.Tests);
 
-                FieldTestResults.AddRange(this.FieldTests);
+                TestResults.AddRange(this.Tests);
             }
 
         }

@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using AriaSysSmall;
 using System.Text.RegularExpressions;
 using PlanSetup = VMS.TPS.Common.Model.API.PlanSetup;
 using VMS.TPS.Common.Model.API;
@@ -19,7 +18,7 @@ namespace VMS.TPS
         public GeneralPrescriptionTests(PlanSetup cPlan, string[] doctors) : base(cPlan, doctors)
         {
             PrescribedDosePercentageTestCase = new TestCase("Prescribed Dose Percentage Check", "Test performed to ensure prescribed dose percentage is set to 100%.", TestCase.PASS);
-            this.FieldTests.Add(PrescribedDosePercentageTestCase);
+            this.Tests.Add(PrescribedDosePercentageTestCase);
         }
 
         /* Iterates through each beam in the current plan and runs all field tests for each beam.
@@ -34,21 +33,29 @@ namespace VMS.TPS
          * Updated: JB 6/13/18
          */
         public void ExecuteTests(bool runPerBeam, Beam b = null) {
-        
+
             if (runPerBeam)
             {
-                PrescriptionBolusCheck(b).AddToListOnFail(this.TestResults, this.FieldTests);
-                PrescriptionEnergyCheck(b).AddToListOnFail(this.TestResults, this.FieldTests);
-            }
-            else
-            {
-                PrescribedDosePercentageCheck().AddToListOnFail(this.TestResults, this.FieldTests);
-                PrescriptionApprovalCheck().AddToListOnFail(this.TestResults, this.FieldTests);
-                PrescriptionFractionationCheck().AddToListOnFail(this.TestResults, this.FieldTests);
-                PrescriptionDosePerFractionCheck().AddToListOnFail(this.TestResults, this.FieldTests);
-                PrescriptionDoseCheck().AddToListOnFail(this.TestResults, this.FieldTests);
+                string removedTest = null;
 
-                TestResults.AddRange(this.FieldTests);
+                foreach (KeyValuePair<string, TestCase.Test> test in TestMethods)
+                {
+                    removedTest = test.Value(b).AddToListOnFail(this.TestResults, this.Tests);
+                }
+                if (removedTest != null)
+                {
+                    TestMethods.Remove(removedTest);
+                }
+            }
+            else //standalone tests
+            {
+                PrescriptionFractionationCheck().AddToListOnFail(this.TestResults, this.Tests);
+                PrescriptionDoseCheck().AddToListOnFail(this.TestResults, this.Tests);
+                PrescriptionDosePerFractionCheck().AddToListOnFail(this.TestResults, this.Tests);
+                PrescriptionApprovalCheck().AddToListOnFail(this.TestResults, this.Tests);
+                PrescribedDosePercentageCheck().AddToListOnFail(this.TestResults, this.Tests);
+
+                TestResults.AddRange(this.Tests);
             }
 
 
