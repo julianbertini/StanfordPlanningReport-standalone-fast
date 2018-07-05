@@ -2,8 +2,9 @@
 using System.Collections.Generic;
 using System.Linq;
 using VMS.TPS.Common.Model.API;
+using AriaEnmSmall;
 
-namespace StanfordPlanningReport
+namespace VMS.TPS
 {
     public class GeneralTests: SharedTests
     {
@@ -11,82 +12,86 @@ namespace StanfordPlanningReport
         private TestCase PlanNormalizationTestCase; 
         private TestCase CouchTestCase; 
         private TestCase DoseAlgorithmTestCase;  
-        private TestCase MachineScaleTestCase; // Added checking IEC scale 06/01/2018
-        private TestCase MachineIdTestCase; // Added checking machine constancy for all beams 06/01/2018
         private TestCase JawMaxTestCase;
         private TestCase JawMinTestCase;  // Added jaw min test on 5/30/2018
         private TestCase JawLimitTestCase; // Added Arc field x jaw size < 15cm on 5/30/2018
-        private TestCase DoseRateTestCase;
         private TestCase HighMUTestCase; 
         private TestCase TableHeightTestCase; 
         private TestCase SBRTDoseResolutionTestCase;
         private TestCase SBRTCTSliceThicknessTestCase;
-        private TestCase ShortTreatmentTimeTestCase;
+        private TestCase UserOriginTestCase;
+        private TestCase ImageDateTestCase;
+        private TestCase PatientOrientationTestCase;
+        private TestCase PlanningApprovalTestCase;
+        private TestCase TargetVolumeTestCase;
+        private TestCase ShiftNoteJournalTestCase;
 
-        private string MachineName;
         private double TargetVolume;
+        private string[] Doctors;
 
-
-        public GeneralTests(PlanSetup cPlan) : base(cPlan)
+        public GeneralTests(PlanSetup cPlan, string[] doctors) : base(cPlan)
         {
+            Doctors = doctors;
 
             // per Beam tests
             CouchTestCase = new TestCase("Couch Check", "(VMAT) Test performed to ensure correct couch is included in plan.", TestCase.PASS);
-            this.fieldTests.Add(CouchTestCase);
+            this.Tests.Add(CouchTestCase);
             this.testMethods.Add(CouchTestCase.GetName(), CouchCheck);
 
             PlanNormalizationTestCase = new TestCase("Plan Normalization Check", "(VMAT) Test performed to ensure plan normalization set to: 100.00% covers 95.00% of Target Volume.", TestCase.PASS);
-            this.fieldTests.Add(PlanNormalizationTestCase);
+            this.Tests.Add(PlanNormalizationTestCase);
             this.testMethods.Add(PlanNormalizationTestCase.GetName(), PlanNormalizationCheck);
 
             DoseAlgorithmTestCase = new TestCase("Dose Algorithm Check", "Test performed to ensure photon dose calculation algorithm is either AAA_V13623 or AcurosXB_V13623.", TestCase.PASS);
-            this.fieldTests.Add(DoseAlgorithmTestCase);
+            this.Tests.Add(DoseAlgorithmTestCase);
             this.testMethods.Add(DoseAlgorithmTestCase.GetName(), DoseAlgorithmCheck);
 
-            MachineScaleTestCase = new TestCase("Machine Scale Check", "Test performed to ensure machine IEC scale is used.", TestCase.PASS);
-            this.fieldTests.Add(MachineScaleTestCase);
-            this.testMethods.Add(MachineScaleTestCase.GetName(), MachineScaleCheck);
-
-            MachineIdTestCase = new TestCase("Machine Constancy Check", "Test performed to ensure all fields have the same treatment machine.", TestCase.PASS);
-            this.fieldTests.Add(MachineIdTestCase);
-            this.testMethods.Add(MachineIdTestCase.GetName(), MachineIdCheck);
-
             JawMaxTestCase = new TestCase("Jaw Max Check", "Test performed to ensure each jaw does not exceed 20.0 cm.", TestCase.PASS);
-            this.fieldTests.Add(JawMaxTestCase);
+            this.Tests.Add(JawMaxTestCase);
             this.testMethods.Add(JawMaxTestCase.GetName(), JawMaxCheck);
 
             JawMinTestCase = new TestCase("Jaw Min Check", "Test performed to ensure jaw X & Y >= 3.0 cm (3D plan) or 1.0 cm (control points for VMAT).", TestCase.PASS);
-            this.fieldTests.Add(JawMinTestCase);
+            this.Tests.Add(JawMinTestCase);
             this.testMethods.Add(JawMinTestCase.GetName(), JawMinCheck);
 
             JawLimitTestCase = new TestCase("Jaw limit Check", "(VMAT) Test performed to ensure X <= 14.5cm for CLINACs; Y1 & Y2 <= 10.5cm for TrueBeam HD MLC.", TestCase.PASS);
-            this.fieldTests.Add(JawLimitTestCase);
+            this.Tests.Add(JawLimitTestCase);
             this.testMethods.Add(JawLimitTestCase.GetName(), JawLimitCheck);
 
             TableHeightTestCase = new TestCase("Table Height Check", "(VMAT) Test performed to ensure table height is less than 21.0 cm.", TestCase.PASS);
-            this.fieldTests.Add(TableHeightTestCase);
+            this.Tests.Add(TableHeightTestCase);
             this.testMethods.Add(TableHeightTestCase.GetName(), TableHeightCheck);
 
             SBRTDoseResolutionTestCase = new TestCase("SBRT Dose Resolution", "Test performed to ensure SRS ARC plans or small target volumes < 5cc use a dose resolution of less than or equal to 1.5 mm.", TestCase.PASS);
-            this.fieldTests.Add(SBRTDoseResolutionTestCase);
+            this.Tests.Add(SBRTDoseResolutionTestCase);
             this.testMethods.Add(SBRTDoseResolutionTestCase.GetName(), SBRTDoseResolutionCheck);
 
             SBRTCTSliceThicknessTestCase = new TestCase("SBRT CT Slice Thickness", "Test performed to ensure SRS ARC plans or small target volumes < 5cc use a CT slice with thickness less than or equal to 2 mm.", TestCase.PASS);
-            this.fieldTests.Add(SBRTCTSliceThicknessTestCase);
+            this.Tests.Add(SBRTCTSliceThicknessTestCase);
             this.testMethods.Add(SBRTCTSliceThicknessTestCase.GetName(), SBRTCTSliceThicknessCheck);
 
-            ShortTreatmentTimeTestCase = new TestCase("Short Treatment Time Check", "Test performed to ensure minimum treatment time is met.", TestCase.PASS);
-            this.fieldTests.Add(ShortTreatmentTimeTestCase);
-            this.testMethods.Add(ShortTreatmentTimeTestCase.GetName(), ShortTreatmentTimeCheck);
-
-            DoseRateTestCase = new TestCase("Dose Rate Check", "Test performed to ensure maximum dose rates are set.", TestCase.PASS);
-            this.fieldTests.Add(DoseRateTestCase);
-            this.testMethods.Add(DoseRateTestCase.GetName(), DoseRateCheck);
 
             //standalone 
             HighMUTestCase = new TestCase("High MU Check", "Test performed to ensure total MU is less than 4 times the prescribed dose per fraction in cGy.", TestCase.PASS);
-            this.fieldTests.Add(HighMUTestCase);
+            this.Tests.Add(HighMUTestCase);
 
+            UserOriginTestCase = new TestCase("User Origin Check", "Test performed to ensure user origin is not set to (0.0, 0.0, 0.0).", TestCase.PASS);
+            this.Tests.Add(UserOriginTestCase);
+
+            ImageDateTestCase = new TestCase("Image Date Check", "Test performed to ensure date of image is within 14 days of the date the plan was created.", TestCase.PASS);
+            this.Tests.Add(ImageDateTestCase);
+
+            PatientOrientationTestCase = new TestCase("Patient Orientation Check", "Test performed to check if treatment orientation is the same as the CT image orientation.", TestCase.PASS);
+            this.Tests.Add(PatientOrientationTestCase);
+
+            PlanningApprovalTestCase = new TestCase("Planning Approval Check", "Test performed to ensure plan was planning approved by an approved person (faculty).", TestCase.PASS);
+            this.Tests.Add(PlanningApprovalTestCase);
+
+            TargetVolumeTestCase = new TestCase("Target Volume Check", "Test performed to ensure target volume does not contain string TS and contains the string PTV.", TestCase.PASS);
+            this.Tests.Add(TargetVolumeTestCase);
+
+            ShiftNoteJournalTestCase = new TestCase("Shift Note Journal Existence Check", "Test performed to ensure that shift notes have been created for the therapists.", TestCase.PASS);
+            this.Tests.Add(ShiftNoteJournalTestCase);
         }
 
         /* Iterates through each beam in the current plan and runs all field tests for each beam.
@@ -104,16 +109,29 @@ namespace StanfordPlanningReport
         {
             if (runPerBeam)
             {
+                string removedTest = null;
+
                 foreach (KeyValuePair<string, TestCase.Test> test in testMethods)
                 {
-                    test.Value(b).AddToListOnFail(this.fieldTestResults, this.fieldTests, this.testMethods);
+                    removedTest = test.Value(b).AddToListOnFail(this.TestResults, this.Tests);
+                }
+                if (removedTest != null)
+                {
+                    testMethods.Remove(removedTest);
                 }
             }
             else //standalone tests
             {
-                HighMUCheck().AddToListOnFail(this.fieldTestResults, this.fieldTests);
+                HighMUCheck().AddToListOnFail(this.TestResults, this.Tests);
+                UserOriginCheck().AddToListOnFail(this.TestResults, this.Tests);
+                ImageDateCheck().AddToListOnFail(this.TestResults, this.Tests);
+                PatientOrientationCheck().AddToListOnFail(this.TestResults, this.Tests);
+                PlanningApprovalCheck().AddToListOnFail(this.TestResults, this.Tests);
+                TargetVolumeCheck().AddToListOnFail(this.TestResults, this.Tests);
+
+                TestResults.AddRange(this.Tests);
             }
-            fieldTestResults.AddRange(this.fieldTests);
+
         }
 
         public TestCase CouchCheck(Beam b)
@@ -194,32 +212,6 @@ namespace StanfordPlanningReport
                 return DoseAlgorithmTestCase;
             }
             catch { DoseAlgorithmTestCase.SetResult(TestCase.FAIL); return DoseAlgorithmTestCase; }
-        }
-
-        private string FindMachineName()
-        {
-            string machineName = "";
-            foreach (Beam b in CurrentPlan.Beams)
-            {
-                if (!b.IsSetupField)
-                {
-                    machineName = b.TreatmentUnit.Id.ToString();
-                    break;
-                }
-            }
-            return machineName;
-        }
-
-        // Added machine consistency SL 06/01/2018
-        public TestCase MachineIdCheck(Beam b)
-        {
-            try
-            {
-                if (b.TreatmentUnit.Id.ToString() != MachineName) { MachineIdTestCase.SetResult(TestCase.FAIL); return MachineIdTestCase; }
-
-                return MachineIdTestCase;
-            }
-            catch { MachineIdTestCase.SetResult(TestCase.FAIL); return MachineIdTestCase; }
         }
 
         public TestCase JawMaxCheck(Beam b)
@@ -389,9 +381,7 @@ namespace StanfordPlanningReport
             catch { SBRTCTSliceThicknessTestCase.SetResult(TestCase.FAIL); return SBRTCTSliceThicknessTestCase; }
         }
 
-        
-
-        public TestCase DoseRateCheck(Beam b)
+        public override TestCase DoseRateCheck(Beam b)
         {
             try
             {
@@ -409,6 +399,119 @@ namespace StanfordPlanningReport
                 return DoseRateTestCase;
             }
             catch { DoseRateTestCase.SetResult(TestCase.FAIL); return DoseRateTestCase; }
+        }
+
+        public override TestCase MachineIdCheck(Beam b)
+        {
+            try
+            {
+                if (b.TreatmentUnit.Id.ToString() != MachineName) { MachineIdTestCase.SetResult(TestCase.FAIL); return MachineIdTestCase; }
+
+                return MachineIdTestCase;
+            }
+            catch { MachineIdTestCase.SetResult(TestCase.FAIL); return MachineIdTestCase; }
+        }
+
+        public TestCase UserOriginCheck()
+        {
+            try
+            {
+                if (CurrentPlan.StructureSet.Image.UserOrigin.x == 0.0 && CurrentPlan.StructureSet.Image.UserOrigin.y == 0.0 && CurrentPlan.StructureSet.Image.UserOrigin.z == 0.0)
+                                                                                                                                                            { UserOriginTestCase.SetResult(TestCase.FAIL); return UserOriginTestCase; }
+                return UserOriginTestCase;
+            }
+            catch (Exception ex) {
+                return UserOriginTestCase.HandleTestError(ex);
+            }
+        }
+
+        public TestCase ImageDateCheck()
+        {
+            try
+            {
+                if (CurrentPlan.CreationDateTime.Value.DayOfYear - 14 >= CurrentPlan.StructureSet.Image.Series.Study.CreationDateTime.Value.DayOfYear)
+                                                                                                                                                    { ImageDateTestCase.SetResult(TestCase.FAIL); return ImageDateTestCase; }
+                return ImageDateTestCase;
+            }
+            catch (Exception ex)
+            {
+                return ImageDateTestCase.HandleTestError(ex);
+            }
+        }
+
+        public TestCase PatientOrientationCheck()
+        {
+            try
+            {
+                if (CurrentPlan.TreatmentOrientation.ToString() != CurrentPlan.StructureSet.Image.ImagingOrientation.ToString())
+                                                                                                    { PatientOrientationTestCase.SetResult(TestCase.FAIL); return PatientOrientationTestCase; }
+                return PatientOrientationTestCase;
+            }
+            catch (Exception ex)
+            {
+                return PatientOrientationTestCase.HandleTestError(ex);
+            }
+        }
+
+
+        public TestCase PlanningApprovalCheck()
+        {
+            try
+            {
+                foreach (string dr in Doctors)
+                {
+                    if (CurrentPlan.PlanningApprover.ToString() == dr.ToString()) { return PlanningApprovalTestCase; }
+                }
+                PlanningApprovalTestCase.SetResult(TestCase.FAIL); return PlanningApprovalTestCase;
+            }
+            catch (Exception ex)
+            {
+                return PlanningApprovalTestCase.HandleTestError(ex);
+            }
+        }
+
+        public TestCase TargetVolumeCheck()
+        {
+            try
+            {
+                if ((CurrentPlan.TargetVolumeID.ToString().Contains("TS") || !CurrentPlan.TargetVolumeID.ToString().Contains("PTV")) 
+                                                                                                && CurrentPlan.PlanNormalizationMethod.ToString().Contains("Volume"))
+                                                                                                                                { TargetVolumeTestCase.SetResult(TestCase.FAIL); return TargetVolumeTestCase; }
+                return TargetVolumeTestCase;
+            }
+            catch (Exception ex)
+            {
+                return TargetVolumeTestCase.HandleTestError(ex);
+            }
+        }
+
+        // Added by SL 06/07/2018 Only check if dosi has created shift note yet
+        public TestCase ShiftNotesJournalCheck(PlanSetup CurrentPlan)
+        {
+            using (var ariaEnm = new AriaE())
+            {
+                try
+                {
+                    var pt_id_enm = ariaEnm.pt_inst_key.Where(tmp => tmp.pt_key_value == CurrentPlan.Course.Patient.Id).ToList().First().pt_id;
+                    if (pt_id_enm.Any())
+                    {
+                        var journalEntries = ariaEnm.quick_note.Where(tmp => tmp.pt_id == pt_id_enm).ToList();
+                        if (journalEntries.Any())
+                        {
+                            ShiftNoteJournalTestCase.SetResult(TestCase.FAIL);
+                            foreach (var tmp in journalEntries)
+                            {
+                                if (DateTime.Compare(tmp.note_tstamp.Value, CurrentPlan.CreationDateTime.Value.AddDays(30)) <= 0 && DateTime.Compare(tmp.note_tstamp.Value, CurrentPlan.CreationDateTime.Value.AddDays(-7)) >= 0 && (tmp.valid_entry_ind == "Y"))
+                                {
+                                    if (tmp.quick_note_text.Contains(CurrentPlan.Id)) { ShiftNoteJournalTestCase.SetResult(TestCase.PASS); break; }
+                                }
+                            }
+                        }
+                    }
+                    return ShiftNoteJournalTestCase;
+                }
+                catch { ShiftNoteJournalTestCase.SetResult(TestCase.FAIL); return ShiftNoteJournalTestCase; }
+            }
         }
 
     }

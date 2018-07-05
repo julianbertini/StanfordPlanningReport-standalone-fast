@@ -6,28 +6,24 @@ using System.Text.RegularExpressions;
 using PlanSetup = VMS.TPS.Common.Model.API.PlanSetup;
 using VMS.TPS.Common.Model.API;
 
-namespace StanfordPlanningReport
+namespace VMS.TPS
 {
     public class GeneralPrescriptionTests: SharedPrescriptionTests
     {
+        private TestCase PrescribedDosePercentageTestCase;
 
-        /* Constructor for FieldTest class to initialize the current plan object
+        /* Constructor for GeneralPrescriptionTests. It envokes the base class constructor (SharedPrescriptionTests), modifying only what's necessary.
          *
-         * Updated: JB 6/13/18
+         * Updated: JB 7/3/18
          */
-        public GeneralPrescriptionTests(PlanSetup cPlan, string[] doctors) : base(cPlan, doctors) { }
-
-        /* Getter method for List of field test results
-         * 
-         * Updated: JB 6/13/18
-         */
-        public List<TestCase> GetTestResults()
+        public GeneralPrescriptionTests(PlanSetup cPlan, string[] doctors) : base(cPlan, doctors)
         {
-            return fieldTestResults;
+            PrescribedDosePercentageTestCase = new TestCase("Prescribed Dose Percentage Check", "Test performed to ensure prescribed dose percentage is set to 100%.", TestCase.PASS);
+            this.FieldTests.Add(PrescribedDosePercentageTestCase);
         }
 
         /* Iterates through each beam in the current plan and runs all field tests for each beam.
-         * It modifies the fieldTestResults List to include the resulting test cases. 
+         * It modifies the FieldTestResults List to include the resulting test cases. 
          * It's organized such that failed tests will come before passed tests in the list (useful for later formatting).
          * 
          * Params: 
@@ -41,18 +37,20 @@ namespace StanfordPlanningReport
         
             if (runPerBeam)
             {
-                PrescriptionBolusCheck(b).AddToListOnFail(this.fieldTestResults, this.fieldTests);
-                PrescriptionEnergyCheck(b).AddToListOnFail(this.fieldTestResults, this.fieldTests);
+                PrescriptionBolusCheck(b).AddToListOnFail(this.TestResults, this.FieldTests);
+                PrescriptionEnergyCheck(b).AddToListOnFail(this.TestResults, this.FieldTests);
             }
             else
             {
-                PrescribedDosePercentageCheck().AddToListOnFail(this.fieldTestResults, this.fieldTests);
-                PrescriptionApprovalCheck().AddToListOnFail(this.fieldTestResults, this.fieldTests);
-                PrescriptionFractionationCheck().AddToListOnFail(this.fieldTestResults, this.fieldTests);
-                PrescriptionDosePerFractionCheck().AddToListOnFail(this.fieldTestResults, this.fieldTests);
-                PrescriptionDoseCheck().AddToListOnFail(this.fieldTestResults, this.fieldTests);
+                PrescribedDosePercentageCheck().AddToListOnFail(this.TestResults, this.FieldTests);
+                PrescriptionApprovalCheck().AddToListOnFail(this.TestResults, this.FieldTests);
+                PrescriptionFractionationCheck().AddToListOnFail(this.TestResults, this.FieldTests);
+                PrescriptionDosePerFractionCheck().AddToListOnFail(this.TestResults, this.FieldTests);
+                PrescriptionDoseCheck().AddToListOnFail(this.TestResults, this.FieldTests);
+
+                TestResults.AddRange(this.FieldTests);
             }
-            fieldTestResults.AddRange(this.fieldTests);
+
 
         }
 
@@ -113,11 +111,11 @@ namespace StanfordPlanningReport
             {
                 if (!b.IsSetupField)
                 {
-                    if (b.Boluses.Count() == 0 && (bolusInfo[0] != null || bolusInfo[1] != null) )
+                    if (b.Boluses.Count() == 0 && (_BolusInfo[0] != null || _BolusInfo[1] != null) )
                     {
                         PrescriptionBolusTestCase.SetResult(TestCase.FAIL); return PrescriptionBolusTestCase;
                     }
-                    if ( b.Boluses.Count() != 0 && (bolusInfo[0] == null || bolusInfo[1] == null) )
+                    if ( b.Boluses.Count() != 0 && (_BolusInfo[0] == null || _BolusInfo[1] == null) )
                     {
                         PrescriptionBolusTestCase.SetResult(TestCase.FAIL); return PrescriptionBolusTestCase;
                     }

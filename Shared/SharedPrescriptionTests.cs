@@ -6,48 +6,44 @@ using System.Text.RegularExpressions;
 using PlanSetup = VMS.TPS.Common.Model.API.PlanSetup;
 using VMS.TPS.Common.Model.API;
 
-namespace StanfordPlanningReport
+namespace VMS.TPS
 {
     public abstract class SharedPrescriptionTests
     {
         protected PlanSetup CurrentPlan;
-        protected string[] Doctors;
-        protected string[] bolusInfo;
-        protected List<TestCase> fieldTestResults;
-        protected List<TestCase> fieldTests;
+        protected string[] _Doctors;
+        protected string[] _BolusInfo;
+        public List<TestCase> TestResults { get; set; }
+        protected List<TestCase> FieldTests;
 
         // All field tests here
         protected TestCase PrescriptionApprovalTestCase;
         protected TestCase PrescriptionFractionationTestCase;
         protected TestCase PrescriptionDosePerFractionTestCase;
         protected TestCase PrescriptionDoseTestCase;
-        protected TestCase PrescribedDosePercentageTestCase;
         protected TestCase PrescriptionEnergyTestCase;
         protected TestCase PrescriptionBolusTestCase;
 
         public SharedPrescriptionTests(PlanSetup cPlan, string[] doctors)
         {
-            fieldTestResults = new List<TestCase>();
-            fieldTests = new List<TestCase>();
-            Doctors = doctors;
+            TestResults = new List<TestCase>();
+            FieldTests = new List<TestCase>();
+            _Doctors = doctors;
             CurrentPlan = cPlan;
 
-            bolusInfo = GetBolusFreqAndThickness();
+            _BolusInfo = GetBolusFreqAndThickness();
 
             PrescriptionApprovalTestCase = new TestCase("Prescription Approval Check", "Test performed to check that prescription is approved by MD.", TestCase.PASS);
-            this.fieldTests.Add(PrescriptionApprovalTestCase);
+            this.FieldTests.Add(PrescriptionApprovalTestCase);
 
             PrescriptionFractionationTestCase = new TestCase("Prescription Fractionation Check", "Test performed to ensure planned fractionation matches linked prescription.", TestCase.PASS);
-            this.fieldTests.Add(PrescriptionFractionationTestCase);
+            this.FieldTests.Add(PrescriptionFractionationTestCase);
 
             PrescriptionDosePerFractionTestCase = new TestCase("Prescription Dose Per Fraction Check", "Test performed to ensure planned dose per fraction matches linked prescription.", TestCase.PASS);
-            this.fieldTests.Add(PrescriptionDosePerFractionTestCase);
+            this.FieldTests.Add(PrescriptionDosePerFractionTestCase);
 
             PrescriptionDoseTestCase = new TestCase("Prescription Dose Check", "Test performed to ensure planned total dose matches linked prescription.", TestCase.PASS);
-            this.fieldTests.Add(PrescriptionDoseTestCase);
-
-            PrescribedDosePercentageTestCase = new TestCase("Prescribed Dose Percentage Check", "Test performed to ensure prescribed dose percentage is set to 100%.", TestCase.PASS);
-            this.fieldTests.Add(PrescribedDosePercentageTestCase);
+            this.FieldTests.Add(PrescriptionDoseTestCase);
 
             PrescriptionEnergyTestCase = new TestCase("Prescription Energy Check", "Test performed to ensure planned energy matches linked prescription.", TestCase.PASS);
 
@@ -139,7 +135,7 @@ namespace StanfordPlanningReport
                         }
                     }
 
-                    if (Doctors.Contains(CurrentPlan.RTPrescription.HistoryUserName) && rx_status.ToString().ToUpper().Contains("APPROVED"))
+                    if (_Doctors.Contains(CurrentPlan.RTPrescription.HistoryUserName) && rx_status.ToString().ToUpper().Contains("APPROVED"))
                     { PrescriptionApprovalTestCase.SetResult(TestCase.PASS); return PrescriptionApprovalTestCase; }
                     else { PrescriptionApprovalTestCase.SetResult(TestCase.FAIL); return PrescriptionApprovalTestCase; }
                 }

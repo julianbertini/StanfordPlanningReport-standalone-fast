@@ -2,12 +2,12 @@
 using System.Collections.Generic;
 using VMS.TPS.Common.Model.API;
 
-namespace StanfordPlanningReport.TSEI
+namespace VMS.TPS
 {
-    class TSEITests : SharedTests
+    class TSEITests 
     {
 
-        public TSEITests(PlanSetup cPlan) : base(cPlan)
+        public TSEITests(PlanSetup cPlan) 
         {
 
         }

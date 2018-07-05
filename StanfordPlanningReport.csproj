@@ -9,7 +9,7 @@
     <OutputType>Exe</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
     <RootNamespace>StanfordPlanningReport</RootNamespace>
-    <AssemblyName>StanfordPlanningReport</AssemblyName>
+    <AssemblyName>StanfordPlanningReportTEST4.esapi</AssemblyName>
     <TargetFrameworkVersion>v4.6.1</TargetFrameworkVersion>
     <TargetFrameworkProfile>
     </TargetFrameworkProfile>
@@ -35,7 +35,7 @@
     <DebugSymbols>true</DebugSymbols>
     <DebugType>full</DebugType>
     <Optimize>false</Optimize>
-    <OutputPath>bin\debug</OutputPath>
+    <OutputPath>.\</OutputPath>
     <DefineConstants>DEBUG;TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
@@ -50,6 +50,9 @@
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
     <Prefer32Bit>false</Prefer32Bit>
+  </PropertyGroup>
+  <PropertyGroup>
+    <StartupObject />
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="CommandLine, Version=1.9.71.2, Culture=neutral, PublicKeyToken=de6f01bd326f8c32, processorArchitecture=MSIL">
@@ -104,23 +107,31 @@
     <Reference Include="PresentationFramework" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Stanford_API_Plan_Report.cs" />
+    <Compile Include="Reports\Report.cs" />
     <Compile Include="General\GeneralFieldTests.cs" />
     <Compile Include="General\GeneralPrescriptionTests.cs" />
     <Compile Include="General\GeneralTests.cs" />
     <Compile Include="PhysicsCheck.cs" />
+    <Compile Include="Reports\MasterReport.cs" />
     <Compile Include="Route.cs" />
     <Compile Include="HTTPServer.cs" />
     <Compile Include="frontend\InteractiveReport.cs" />
-    <Compile Include="Report.cs" />
+    <Compile Include="Reports\PhysicsReport.cs" />
+    <Compile Include="Shared\SharedFieldTests.cs" />
     <Compile Include="Shared\SharedPrescriptionTests.cs" />
     <Compile Include="Shared\SharedTests.cs" />
     <Compile Include="TestCase.cs" />
-    <Compile Include="julianPlayground.cs" />
-    <Compile Include="StanfordPlanningReport.cs" />
+    <Compile Include="Testing\julianPlayground.cs" />
+    <Compile Include="Testing\StanfordPlanningReport.cs" />
+    <Compile Include="TSEI\TSEIFieldTests.cs" />
     <Compile Include="TSEI\TSEITests.cs" />
     <Compile Include="TSEI\TSEIPrescriptionTests.cs" />
+    <Compile Include="Warnings\Warnings.cs" />
   </ItemGroup>
   <ItemGroup>
+    <None Include=".gitattributes" />
+    <None Include=".gitignore" />
     <None Include="App.config">
       <SubType>Designer</SubType>
     </None>
@@ -317,7 +328,8 @@
     <Content Include="frontend\FailedCount.html" />
     <Content Include="frontend\updatedTestResults.html" />
     <Content Include="frontend\ackDetailsModal.html" />
-    <Content Include="PhysicsReport.html" />
+    <Content Include="Reports\Report.html" />
+    <Content Include="Reports\PhysicsReport.html" />
   </ItemGroup>
   <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

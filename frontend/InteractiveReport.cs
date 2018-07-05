@@ -5,11 +5,11 @@ using HtmlAgilityPack;
 using Patient = VMS.TPS.Common.Model.API.Patient;
 using PlanSetup = VMS.TPS.Common.Model.API.PlanSetup;
 
-namespace StanfordPlanningReport
+namespace VMS.TPS
 {
     class InteractiveReport
     {
-        private const string testResultsHTMLPath = @"Z:\\Users\\Jbertini\\ESAPI\\StanfordPlanningReport-standalone-fast\\frontend\\testResultsIndex.html";
+        private const string testResultsHTMLPath = @"Z:\\Users\\Jbertini\\ESAPI\\VMSTPS-standalone-fast\\frontend\\testResultsIndex.html";
         private const string IndexUrl = @"http://localhost/";
 
         private HtmlDocument importedDoc;

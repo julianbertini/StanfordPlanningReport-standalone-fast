@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using VMS.TPS.Common.Model.API;
 
-namespace StanfordPlanningReport
+namespace VMS.TPS
 {
     public class TestCase : IEquatable<TestCase>
     {
@@ -80,17 +80,15 @@ namespace StanfordPlanningReport
             return false;
         }
 
-        public void AddToListOnFail(List<TestCase> resultList, List<TestCase> inventory, Dictionary<string, Test> testMethods = null)
+        public string AddToListOnFail(List<TestCase> resultList, List<TestCase> inventory)
         {
             if (this.result == TestCase.FAIL && !resultList.Contains(this))
             {
                 resultList.Add(this);
                 inventory.Remove(this);
-                if (testMethods != null)
-                {
-                    testMethods.Remove(this.name);
-                }
+                return this.name;
             }
+            return null;
         }
 
         /* Error handling format for test cases that fail for some reason not related to intended purpose (i.e. something wrong with code)

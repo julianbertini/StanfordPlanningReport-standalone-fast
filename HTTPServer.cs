@@ -7,7 +7,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace StanfordPlanningReport
+namespace VMS.TPS
 {
     class HTTPServer
     {
@@ -16,7 +16,7 @@ namespace StanfordPlanningReport
         private HttpListener _listener;
         public Route Routes { get; set; }
 
-        private const string testResultsHTMLPath = @"Z:\\Users\\Jbertini\\ESAPI\\StanfordPlanningReport-standalone-fast\\frontend\\testResultsIndex.html";
+        private const string testResultsHTMLPath = @"Z:\\Users\\Jbertini\\ESAPI\\VMSTPS-standalone-fast\\frontend\\testResultsIndex.html";
 
         public HTTPServer()
         {
@@ -119,7 +119,7 @@ namespace StanfordPlanningReport
 
             response.StatusCode = (int)HttpStatusCode.OK;
             response.StatusDescription = "OK";
-            response.ProtocolVersion = new Version("1.1");
+            response.ProtocolVersion = new System.Version("1.1");
             response.AddHeader("Content-Type", "text/html; charset=utf-8");
 
             // Construct a response.
@@ -241,7 +241,7 @@ namespace StanfordPlanningReport
 
             response.StatusCode = (int)HttpStatusCode.NotFound;
             response.StatusDescription = "Resource not found";
-            response.ProtocolVersion = new Version("1.1");
+            response.ProtocolVersion = new System.Version("1.1");
 
             string message404;
             StringBuilder message = new StringBuilder();

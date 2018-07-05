@@ -6,11 +6,19 @@ using System.Text.RegularExpressions;
 using PlanSetup = VMS.TPS.Common.Model.API.PlanSetup;
 using VMS.TPS.Common.Model.API;
 
-namespace StanfordPlanningReport.TSEI
+namespace VMS.TPS
 {
     class TSEIPrescriptionTests: SharedPrescriptionTests
     {
-        public TSEIPrescriptionTests(PlanSetup cPlan, string[] doctors) : base(cPlan, doctors) { }
+        /* Constructor for TSEIPrescriptionTests. Calls base class constructor (SharedPrescriptionTests).
+         * Sets PrescribedDosePercentageTestCase as null since it does not apply here
+         * 
+         * Updated: JB 7/3/18
+         */
+        public TSEIPrescriptionTests(PlanSetup cPlan, string[] doctors) : base(cPlan, doctors)
+        {
+            PrescriptionBolusTestCase = new TestCase("Prescription Bolus Check", "Verifies that there is no bolus present in Rx or treatment plan.", TestCase.PASS);
+        }
 
         /* Verifies the fractionation. In the case of TSEI, fractionation will be 1/2 of total plan fractions, since 
          * 1/2 goes for AP and the other 1/2 for PA.
@@ -71,7 +79,7 @@ namespace StanfordPlanningReport.TSEI
         /* Verifies the energy of each beam respective to the Rx. It should always be 9E.
          * 
          * Params: 
-         *      None
+         *      Beam b - the current beam under consideration
          * 
          * Returns:
          *      PrescriptionEnergyTestCase - the test object representing the result of this test.
@@ -107,8 +115,8 @@ namespace StanfordPlanningReport.TSEI
         * Params: 
         *          Beam b - the current beam being considered
         * Returns: 
-        *          A failed test if bolus indications do not match
-        *          A passed test if bolus indications match 
+        *          A failed test if bolus exists in Rx or plan
+        *          A passed test if bolus does not exist  
         * 
         * Updated: JB 7/2/18
         */
@@ -118,7 +126,7 @@ namespace StanfordPlanningReport.TSEI
             {
                 if (!b.IsSetupField)
                 {
-                    if (b.Boluses.Count() != 0 || bolusInfo[0] != null || bolusInfo[1] != null)
+                    if (b.Boluses.Count() != 0 || _BolusInfo[0] != null || _BolusInfo[1] != null)
                     {
                         PrescriptionBolusTestCase.SetResult(TestCase.FAIL); return PrescriptionBolusTestCase;
                     }

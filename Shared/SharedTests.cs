@@ -7,36 +7,90 @@ using System.Text.RegularExpressions;
 using VMS.TPS.Common.Model.API;
 
 
-namespace StanfordPlanningReport
+namespace VMS.TPS
 {
-    public class SharedTests
+    public abstract class SharedTests
     {
         protected Dictionary<string, TestCase.Test> testMethods;
+        protected Dictionary<string, TestCase.Test> testMethodsCopy;
         protected PlanSetup CurrentPlan;
-        protected List<TestCase> fieldTestResults;
-        protected List<TestCase> fieldTests;
+        public List<TestCase> TestResults { get; set; }
+        protected List<TestCase> Tests;
+
+        protected TestCase MachineScaleTestCase; // Added checking IEC scale 06/01/2018
+        protected TestCase MachineIdTestCase;
+        protected TestCase ShortTreatmentTimeTestCase;
+        protected TestCase CourseNameTestCase;
+        protected TestCase ActiveCourseTestCase;
+        protected TestCase DoseRateTestCase;
+
+        protected string MachineName;
+
 
         public SharedTests(PlanSetup cPlan)
         {
             CurrentPlan = cPlan;
-            fieldTests = new List<TestCase>();
-            fieldTestResults = new List<TestCase>();
+            Tests = new List<TestCase>();
+            TestResults = new List<TestCase>();
             testMethods = new Dictionary<string, TestCase.Test>();
+            testMethodsCopy = new Dictionary<string, TestCase.Test>();
+
+            MachineName = FindMachineName();
+
+            // per Beam tests
+            MachineScaleTestCase = new TestCase("Machine Scale Check", "Test performed to ensure machine IEC scale is used.", TestCase.PASS);
+            this.Tests.Add(MachineScaleTestCase);
+            this.testMethods.Add(MachineScaleTestCase.GetName(), MachineScaleCheck);
+
+            MachineIdTestCase = new TestCase("Machine Constancy Check", "Test performed to ensure all fields have the same treatment machine.", TestCase.PASS);
+            this.Tests.Add(MachineIdTestCase);
+            this.testMethods.Add(MachineIdTestCase.GetName(), MachineIdCheck);
+
+            ShortTreatmentTimeTestCase = new TestCase("Short Treatment Time Check", "Test performed to ensure minimum treatment time is met.", TestCase.PASS);
+            this.Tests.Add(ShortTreatmentTimeTestCase);
+            this.testMethods.Add(ShortTreatmentTimeTestCase.GetName(), ShortTreatmentTimeCheck);
+
+            DoseRateTestCase = new TestCase("Dose Rate Check", "Test performed to ensure maximum dose rates are set.", TestCase.PASS);
+            this.Tests.Add(DoseRateTestCase);
+            this.testMethods.Add(DoseRateTestCase.GetName(), DoseRateCheck);
+
+            // standalone tests
+            CourseNameTestCase = new TestCase("Course Name Check", "Verifies that course names are not blank after the 'C' character.", TestCase.PASS);
+            this.Tests.Add(CourseNameTestCase);
+
+            ActiveCourseTestCase = new TestCase("Active Course Check", "Test performed to ensure all courses other than the current course are completed.", TestCase.PASS);
+            this.Tests.Add(ActiveCourseTestCase);
         }
 
-        public TestCase AcitveCourseCheck(PlanSetup CurrentPlan)
-        {
-            TestCase ch = new TestCase("Active Course Check", "Test performed to ensure all courses other than the current course are completed.", TestCase.PASS);
+        public abstract TestCase DoseRateCheck(Beam b);
+        public abstract TestCase MachineIdCheck(Beam b);
 
+        private string FindMachineName()
+        {
+            string machineName = "";
+            foreach (Beam b in CurrentPlan.Beams)
+            {
+                if (!b.IsSetupField)
+                {
+                    machineName = b.TreatmentUnit.Id.ToString();
+                    break;
+                }
+            }
+            return machineName;
+        }
+
+        public TestCase AcitveCourseCheck()
+        {
             try
             {
                 foreach (Course c in CurrentPlan.Course.Patient.Courses)
                 {
-                    if (!c.CompletedDateTime.HasValue && CurrentPlan.Course.Id != c.Id) { ch.SetResult(TestCase.FAIL); return ch; }
+                    if (!c.CompletedDateTime.HasValue && CurrentPlan.Course.Id != c.Id) { ActiveCourseTestCase.SetResult(TestCase.FAIL); return ActiveCourseTestCase; }
                 }
-                ch.SetResult(TestCase.PASS); return ch;
+
+                return ActiveCourseTestCase;
             }
-            catch { ch.SetResult(TestCase.FAIL); return ch; }
+            catch { ActiveCourseTestCase.SetResult(TestCase.FAIL); return ActiveCourseTestCase; }
         }
 
         /* Makes sure that a course has a name starting with C and is not empty after the C
@@ -48,18 +102,17 @@ namespace StanfordPlanningReport
         * 
         * Updated: JB 6/15/18
         */
-        public TestCase CourseNameNotEmptyCheck(PlanSetup CurrentPlan)
+        public TestCase CourseNameCheck()
         {
-            TestCase test = new TestCase("Course Name Check", "Verifies that course names are not blank after the 'C' character.", TestCase.PASS);
 
             string name = CurrentPlan.Course.Id;
             string result = Regex.Match(name, @"C\d+").ToString();
             if (string.IsNullOrEmpty(result) || string.IsNullOrEmpty(name.Substring(result.Length, name.Length - result.Length)))
             {
-                test.SetResult(TestCase.FAIL); return test;
+                CourseNameTestCase.SetResult(TestCase.FAIL); return CourseNameTestCase;
             }
 
-            return test;
+            return CourseNameTestCase;
         }
 
         // Added machine scale check IEC61217 SL 06/01/2018
@@ -75,7 +128,6 @@ namespace StanfordPlanningReport
             }
             catch { MachineScaleTestCase.SetResult(TestCase.FAIL); return MachineScaleTestCase; }
         }
-
 
         // Updated by SL on 05/27/2018
         public TestCase ShortTreatmentTimeCheck(Beam b)

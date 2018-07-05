@@ -2,7 +2,7 @@
 using System.Net;
 using System.Collections.Generic;
 
-namespace StanfordPlanningReport
+namespace VMS.TPS
 {
     class Route
     {
