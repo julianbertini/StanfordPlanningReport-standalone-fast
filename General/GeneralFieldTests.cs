@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Linq;
+using System.Text.RegularExpressions;
 using System.Collections.Generic;
 using VMS.TPS.Common.Model.API;
 using PlanSetup = VMS.TPS.Common.Model.API.PlanSetup;
@@ -9,11 +10,11 @@ namespace VMS.TPS
     public class GeneralFieldTests: SharedFieldTests
     {
         // All field tests here
-        private TestCase setupFieldAngleTest;
-        private TestCase setupFieldNameTest;
-        private TestCase DRRAllFieldsTest;
-        private TestCase arcFieldNameTest;
-        private TestCase SetupFieldBolusTest;
+        private TestCase SetupFieldAngleTestCase;
+        private TestCase SetupFieldNameTestCase;
+        private TestCase DRRAllFieldsTestCase;
+        private TestCase ArcFieldNameTestCase;
+        private TestCase SetupFieldBolusTestCase;
 
 
         /* Constructor for FieldTest class to initialize the current plan object
@@ -23,26 +24,29 @@ namespace VMS.TPS
         public GeneralFieldTests(PlanSetup cPlan): base(cPlan)
         {
             // per Beam tests
-            setupFieldNameTest = new TestCase("Setup Field Name Check", @"Test performed to ensure setup fields are 
-                                                                                 named according to convention and tests angle values.", TestCase.PASS);
-            this.Tests.Add(setupFieldNameTest);
-            this.TestMethods.Add(setupFieldNameTest.GetName(),SetupFieldNameCheck);
+            SetupFieldNameTestCase = new TestCase("Setup Field Name", "Test not completed.", TestCase.FAIL);
+            this.Tests.Add(SetupFieldNameTestCase);
+            this.TestMethods.Add(SetupFieldNameTestCase.Name, SetupFieldNameCheck);
 
-            DRRAllFieldsTest = new TestCase("DRR Check", "Test performed to ensure that high resolution DRRs are present for all fields.", TestCase.PASS);
-            this.Tests.Add(DRRAllFieldsTest);
-            this.TestMethods.Add(DRRAllFieldsTest.GetName(), DRRAllFieldsCheck);
+            DRRAllFieldsTestCase = new TestCase("DRR Presence", "Test not completed.", TestCase.FAIL);
+            this.Tests.Add(DRRAllFieldsTestCase);
+            this.TestMethods.Add(DRRAllFieldsTestCase.Name, DRRAllFieldsCheck);
 
-            arcFieldNameTest = new TestCase("Arc Field Name Check", "(VMAT) Test performed to ensure ARC field names is consistent with direction (CW vs. CCW).", TestCase.PASS);
-            this.Tests.Add(arcFieldNameTest);
-            this.TestMethods.Add(arcFieldNameTest.GetName(), ArcFieldNameCheck);
+            ArcFieldNameTestCase = new TestCase("Arc Field Name (VMAT)", "Test not completed.", TestCase.FAIL);
+            this.Tests.Add(ArcFieldNameTestCase);
+            this.TestMethods.Add(ArcFieldNameTestCase.Name, ArcFieldNameCheck);
 
-            SetupFieldBolusTest = new TestCase("Setup Field Bolus Check", "Test performed to ensure setup fields are not linked with bolus, otherwise underliverable.", TestCase.PASS);
-            this.Tests.Add(SetupFieldBolusTest);
-            this.TestMethods.Add(SetupFieldBolusTest.GetName(),SetupFieldBolusCheck);
+            SetupFieldBolusTestCase = new TestCase("Setup Field Bolus", "Test not completed.", TestCase.FAIL);
+            this.Tests.Add(SetupFieldBolusTestCase);
+            this.TestMethods.Add(SetupFieldBolusTestCase.Name, SetupFieldBolusCheck);
+
+            TreatmentFieldNameTestCase = new TestCase("Tx Field Name and Angle (3D)", "Test not completed.", TestCase.FAIL);
+            this.Tests.Add(TreatmentFieldNameTestCase);
+            this.TestMethods.Add(TreatmentFieldNameTestCase.Name, TreatmentFieldNameCheck);
 
             // standalone tests
-            setupFieldAngleTest = new TestCase("Setup Field Angle Test", "Test performed to enture 4 cardinal angle setup fields are provided.", TestCase.PASS);
-            this.Tests.Add(setupFieldAngleTest);
+            SetupFieldAngleTestCase = new TestCase("Setup Fields Presence", "Test not completed.", TestCase.FAIL);
+            this.Tests.Add(SetupFieldAngleTestCase);
         }
 
         /* Getter method for List of field test results
@@ -69,16 +73,23 @@ namespace VMS.TPS
         {
             if (runPerBeam)
             {
-                string removedTest = null;
+                List<string> testsToRemove = new List<string>();
+                string testName = null;
 
-                foreach(KeyValuePair<string, TestCase.Test> test in TestMethods)
+                foreach (KeyValuePair<string, TestCase.Test> test in TestMethods)
                 {
-                    removedTest = test.Value(b).AddToListOnFail(this.TestResults, this.Tests);
+                    testName = test.Value(b).AddToListOnFail(this.TestResults, this.Tests);
+
+                    if (testName != null)
+                    {
+                        testsToRemove.Add(testName);
+                    }
                 }
-                if (removedTest != null)
+                foreach (string name in testsToRemove)
                 {
-                    TestMethods.Remove(removedTest);
+                    TestMethods.Remove(name);
                 }
+
             }
             else //standalone tests
             {
@@ -86,23 +97,25 @@ namespace VMS.TPS
 
                 TestResults.AddRange(this.Tests);
             }
-
         }
 
         //Added by SL 03/02/2018 - SetupFieldBolusCheck
         public TestCase SetupFieldBolusCheck(Beam b)
         {
+            SetupFieldBolusTestCase.Description = "Setup fields do not have bolus linked.";
+            SetupFieldBolusTestCase.Result = TestCase.PASS;
+
             try
             {
                 if ((b.IsSetupField) && (b.Boluses.Count() > 0))   // Setup fields have bolus attached -- errors!
                 {
-                    SetupFieldBolusTest.SetResult(TestCase.FAIL); return SetupFieldBolusTest;
+                    SetupFieldBolusTestCase.Result = TestCase.FAIL; return SetupFieldBolusTestCase;
                 }
-                SetupFieldBolusTest.SetResult(TestCase.PASS); return SetupFieldBolusTest;
+                SetupFieldBolusTestCase.Result = TestCase.PASS; return SetupFieldBolusTestCase;
             }
             catch (Exception ex)
             {
-                return setupFieldAngleTest.HandleTestError(ex);
+                return SetupFieldAngleTestCase.HandleTestError(ex);
             }
         }
 
@@ -110,7 +123,11 @@ namespace VMS.TPS
         //TODO: documentation
         public TestCase SetupFieldAngleCheck(Beam beam = null)
         {
+            SetupFieldAngleTestCase.Description = "4 cardinal angle setup fields provided.";
+            SetupFieldAngleTestCase.Result = TestCase.PASS;
+
             bool zero = false, ninety = false, oneEighty = false, twoSeventy = false;
+
             try
             {
                 foreach (Beam b in this.CurrentPlan.Beams) {
@@ -136,13 +153,13 @@ namespace VMS.TPS
                 }
                 if (!zero || !ninety || !oneEighty || !twoSeventy)
                 {
-                    setupFieldAngleTest.SetResult(TestCase.FAIL); return setupFieldAngleTest;
+                    SetupFieldAngleTestCase.Result = TestCase.FAIL; return SetupFieldAngleTestCase;
                 }
-                return setupFieldAngleTest;
+                return SetupFieldAngleTestCase;
             }
             catch (Exception ex)
             {
-                return setupFieldAngleTest.HandleTestError(ex);
+                return SetupFieldAngleTestCase.HandleTestError(ex);
             }
 
         }
@@ -150,70 +167,73 @@ namespace VMS.TPS
         //TODO: documentation
         public TestCase SetupFieldNameCheck(Beam b)
         {
+            SetupFieldNameTestCase.Description = "Setup fields named according to gantry angles.";
+            SetupFieldNameTestCase.Result = TestCase.PASS;
+
             try
             {
                 if (!b.IsSetupField)
                 {
-                    return setupFieldNameTest;
+                    return SetupFieldNameTestCase;
                 }
                 if (this.CurrentPlan.TreatmentOrientation.ToString() == "HeadFirstSupine" && !b.Id.ToString().ToUpper().Contains("CBCT"))
                 {
                     if (b.ControlPoints.First().GantryAngle.ToString("N1") == "0.0" && (!b.Id.ToString().ToUpper().Contains("AP")))
-                                                                    { setupFieldNameTest.SetResult(TestCase.FAIL); return setupFieldNameTest; }
+                                                                    { SetupFieldNameTestCase.Result = TestCase.FAIL; return SetupFieldNameTestCase; }
 
                     else if (b.ControlPoints.First().GantryAngle.ToString("N1") == "90.0" && (!b.Id.ToString().ToUpper().Contains("LLAT")
                                                                                             && !b.Id.ToString().ToUpper().Contains("L LAT")))
-                                                                            { setupFieldNameTest.SetResult(TestCase.FAIL); return setupFieldNameTest; }
+                                                                            { SetupFieldNameTestCase.Result = TestCase.FAIL; return SetupFieldNameTestCase; }
 
                     else if (b.ControlPoints.First().GantryAngle.ToString("N1") == "270.0" && (!b.Id.ToString().ToUpper().Contains("RLAT")
                                                                                             && !b.Id.ToString().ToUpper().Contains("R LAT")))
-                                                                            { setupFieldNameTest.SetResult(TestCase.FAIL); return setupFieldNameTest; }
+                                                                            { SetupFieldNameTestCase.Result = TestCase.FAIL; return SetupFieldNameTestCase; }
 
                     else if (b.ControlPoints.First().GantryAngle.ToString("N1") == "180.0" && (!b.Id.ToString().ToUpper().Contains("PA")))
-                                                                            { setupFieldNameTest.SetResult(TestCase.FAIL); return setupFieldNameTest; }
+                                                                            { SetupFieldNameTestCase.Result = TestCase.FAIL; return SetupFieldNameTestCase; }
 
                     else if (b.ControlPoints.First().GantryAngle.ToString("N1") == "45.0" && (!b.Id.ToString().ToUpper().Contains("LAO")))
-                                                                             { setupFieldNameTest.SetResult(TestCase.FAIL); return setupFieldNameTest; }
+                                                                             { SetupFieldNameTestCase.Result = TestCase.FAIL; return SetupFieldNameTestCase; }
 
                     else if (b.ControlPoints.First().GantryAngle.ToString("N1") == "315.0" && (!b.Id.ToString().ToUpper().Contains("RAO")))
-                                                                                { setupFieldNameTest.SetResult(TestCase.FAIL); return setupFieldNameTest; }
+                                                                                { SetupFieldNameTestCase.Result = TestCase.FAIL; return SetupFieldNameTestCase; }
                 }
                 else if (this.CurrentPlan.TreatmentOrientation.ToString() == "FeetFirstSupine" && b.Id.ToString().ToUpper() != "CBCT")
                 {
                     if (b.ControlPoints.First().GantryAngle.ToString("N1") == "0.0" && (!b.Id.ToString().ToUpper().Contains("AP")))
-                                                                    { setupFieldNameTest.SetResult(TestCase.FAIL); return setupFieldNameTest; }
+                                                                    { SetupFieldNameTestCase.Result = TestCase.FAIL; return SetupFieldNameTestCase; }
                     else if (b.ControlPoints.First().GantryAngle.ToString("N1") == "270.0" && (!b.Id.ToString().ToUpper().Contains("LLAT") && !b.Id.ToString().ToUpper().Contains("L LAT")))
-                                                                                                                                                        { setupFieldNameTest.SetResult(TestCase.FAIL); return setupFieldNameTest; }
+                                                                                                                                                        { SetupFieldNameTestCase.Result = TestCase.FAIL; return SetupFieldNameTestCase; }
                     else if (b.ControlPoints.First().GantryAngle.ToString("N1") == "90.0" && (!b.Id.ToString().ToUpper().Contains("RLAT") && !b.Id.ToString().ToUpper().Contains("R LAT")))
-                                                                                                                                                        { setupFieldNameTest.SetResult(TestCase.FAIL); return setupFieldNameTest; }
+                                                                                                                                                        { SetupFieldNameTestCase.Result = TestCase.FAIL; return SetupFieldNameTestCase; }
                     else if (b.ControlPoints.First().GantryAngle.ToString("N1") == "180.0" && (!b.Id.ToString().ToUpper().Contains("PA")))
-                                                                                                                                                        { setupFieldNameTest.SetResult(TestCase.FAIL); return setupFieldNameTest; }
+                                                                                                                                                        { SetupFieldNameTestCase.Result = TestCase.FAIL; return SetupFieldNameTestCase; }
                     else if (b.ControlPoints.First().GantryAngle.ToString("N1") == "45.0" && (!b.Id.ToString().ToUpper().Contains("RAO")))
-                                                                                                                                                        { setupFieldNameTest.SetResult(TestCase.FAIL); return setupFieldNameTest; }
+                                                                                                                                                        { SetupFieldNameTestCase.Result = TestCase.FAIL; return SetupFieldNameTestCase; }
                     else if (b.ControlPoints.First().GantryAngle.ToString("N1") == "315.0" && (!b.Id.ToString().ToUpper().Contains("LAO")))
-                                                                                                                                                        { setupFieldNameTest.SetResult(TestCase.FAIL); return setupFieldNameTest; }
+                                                                                                                                                        { SetupFieldNameTestCase.Result = TestCase.FAIL; return SetupFieldNameTestCase; }
                 }
                 else if (this.CurrentPlan.TreatmentOrientation.ToString() == "HeadFirstProne" && b.Id.ToString().ToUpper() != "CBCT")
                 {
                     if (b.ControlPoints.First().GantryAngle.ToString("N1") == "180.0" && (!b.Id.ToString().ToUpper().Contains("AP")))
-                                                                                                                                                        { setupFieldNameTest.SetResult(TestCase.FAIL); return setupFieldNameTest; }
+                                                                                                                                                        { SetupFieldNameTestCase.Result = TestCase.FAIL; return SetupFieldNameTestCase; }
                     else if (b.ControlPoints.First().GantryAngle.ToString("N1") == "270.0" && (!b.Id.ToString().ToUpper().Contains("LLAT") && !b.Id.ToString().ToUpper().Contains("L LAT")))
-                                                                                                                                                         { setupFieldNameTest.SetResult(TestCase.FAIL); return setupFieldNameTest; }
+                                                                                                                                                         { SetupFieldNameTestCase.Result = TestCase.FAIL; return SetupFieldNameTestCase; }
                     else if (b.ControlPoints.First().GantryAngle.ToString("N1") == "90.0" && (!b.Id.ToString().ToUpper().Contains("RLAT") && !b.Id.ToString().ToUpper().Contains("R LAT")))
-                                                                                                                                                         { setupFieldNameTest.SetResult(TestCase.FAIL); return setupFieldNameTest; }
+                                                                                                                                                         { SetupFieldNameTestCase.Result = TestCase.FAIL; return SetupFieldNameTestCase; }
                     else if (b.ControlPoints.First().GantryAngle.ToString("N1") == "0.0" && (!b.Id.ToString().ToUpper().Contains("PA")))
-                                                                                                                                                         { setupFieldNameTest.SetResult(TestCase.FAIL); return setupFieldNameTest; }
+                                                                                                                                                         { SetupFieldNameTestCase.Result = TestCase.FAIL; return SetupFieldNameTestCase; }
                     else if (b.ControlPoints.First().GantryAngle.ToString("N1") == "45.0" && (!b.Id.ToString().ToUpper().Contains("RPO")))
-                                                                                                                                                         { setupFieldNameTest.SetResult(TestCase.FAIL); return setupFieldNameTest; }
+                                                                                                                                                         { SetupFieldNameTestCase.Result = TestCase.FAIL; return SetupFieldNameTestCase; }
                     else if (b.ControlPoints.First().GantryAngle.ToString("N1") == "315.0" && (!b.Id.ToString().ToUpper().Contains("LPO")))
-                                                                                                                                                         { setupFieldNameTest.SetResult(TestCase.FAIL); return setupFieldNameTest; }
+                                                                                                                                                         { SetupFieldNameTestCase.Result = TestCase.FAIL; return SetupFieldNameTestCase; }
                 }
 
-                return setupFieldNameTest;
+                return SetupFieldNameTestCase;
             }
             catch (Exception ex)
             {
-                return setupFieldNameTest.HandleTestError(ex);
+                return SetupFieldNameTestCase.HandleTestError(ex);
             }
 
         }
@@ -221,11 +241,14 @@ namespace VMS.TPS
         //TODO: documentation
         public override TestCase TreatmentFieldNameCheck(Beam b)
         {
+            TreatmentFieldNameTestCase.Description = "Tx field names and corresponding gantry angles match.";
+            TreatmentFieldNameTestCase.Result = TestCase.PASS;
+
             try
             {
                 if (b.IsSetupField || b.Id.ToString().ToUpper().Contains("TNG")
                                           || b.MLCPlanType.ToString().ToUpper() == "VMAT" || b.MLCPlanType.ToString().ToUpper() == "ARC")
-                                        { TreatmentFieldNameTest.SetResult(TestCase.PASS); return TreatmentFieldNameTest; }
+                                        { TreatmentFieldNameTestCase.Result = TestCase.PASS; return TreatmentFieldNameTestCase; }
 
 
 
@@ -233,66 +256,66 @@ namespace VMS.TPS
                 {
                     if ((b.Id.ToString().ToUpper().Contains("AP") || b.Id.ToString().ToUpper().Contains("ANT"))
                                                                     && b.ControlPoints.First().GantryAngle.ToString("N1") != "0.0")
-                                        { TreatmentFieldNameTest.SetResult(TestCase.FAIL); return TreatmentFieldNameTest; }
+                                        { TreatmentFieldNameTestCase.Result = TestCase.FAIL; return TreatmentFieldNameTestCase; }
 
                     else if ((b.Id.ToString().ToUpper().Contains("PA") || b.Id.ToString().ToUpper().Contains("POST"))
                                                                         && b.ControlPoints.First().GantryAngle.ToString("N1") != "180.0")
-                                        { TreatmentFieldNameTest.SetResult(TestCase.FAIL); return TreatmentFieldNameTest; }
+                                        { TreatmentFieldNameTestCase.Result = TestCase.FAIL; return TreatmentFieldNameTestCase; }
 
                     else if ((b.Id.ToString().ToUpper().Contains("LLAT") || b.Id.ToString().ToUpper().Contains("L LAT") 
                                                                                                 || b.Id.ToString().ToUpper().Contains("LEFT"))
                                                                             && b.ControlPoints.First().GantryAngle.ToString("N1") != "90.0")
-                                        { TreatmentFieldNameTest.SetResult(TestCase.FAIL); return TreatmentFieldNameTest; }
+                                        { TreatmentFieldNameTestCase.Result = TestCase.FAIL; return TreatmentFieldNameTestCase; }
 
                     else if ((b.Id.ToString().ToUpper().Contains("RLAT") || b.Id.ToString().ToUpper().Contains("R LAT") 
                                                                                                 || b.Id.ToString().ToUpper().Contains("RIGHT"))
                                                                             && b.ControlPoints.First().GantryAngle.ToString("N1") != "270.0")
-                                        { TreatmentFieldNameTest.SetResult(TestCase.FAIL); return TreatmentFieldNameTest; }
+                                        { TreatmentFieldNameTestCase.Result = TestCase.FAIL; return TreatmentFieldNameTestCase; }
                 }
                 else if (this.CurrentPlan.TreatmentOrientation.ToString() == "FeetFirstSupine")
                 {
                     if ((b.Id.ToString().ToUpper().Contains("AP") || b.Id.ToString().ToUpper().Contains("ANT"))
                                                                     && b.ControlPoints.First().GantryAngle.ToString("N1") != "0.0")
-                                { TreatmentFieldNameTest.SetResult(TestCase.FAIL); return TreatmentFieldNameTest; }
+                                { TreatmentFieldNameTestCase.Result = TestCase.FAIL; return TreatmentFieldNameTestCase; }
 
                     else if ((b.Id.ToString().ToUpper().Contains("PA") || b.Id.ToString().ToUpper().Contains("ANT"))
                                                                         && b.ControlPoints.First().GantryAngle.ToString("N1") != "180.0")
-                                { TreatmentFieldNameTest.SetResult(TestCase.FAIL); return TreatmentFieldNameTest; }
+                                { TreatmentFieldNameTestCase.Result = TestCase.FAIL; return TreatmentFieldNameTestCase; }
 
                     else if ((b.Id.ToString().ToUpper().Contains("RLAT") || b.Id.ToString().ToUpper().Contains("R LAT") 
                                                                                                 || b.Id.ToString().ToUpper().Contains("RIGHT"))
                                                                             && b.ControlPoints.First().GantryAngle.ToString("N1") != "90.0")
-                                { TreatmentFieldNameTest.SetResult(TestCase.FAIL); return TreatmentFieldNameTest; }
+                                { TreatmentFieldNameTestCase.Result = TestCase.FAIL; return TreatmentFieldNameTestCase; }
 
                     else if ((b.Id.ToString().ToUpper().Contains("LLAT") || b.Id.ToString().ToUpper().Contains("L LAT") 
                                                                                                 || b.Id.ToString().ToUpper().Contains("LEFT"))
                                                                             && b.ControlPoints.First().GantryAngle.ToString("N1") != "270.0")
-                                { TreatmentFieldNameTest.SetResult(TestCase.FAIL); return TreatmentFieldNameTest; }
+                                { TreatmentFieldNameTestCase.Result = TestCase.FAIL; return TreatmentFieldNameTestCase; }
                 }
                 else if (this.CurrentPlan.TreatmentOrientation.ToString() == "HeadFirstProne")
                 {
                     if ((b.Id.ToString().ToUpper().Contains("PA") || b.Id.ToString().ToUpper().Contains("POST"))
                                                                     && b.ControlPoints.First().GantryAngle.ToString("N1") != "0.0")
-                                { TreatmentFieldNameTest.SetResult(TestCase.FAIL); return TreatmentFieldNameTest; }
+                                { TreatmentFieldNameTestCase.Result = TestCase.FAIL; return TreatmentFieldNameTestCase; }
 
                     else if ((b.Id.ToString().ToUpper().Contains("AP") || b.Id.ToString().ToUpper().Contains("ANT"))
                                                                         && b.ControlPoints.First().GantryAngle.ToString("N1") != "180.0")
-                                { TreatmentFieldNameTest.SetResult(TestCase.FAIL); return TreatmentFieldNameTest; }
+                                { TreatmentFieldNameTestCase.Result = TestCase.FAIL; return TreatmentFieldNameTestCase; }
 
                     else if ((b.Id.ToString().ToUpper().Contains("RLAT") || b.Id.ToString().ToUpper().Contains("R LAT") || b.Id.ToString().ToUpper().Contains("RIGHT"))
                                                                             && b.ControlPoints.First().GantryAngle.ToString("N1") != "90.0")
-                                { TreatmentFieldNameTest.SetResult(TestCase.FAIL); return TreatmentFieldNameTest; }
+                                { TreatmentFieldNameTestCase.Result = TestCase.FAIL; return TreatmentFieldNameTestCase; }
 
                     else if ((b.Id.ToString().ToUpper().Contains("LLAT") || b.Id.ToString().ToUpper().Contains("L LAT") || b.Id.ToString().ToUpper().Contains("LEFT"))
                                                                             && b.ControlPoints.First().GantryAngle.ToString("N1") != "270.0")
-                                { TreatmentFieldNameTest.SetResult(TestCase.FAIL); return TreatmentFieldNameTest; }
+                                { TreatmentFieldNameTestCase.Result = TestCase.FAIL; return TreatmentFieldNameTestCase; }
                 }
 
-                return TreatmentFieldNameTest;
+                return TreatmentFieldNameTestCase;
             }
             catch (Exception ex)
             {
-                return TreatmentFieldNameTest.HandleTestError(ex);
+                return TreatmentFieldNameTestCase.HandleTestError(ex);
             }
         }
 
@@ -300,17 +323,20 @@ namespace VMS.TPS
         //TODO: documentation
         public TestCase DRRAllFieldsCheck(Beam b)
         {
+            DRRAllFieldsTestCase.Description = "High resolution DRRs present for all fields.";
+            DRRAllFieldsTestCase.Result = TestCase.PASS;
+
             try
             {
                 if (b.ReferenceImage == null)
                 {
-                    DRRAllFieldsTest.SetResult(TestCase.FAIL); return DRRAllFieldsTest;
+                    DRRAllFieldsTestCase.Result = TestCase.FAIL; return DRRAllFieldsTestCase;
                 }
-                return DRRAllFieldsTest;
+                return DRRAllFieldsTestCase;
             }
             catch (Exception ex)
             {
-                return DRRAllFieldsTest.HandleTestError(ex);
+                return DRRAllFieldsTestCase.HandleTestError(ex);
             }
         }
 
@@ -325,37 +351,42 @@ namespace VMS.TPS
          */
         public TestCase ArcFieldNameCheck(Beam b)
         {
+            ArcFieldNameTestCase.Description = "ARC field names consistent with direction.";
+            ArcFieldNameTestCase.Result = TestCase.PASS;
+
             try
             {
                 if (!b.IsSetupField && (b.MLCPlanType.ToString().ToUpper().Contains("VMAT") || b.MLCPlanType.ToString().ToUpper().Contains("ARC")))
                 {
-                    if ((int)b.GantryDirection == 0)
+                    if (b.GantryDirection.ToString() == "None")
                     {
                         if (b.Id.ToString().ToUpper().Contains("CW") || b.Id.ToString().ToUpper().Contains("CCW"))
                         {
-                            arcFieldNameTest.SetResult(TestCase.FAIL); return arcFieldNameTest;
+                            ArcFieldNameTestCase.Result = TestCase.FAIL; return ArcFieldNameTestCase;
                         }
                     }
-                    if ((int)b.GantryDirection == 1)
+                    if (b.GantryDirection.ToString() == "Clockwise")
                     {
                         if (b.Id.ToString().ToUpper().Contains("CCW") || !b.Id.ToString().ToUpper().Contains("CW"))
                         {
-                            arcFieldNameTest.SetResult(TestCase.FAIL); return arcFieldNameTest;
+                            ArcFieldNameTestCase.Result = TestCase.FAIL; return ArcFieldNameTestCase;
                         }
                     }
                     else
                     {
-                        if (b.Id.ToString().ToUpper().Contains("CW") || !b.Id.ToString().ToUpper().Contains("CCW"))
+                        string result = Regex.Match(b.GantryDirection.ToString(), @"\ACW").ToString();
+
+                        if (result.Length > 0 || !b.Id.ToString().ToUpper().Contains("CCW"))
                         {
-                            arcFieldNameTest.SetResult(TestCase.FAIL); return arcFieldNameTest;
+                            ArcFieldNameTestCase.Result = TestCase.FAIL; return ArcFieldNameTestCase;
                         }
                     }
                 }
-                return arcFieldNameTest;
+                return ArcFieldNameTestCase;
             }
             catch (Exception ex)
             {
-                return arcFieldNameTest.HandleTestError(ex);
+                return ArcFieldNameTestCase.HandleTestError(ex);
             }
         }
 

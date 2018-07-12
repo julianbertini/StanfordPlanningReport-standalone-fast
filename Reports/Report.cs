@@ -1,38 +1,43 @@
 ﻿using System;
 using System.Linq;
 using VMS.TPS.Common.Model.API;
+using System.Collections.Generic;
 using PlanSetup = VMS.TPS.Common.Model.API.PlanSetup;
 using Patient = VMS.TPS.Common.Model.API.Patient;
 using Course = VMS.TPS.Common.Model.API.Course;
 
 namespace VMS.TPS
 {
-    class Report
+    public class Report
     {
-
         private PlanSetup CurrentPlan;
         private Patient Patient;
         private Course Course;
+        private double[] Shifts;
+        private int[] IsoGroup;
+        public Dictionary<string, string[]> ShiftGroups { get; set; }
+        private System.IO.StringWriter IsoHtml;
 
         public Report(PlanSetup cPlan, Patient patient, Course course)
         {
             CurrentPlan = cPlan;
             Course = course;
-            Patient = patient; 
+            Patient = patient;
+            Shifts = new double[3];
+            IsoGroup = null;
+            ShiftGroups = new Dictionary<string, string[]>();
+            IsoHtml = new System.IO.StringWriter();
         }
 
-        public static string[] ShiftNote(Beam b, PlanSetup CurrentPlan)
+        public string[] ShiftNote(Beam b, PlanSetup CurrentPlan)
         {
             if (CurrentPlan.StructureSet == null)
             {
                 return new string[] { "", "", "" };
             }
-
-            double[] Shifts;
             string[] ShiftDir;
             string[] ShiftText;
 
-            Shifts = new double[3];
             ShiftDir = new string[3];
             ShiftText = new string[3];
 
@@ -73,6 +78,130 @@ namespace VMS.TPS
             }
 
             return ShiftText;
+        }
+
+        public string GetShiftInfo()
+        {
+            string[] shiftInfo = new string[4];
+            
+            int counter = 0;
+
+            int NumberOfTreatmentFields = 0;
+            foreach (Beam b in CurrentPlan.Beams) { if (!b.IsSetupField) { NumberOfTreatmentFields++; } }
+
+            string[] isoText = new string[NumberOfTreatmentFields];
+
+            foreach (Beam b in CurrentPlan.Beams)
+            {
+                if (!b.IsSetupField)
+                {
+                    isoText[counter] = b.IsocenterPosition.x.ToString() + b.IsocenterPosition.y.ToString() + b.IsocenterPosition.z.ToString();
+                    counter++;
+                }
+            }
+            int NumIsoGroups = isoText.Distinct().ToArray().Count();
+            var isoTextDistinct = isoText.Distinct().ToArray();
+
+            IsoGroup = new int[NumberOfTreatmentFields];
+
+            counter = 0;
+            for (int i = 0; i < NumIsoGroups; i++)
+            {
+                foreach (Beam b in CurrentPlan.Beams)
+                {
+                    if (!b.IsSetupField)
+                    {
+                        if (b.IsocenterPosition.x.ToString() + b.IsocenterPosition.y.ToString() + b.IsocenterPosition.z.ToString() == isoTextDistinct[i])
+                        {
+                            IsoGroup[counter] = i + 1;
+                        }
+                        counter++;
+                    }
+                }
+                counter = 0;
+            }
+
+            bool isoGroup1Flag = false;
+            bool isoGroup2Flag = false;
+            bool isoGroup3Flag = false;
+            counter = 0;
+
+            foreach (Beam b in CurrentPlan.Beams)
+            {
+                if (!b.IsSetupField)
+                {
+                    if (IsoGroup[counter] == 1 && isoGroup1Flag == false)
+                    {
+                        if (ShiftNote(b, CurrentPlan)[0].ToString() == "" && ShiftNote(b, CurrentPlan)[1].ToString() == "" && ShiftNote(b, CurrentPlan)[2].ToString() == "")
+                        {
+                            IsoHtml.WriteLine("{0}{1}{2}{3}{4}{5}{6}{7}", "<h3> Isocenter Group 1:</h3><h4> ", CurrentPlan.Id, "<br>Isoshift from CT REF:</h4><div class=\"tab\"><h4>", "No Shifts", "<br>", "</h4><h4>TT: ", (b.ControlPoints.First().TableTopVerticalPosition / 10.0).ToString("N1"), " cm</h4><br></div>");
+                            shiftInfo[0] = "No Shifts";
+                            shiftInfo[1] = (b.ControlPoints.First().TableTopVerticalPosition / 10.0).ToString("N1");
+                            ShiftGroups["Group1"] = shiftInfo;
+                            isoGroup1Flag = true;
+                        }
+                        else
+                        {
+                            IsoHtml.WriteLine("{0}{1}{2}{3}{4}{5}{6}{7}{8}{9}{10}{11}", "<h3> Isocenter Group 1:</h3><h4> ", CurrentPlan.Id, "<br>Isoshift from CT REF:</h4><div class=\"tab\"><h4>", ShiftNote(b, CurrentPlan)[0].ToString(), "<br>", ShiftNote(b, CurrentPlan)[1].ToString(), "<br>", ShiftNote(b, CurrentPlan)[2].ToString(), "<br>", "</h4><h4>TT: ", (b.ControlPoints.First().TableTopVerticalPosition / 10.0).ToString("N1"), " cm</h4><br></div>");
+                            shiftInfo[0] = ShiftNote(b, CurrentPlan)[0];
+                            shiftInfo[1] = ShiftNote(b, CurrentPlan)[1];
+                            shiftInfo[2] = ShiftNote(b, CurrentPlan)[2];
+                            shiftInfo[3] = (b.ControlPoints.First().TableTopVerticalPosition / 10.0).ToString("N1");
+                            ShiftGroups["Group1"] = shiftInfo;
+                            isoGroup1Flag = true;
+                        }
+                    }
+                    else if (IsoGroup[counter] == 2 && isoGroup2Flag == false)
+                    {
+                        if (ShiftNote(b, CurrentPlan)[0].ToString() == "" && ShiftNote(b, CurrentPlan)[1].ToString() == "" && ShiftNote(b, CurrentPlan)[2].ToString() == "")
+                        {
+                            IsoHtml.WriteLine("{0}{1}{2}{3}{4}{5}{6}{7}", "<h3> Isocenter Group 2:</h3><h4> ", CurrentPlan.Id, "<br>Isoshift from CT REF:</h4><div class=\"tab\"><h4>", "No Shifts", "<br>", "</h4><h4>TT: ", (b.ControlPoints.First().TableTopVerticalPosition / 10.0).ToString("N1"), " cm</h4><br></div>");
+                            shiftInfo[0] = "No Shifts";
+                            shiftInfo[1] = (b.ControlPoints.First().TableTopVerticalPosition / 10.0).ToString("N1");
+                            ShiftGroups["Group2"] = shiftInfo;
+                            isoGroup2Flag = true;
+                        }
+                        else
+                        {
+                            IsoHtml.WriteLine("{0}{1}{2}{3}{4}{5}{6}{7}{8}{9}{10}{11}", "<h3> Isocenter Group 2:</h3><h4> ", CurrentPlan.Id, "<br>Isoshift from CT REF:</h4><div class=\"tab\"><h4>", ShiftNote(b, CurrentPlan)[0].ToString(), "<br>", ShiftNote(b, CurrentPlan)[1].ToString(), "<br>", ShiftNote(b, CurrentPlan)[2].ToString(), "<br>", "</h4><h4>TT: ", (b.ControlPoints.First().TableTopVerticalPosition / 10.0).ToString("N1"), " cm</h4><br></div>");
+                            shiftInfo[0] = ShiftNote(b, CurrentPlan)[0];
+                            shiftInfo[1] = ShiftNote(b, CurrentPlan)[1];
+                            shiftInfo[2] = ShiftNote(b, CurrentPlan)[2];
+                            shiftInfo[3] = (b.ControlPoints.First().TableTopVerticalPosition / 10.0).ToString("N1");
+                            ShiftGroups["Group2"] = shiftInfo;
+                            isoGroup2Flag = true;
+                        }
+                    }
+                    else if (IsoGroup[counter] == 3 && isoGroup3Flag == false)
+                    {
+                        if (ShiftNote(b, CurrentPlan)[0].ToString() == "" && ShiftNote(b, CurrentPlan)[1].ToString() == "" && ShiftNote(b, CurrentPlan)[2].ToString() == "")
+                        {
+                            IsoHtml.WriteLine("{0}{1}{2}{3}{4}{5}{6}{7}", "<h3> Isocenter Group 3:</h3><h4> ", CurrentPlan.Id, "<br>Isoshift from CT REF:</h4><div class=\"tab\"><h4>", "No Shifts", "<br>", "</h4><h4>TT: ", (b.ControlPoints.First().TableTopVerticalPosition / 10.0).ToString("N1"), " cm</h4><br></div>");
+                            shiftInfo[0] = "No Shifts";
+                            shiftInfo[1] = (b.ControlPoints.First().TableTopVerticalPosition / 10.0).ToString("N1");
+                            ShiftGroups["Group3"] = shiftInfo;
+                            isoGroup3Flag = true;
+                        }
+                        else
+                        {
+                            IsoHtml.WriteLine("{0}{1}{2}{3}{4}{5}{6}{7}{8}{9}{10}{11}", "<h3> Isocenter Group 3:</h3><h4> ", CurrentPlan.Id, "<br>Isoshift from CT REF:</h4><div class=\"tab\"><h4>", ShiftNote(b, CurrentPlan)[0].ToString(), "<br>", ShiftNote(b, CurrentPlan)[1].ToString(), "<br>", ShiftNote(b, CurrentPlan)[2].ToString(), "<br>", "</h4><h4>TT: ", (b.ControlPoints.First().TableTopVerticalPosition / 10.0).ToString("N1"), " cm</h4><br></div>");
+                            shiftInfo[0] = ShiftNote(b, CurrentPlan)[0];
+                            shiftInfo[1] = ShiftNote(b, CurrentPlan)[1];
+                            shiftInfo[2] = ShiftNote(b, CurrentPlan)[2];
+                            shiftInfo[3] = (b.ControlPoints.First().TableTopVerticalPosition / 10.0).ToString("N1");
+                            ShiftGroups["Group3"] = shiftInfo;
+                            isoGroup3Flag = true;
+                        }
+                    }
+                    else if (IsoGroup[counter] > 3)
+                    {
+                        IsoHtml.WriteLine("{0}", "<h3> Cannot handle more than 3 isocenter groups! </h3>");
+                    }
+                    counter++;
+                }
+            }
+
+            return IsoHtml.ToString();
         }
 
         public string FormatReport()
@@ -450,102 +579,11 @@ namespace VMS.TPS
             reportContent = reportContent.Replace("{PLAN_APPROVED_BY}", CurrentPlan.PlanningApprover.ToString());
             reportContent = reportContent.Replace("{PLAN_APPROVAL_DATE}", CurrentPlan.PlanningApprovalDate.ToString());
 
-            int NumberOfTreatmentFields = 0;
-            foreach (Beam b in CurrentPlan.Beams) { if (!b.IsSetupField) { NumberOfTreatmentFields++; } }
 
-            int counter = 0;
-            string[] isoText = new string[NumberOfTreatmentFields];
-
-            foreach (Beam b in CurrentPlan.Beams)
-            {
-                if (!b.IsSetupField)
-                {
-                    isoText[counter] = b.IsocenterPosition.x.ToString() + b.IsocenterPosition.y.ToString() + b.IsocenterPosition.z.ToString();
-                    counter++;
-                }
-            }
-            int NumIsoGroups = isoText.Distinct().ToArray().Count();
-            var isoTextDistinct = isoText.Distinct().ToArray();
-
-            int[] isoGroup = new int[NumberOfTreatmentFields];
-
-            counter = 0;
-            for (int i = 0; i < NumIsoGroups; i++)
-            {
-                foreach (Beam b in CurrentPlan.Beams)
-                {
-                    if (!b.IsSetupField)
-                    {
-                        if (b.IsocenterPosition.x.ToString() + b.IsocenterPosition.y.ToString() + b.IsocenterPosition.z.ToString() == isoTextDistinct[i])
-                        {
-                            isoGroup[counter] = i + 1;
-                        }
-                        counter++;
-                    }
-                }
-                counter = 0;
-            }
-
-            System.IO.StringWriter isoHtml = new System.IO.StringWriter();
-
-            bool isoGroup1Flag = false;
-            bool isoGroup2Flag = false;
-            bool isoGroup3Flag = false;
-            counter = 0;
-            foreach (Beam b in CurrentPlan.Beams)
-            {
-                if (!b.IsSetupField)
-                {
-                    if (isoGroup[counter] == 1 && isoGroup1Flag == false)
-                    {
-                        if (ShiftNote(b, CurrentPlan)[0].ToString() == "" && ShiftNote(b, CurrentPlan)[1].ToString() == "" && ShiftNote(b, CurrentPlan)[2].ToString() == "")
-                        {
-                            isoHtml.WriteLine("{0}{1}{2}{3}{4}{5}{6}{7}", "<h3> Isocenter Group 1:</h3><h4> ", CurrentPlan.Id, "<br>Isoshift from CT REF:</h4><div class=\"tab\"><h4>", "No Shifts", "<br>", "</h4><h4>TT: ", (b.ControlPoints.First().TableTopVerticalPosition / 10.0).ToString("N1"), " cm</h4><br></div>");
-                            isoGroup1Flag = true;
-                        }
-                        else
-                        {
-                            isoHtml.WriteLine("{0}{1}{2}{3}{4}{5}{6}{7}{8}{9}{10}{11}", "<h3> Isocenter Group 1:</h3><h4> ", CurrentPlan.Id, "<br>Isoshift from CT REF:</h4><div class=\"tab\"><h4>", ShiftNote(b, CurrentPlan)[0].ToString(), "<br>", ShiftNote(b, CurrentPlan)[1].ToString(), "<br>", ShiftNote(b, CurrentPlan)[2].ToString(), "<br>", "</h4><h4>TT: ", (b.ControlPoints.First().TableTopVerticalPosition / 10.0).ToString("N1"), " cm</h4><br></div>");
-                            isoGroup1Flag = true;
-                        }
-                    }
-                    else if (isoGroup[counter] == 2 && isoGroup2Flag == false)
-                    {
-                        if (ShiftNote(b, CurrentPlan)[0].ToString() == "" && ShiftNote(b, CurrentPlan)[1].ToString() == "" && ShiftNote(b, CurrentPlan)[2].ToString() == "")
-                        {
-                            isoHtml.WriteLine("{0}{1}{2}{3}{4}{5}{6}{7}", "<h3> Isocenter Group 2:</h3><h4> ", CurrentPlan.Id, "<br>Isoshift from CT REF:</h4><div class=\"tab\"><h4>", "No Shifts", "<br>", "</h4><h4>TT: ", (b.ControlPoints.First().TableTopVerticalPosition / 10.0).ToString("N1"), " cm</h4><br></div>");
-                            isoGroup2Flag = true;
-                        }
-                        else
-                        {
-                            isoHtml.WriteLine("{0}{1}{2}{3}{4}{5}{6}{7}{8}{9}{10}{11}", "<h3> Isocenter Group 2:</h3><h4> ", CurrentPlan.Id, "<br>Isoshift from CT REF:</h4><div class=\"tab\"><h4>", ShiftNote(b, CurrentPlan)[0].ToString(), "<br>", ShiftNote(b, CurrentPlan)[1].ToString(), "<br>", ShiftNote(b, CurrentPlan)[2].ToString(), "<br>", "</h4><h4>TT: ", (b.ControlPoints.First().TableTopVerticalPosition / 10.0).ToString("N1"), " cm</h4><br></div>");
-                            isoGroup2Flag = true;
-                        }
-                    }
-                    else if (isoGroup[counter] == 3 && isoGroup3Flag == false)
-                    {
-                        if (ShiftNote(b, CurrentPlan)[0].ToString() == "" && ShiftNote(b, CurrentPlan)[1].ToString() == "" && ShiftNote(b, CurrentPlan)[2].ToString() == "")
-                        {
-                            isoHtml.WriteLine("{0}{1}{2}{3}{4}{5}{6}{7}", "<h3> Isocenter Group 3:</h3><h4> ", CurrentPlan.Id, "<br>Isoshift from CT REF:</h4><div class=\"tab\"><h4>", "No Shifts", "<br>", "</h4><h4>TT: ", (b.ControlPoints.First().TableTopVerticalPosition / 10.0).ToString("N1"), " cm</h4><br></div>");
-                            isoGroup3Flag = true;
-                        }
-                        else
-                        {
-                            isoHtml.WriteLine("{0}{1}{2}{3}{4}{5}{6}{7}{8}{9}{10}{11}", "<h3> Isocenter Group 3:</h3><h4> ", CurrentPlan.Id, "<br>Isoshift from CT REF:</h4><div class=\"tab\"><h4>", ShiftNote(b, CurrentPlan)[0].ToString(), "<br>", ShiftNote(b, CurrentPlan)[1].ToString(), "<br>", ShiftNote(b, CurrentPlan)[2].ToString(), "<br>", "</h4><h4>TT: ", (b.ControlPoints.First().TableTopVerticalPosition / 10.0).ToString("N1"), " cm</h4><br></div>");
-                            isoGroup3Flag = true;
-                        }
-                    }
-                    else if (isoGroup[counter] > 3)
-                    {
-                        isoHtml.WriteLine("{0}", "<h3> Cannot handle more than 3 isocenter groups! </h3>");
-                    }
-                    counter++;
-                }
-            }
 
             // Try to re-arrange treatment beams' order
 
-            reportContent = reportContent.Replace("{ISO_SHIFT_TEXT}", isoHtml.ToString());
+            reportContent = reportContent.Replace("{ISO_SHIFT_TEXT}", GetShiftInfo());
 
             System.IO.StringWriter FieldHtmlText = new System.IO.StringWriter();
 
@@ -560,12 +598,13 @@ namespace VMS.TPS
 
             FieldHtmlText.WriteLine("{0}", "<TR>");
             FieldHtmlText.WriteLine("{0}", "<TD><b>Isocenter Group:</b></TD>");
-            counter = 0;
+
+            int counter = 0;
             foreach (Beam b in CurrentPlan.Beams)
             {
                 if (!b.IsSetupField)
                 {
-                    try { FieldHtmlText.WriteLine("{0}{1}{2}", "<TD>", isoGroup[counter], "</TD>"); }
+                    try { FieldHtmlText.WriteLine("{0}{1}{2}", "<TD>", IsoGroup[counter], "</TD>"); }
                     catch { FieldHtmlText.WriteLine("{0}{1}{2}", "<TD>", "None", "</TD>"); }
                     counter++;
                 }

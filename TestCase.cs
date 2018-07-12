@@ -13,9 +13,9 @@ namespace VMS.TPS
         public const string ACK = "ACK";
         public const string WARN = "WARN";
 
-        private string name;
-        private string description;
-        private string result;
+        public string Name { get; set; }
+        public string Description { get; set; }
+        public string Result { get; set; }
         public string Comments { get; set; }
 
         /* Constructor for the TestResult struct. Initializes struct attributes. 
@@ -32,39 +32,10 @@ namespace VMS.TPS
          */
         public TestCase(string nm, string desc, string res, string comments = null)
         {
-            name = nm;
-            description = desc;
-            result = res;
+            Name = nm;
+            Description = desc;
+            Result = res;
             comments = null;
-        }
-
-        /* Getter and setter methods for TestCase attributes.
-         * 
-         * Updated: JB 6/13/18
-         */
-        public void SetName(string name)
-        {
-            this.name = name;
-        }
-        public void SetDescription(string description)
-        {
-            this.description = description;
-        }
-        public void SetResult(string result)
-        {
-            this.result = result;
-        }
-        public string GetResult()
-        {
-            return this.result;
-        }
-        public string GetName()
-        {
-            return this.name;
-        }
-        public string GetDescription()
-        {
-            return this.description;
         }
 
         /* Defines equality for any two arbitrary tests
@@ -73,7 +44,7 @@ namespace VMS.TPS
          */
         public bool Equals(TestCase other)
         {
-            if (this.name == other.name && this.description == other.description)
+            if (this.Name == other.Name && this.Description == other.Description)
             {
                 return true;
             }
@@ -82,11 +53,11 @@ namespace VMS.TPS
 
         public string AddToListOnFail(List<TestCase> resultList, List<TestCase> inventory)
         {
-            if (this.result == TestCase.FAIL && !resultList.Contains(this))
+            if (this.Result == TestCase.FAIL && !resultList.Contains(this))
             {
                 resultList.Add(this);
                 inventory.Remove(this);
-                return this.name;
+                return this.Name;
             }
             return null;
         }
@@ -106,8 +77,8 @@ namespace VMS.TPS
         {
             Console.WriteLine(ex.ToString());
 
-            this.SetResult(TestCase.FAIL);
-            this.SetDescription("An unknown error occured while attempting to run this test. Please report it, including patient ID or other pertinent details.");
+            this.Result = TestCase.FAIL;
+            this.Description = "An unknown error occured while attempting to run this test. Please report it, including patient ID or other pertinent details.";
             return this;
         }
     }

@@ -17,7 +17,7 @@ namespace VMS.TPS
          */
         public GeneralPrescriptionTests(PlanSetup cPlan, string[] doctors) : base(cPlan, doctors)
         {
-            PrescribedDosePercentageTestCase = new TestCase("Prescribed Dose Percentage Check", "Test performed to ensure prescribed dose percentage is set to 100%.", TestCase.PASS);
+            PrescribedDosePercentageTestCase = new TestCase("Prescribed Dose Percentage", "Test not completed.", TestCase.FAIL);
             this.Tests.Add(PrescribedDosePercentageTestCase);
         }
 
@@ -33,19 +33,25 @@ namespace VMS.TPS
          * Updated: JB 6/13/18
          */
         public void ExecuteTests(bool runPerBeam, Beam b = null) {
-
             if (runPerBeam)
             {
-                string removedTest = null;
+                List<string> testsToRemove = new List<string>();
+                string testName = null;
 
                 foreach (KeyValuePair<string, TestCase.Test> test in TestMethods)
                 {
-                    removedTest = test.Value(b).AddToListOnFail(this.TestResults, this.Tests);
+                    testName = test.Value(b).AddToListOnFail(this.TestResults, this.Tests);
+
+                    if (testName != null)
+                    {
+                        testsToRemove.Add(testName);
+                    }
                 }
-                if (removedTest != null)
+                foreach (string name in testsToRemove)
                 {
-                    TestMethods.Remove(removedTest);
+                    TestMethods.Remove(name);
                 }
+
             }
             else //standalone tests
             {
@@ -63,23 +69,28 @@ namespace VMS.TPS
 
         public TestCase PrescribedDosePercentageCheck()
         {
+            PrescribedDosePercentageTestCase.Description = "Rx dose % is set to 100%.";
+            PrescribedDosePercentageTestCase.Result = TestCase.PASS;
+
             try
             {
-                if (CurrentPlan.PrescribedPercentage != 1.0) { PrescribedDosePercentageTestCase.SetResult(TestCase.FAIL); return PrescribedDosePercentageTestCase; }
-                else {PrescribedDosePercentageTestCase.SetResult(TestCase.PASS); return PrescribedDosePercentageTestCase; }
+                if (CurrentPlan.PrescribedPercentage != 1.0) { PrescribedDosePercentageTestCase.Result = TestCase.FAIL; return PrescribedDosePercentageTestCase; }
+                else {PrescribedDosePercentageTestCase.Result = TestCase.PASS; return PrescribedDosePercentageTestCase; }
             }
-            catch { PrescribedDosePercentageTestCase.SetResult(TestCase.FAIL); return PrescribedDosePercentageTestCase; }
+            catch { PrescribedDosePercentageTestCase.Result = TestCase.FAIL; return PrescribedDosePercentageTestCase; }
         }
 
         public override TestCase PrescriptionFractionationCheck()
         {
+            PrescriptionFractionationTestCase.Description = "Plan fractionation matches linked Rx.";
+            PrescriptionFractionationTestCase.Result = TestCase.PASS;
             try
             {
                 foreach (RTPrescriptionTarget t in CurrentPlan.RTPrescription.Targets)
                 {
-                    if (t.NumberOfFractions == CurrentPlan.UniqueFractionation.NumberOfFractions) { PrescriptionFractionationTestCase.SetResult(TestCase.PASS); return PrescriptionFractionationTestCase; }
+                    if (t.NumberOfFractions == CurrentPlan.UniqueFractionation.NumberOfFractions) { PrescriptionFractionationTestCase.Result = TestCase.PASS; return PrescriptionFractionationTestCase; }
                 }
-                PrescriptionFractionationTestCase.SetResult(TestCase.FAIL); return PrescriptionFractionationTestCase;
+                PrescriptionFractionationTestCase.Result = TestCase.FAIL; return PrescriptionFractionationTestCase;
             }
             catch(Exception ex) {
                 return PrescriptionFractionationTestCase.HandleTestError(ex);
@@ -88,6 +99,8 @@ namespace VMS.TPS
 
         public override TestCase PrescriptionDoseCheck()
         {
+            PrescriptionDoseTestCase.Description = "Planned total dose matches linked Rx.";
+            PrescriptionDoseTestCase.Result = TestCase.PASS;
 
             try
             {
@@ -95,11 +108,11 @@ namespace VMS.TPS
                 {
                     if (Math.Abs(t.DosePerFraction.Dose * t.NumberOfFractions - CurrentPlan.UniqueFractionation.PrescribedDosePerFraction.Dose * 
                                                                                                                         CurrentPlan.UniqueFractionation.NumberOfFractions.Value) <= 0.1)
-                                                                                                                            { PrescriptionDoseTestCase.SetResult(TestCase.PASS); return PrescriptionDoseTestCase; }
+                                                                                                                            { PrescriptionDoseTestCase.Result = TestCase.PASS; return PrescriptionDoseTestCase; }
                 }
-                PrescriptionDoseTestCase.SetResult(TestCase.FAIL); return PrescriptionDoseTestCase;
+                PrescriptionDoseTestCase.Result = TestCase.FAIL; return PrescriptionDoseTestCase;
             }
-            catch { PrescriptionDoseTestCase.SetResult(TestCase.FAIL); return PrescriptionDoseTestCase; }
+            catch { PrescriptionDoseTestCase.Result = TestCase.FAIL; return PrescriptionDoseTestCase; }
         }
 
         /* Verifies that the existence of bolus in Rx matches the existence of bolus in treatment fields.
@@ -114,17 +127,20 @@ namespace VMS.TPS
         */
         public override TestCase PrescriptionBolusCheck(Beam b)
         {
+            PrescriptionBolusTestCase.Description = "Presence of bolus on all Tx fields if bolus included in Rx.";
+            PrescriptionBolusTestCase.Result = TestCase.PASS;
+
             try
             {
                 if (!b.IsSetupField)
                 {
                     if (b.Boluses.Count() == 0 && (_BolusInfo[0] != null || _BolusInfo[1] != null) )
                     {
-                        PrescriptionBolusTestCase.SetResult(TestCase.FAIL); return PrescriptionBolusTestCase;
+                        PrescriptionBolusTestCase.Result = TestCase.FAIL; return PrescriptionBolusTestCase;
                     }
                     if ( b.Boluses.Count() != 0 && (_BolusInfo[0] == null || _BolusInfo[1] == null) )
                     {
-                        PrescriptionBolusTestCase.SetResult(TestCase.FAIL); return PrescriptionBolusTestCase;
+                        PrescriptionBolusTestCase.Result = TestCase.FAIL; return PrescriptionBolusTestCase;
                     }
                 }
 
@@ -140,6 +156,9 @@ namespace VMS.TPS
 
         public override TestCase PrescriptionEnergyCheck(Beam b)
         {
+            PrescriptionEnergyTestCase.Description = "Planned energy matches linked Rx.";
+            PrescriptionEnergyTestCase.Result = TestCase.PASS;
+
             try
             {
                 if (!b.IsSetupField)
@@ -148,7 +167,7 @@ namespace VMS.TPS
 
                     if (!CurrentPlan.RTPrescription.Energies.Any(l => l.Contains(value)))
                     {
-                        PrescriptionEnergyTestCase.SetResult(TestCase.FAIL); return PrescriptionEnergyTestCase;
+                        PrescriptionEnergyTestCase.Result = TestCase.FAIL; return PrescriptionEnergyTestCase;
                     }
                 }
                 return PrescriptionEnergyTestCase;

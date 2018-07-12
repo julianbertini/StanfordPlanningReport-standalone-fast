@@ -36,7 +36,7 @@ namespace VMS.TPS
             generalTests.ExecuteTests(runPerBeam);
 
             Results.AddRange(generalPrescriptionTests.TestResults);
-            Results.AddRange(fieldTests.GetTestResults());
+            Results.AddRange(fieldTests.TestResults);
             Results.AddRange(generalTests.TestResults);
 
         }

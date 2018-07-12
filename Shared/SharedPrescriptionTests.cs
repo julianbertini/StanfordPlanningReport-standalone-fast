@@ -35,27 +35,28 @@ namespace VMS.TPS
             _BolusInfo = GetBolusFreqAndThickness();
 
             // per Beam
-            PrescriptionEnergyTestCase = new TestCase("Prescription Energy Check", "Test performed to ensure planned energy matches linked prescription.", TestCase.PASS);
-            this.Tests.Add(PrescriptionEnergyTestCase);
-            this.TestMethods.Add(PrescriptionEnergyTestCase.GetName(), PrescriptionEnergyCheck);
-
-            PrescriptionBolusTestCase = new TestCase("Prescription Bolus Check", "Test performed to check presence of bolus on all treatment fields if bolus included in prescription.", TestCase.PASS);
+            PrescriptionBolusTestCase = new TestCase("Prescription Bolus", "Test not completed.", TestCase.FAIL);
             this.Tests.Add(PrescriptionBolusTestCase);
-            this.TestMethods.Add(PrescriptionBolusTestCase.GetName(), PrescriptionBolusCheck);
+            this.TestMethods.Add(PrescriptionBolusTestCase.Name, PrescriptionBolusCheck);
+
+            PrescriptionEnergyTestCase = new TestCase("Prescription Energy", "Test not completed.", TestCase.FAIL);
+            this.Tests.Add(PrescriptionEnergyTestCase);
+            this.TestMethods.Add(PrescriptionEnergyTestCase.Name, PrescriptionEnergyCheck);
+
 
             // standalone
-            PrescriptionApprovalTestCase = new TestCase("Prescription Approval Check", "Test performed to check that prescription is approved by MD.", TestCase.PASS);
+            PrescriptionApprovalTestCase = new TestCase("Prescription Approval", "Test not completed.", TestCase.FAIL);
             this.Tests.Add(PrescriptionApprovalTestCase);
 
-            PrescriptionDosePerFractionTestCase = new TestCase("Prescription Dose Per Fraction Check", "Test performed to ensure planned dose per fraction matches linked prescription.", TestCase.PASS);
+            PrescriptionDosePerFractionTestCase = new TestCase("Prescription Dose Per Fraction", "Test not completed.", TestCase.FAIL);
             this.Tests.Add(PrescriptionDosePerFractionTestCase);
 
-
-            PrescriptionFractionationTestCase = new TestCase("Prescription Fractionation Check", "Test performed to ensure planned fractionation matches linked prescription.", TestCase.PASS);
+            PrescriptionFractionationTestCase = new TestCase("Prescription Fractionation", "Test not completed.", TestCase.FAIL);
             this.Tests.Add(PrescriptionFractionationTestCase);
 
-            PrescriptionDoseTestCase = new TestCase("Prescription Dose Check", "Test performed to ensure planned total dose matches linked prescription.", TestCase.PASS);
+            PrescriptionDoseTestCase = new TestCase("Prescription Dose", "Test not completed", TestCase.FAIL);
             this.Tests.Add(PrescriptionDoseTestCase);
+
         }
 
         public abstract TestCase PrescriptionEnergyCheck(Beam b);
@@ -101,20 +102,24 @@ namespace VMS.TPS
 
         public TestCase PrescriptionDosePerFractionCheck()
         {
+            PrescriptionDosePerFractionTestCase.Description = "Planned dose per fraction matches linked Rx.";
+            PrescriptionDosePerFractionTestCase.Result = TestCase.PASS;
 
             try
             {
                 foreach (RTPrescriptionTarget t in CurrentPlan.RTPrescription.Targets)
                 {
-                    if ((t.DosePerFraction.Dose - CurrentPlan.UniqueFractionation.PrescribedDosePerFraction.Dose) <= CurrentPlan.UniqueFractionation.PrescribedDosePerFraction.Dose * 0.01) { PrescriptionDosePerFractionTestCase.SetResult(TestCase.PASS); return PrescriptionDosePerFractionTestCase; }
+                    if ((t.DosePerFraction.Dose - CurrentPlan.UniqueFractionation.PrescribedDosePerFraction.Dose) <= CurrentPlan.UniqueFractionation.PrescribedDosePerFraction.Dose * 0.01) { PrescriptionDosePerFractionTestCase.Result = TestCase.PASS; return PrescriptionDosePerFractionTestCase; }
                 }
-                PrescriptionDosePerFractionTestCase.SetResult(TestCase.FAIL); return PrescriptionDosePerFractionTestCase;
+                PrescriptionDosePerFractionTestCase.Result = TestCase.FAIL; return PrescriptionDosePerFractionTestCase;
             }
-            catch { PrescriptionDosePerFractionTestCase.SetResult(TestCase.FAIL); return PrescriptionDosePerFractionTestCase; }
+            catch { PrescriptionDosePerFractionTestCase.Result = TestCase.FAIL; return PrescriptionDosePerFractionTestCase; }
         }
 
         public TestCase PrescriptionApprovalCheck()
         {
+            PrescriptionApprovalTestCase.Description = "Rx is approved by MD.";
+            PrescriptionApprovalTestCase.Result = TestCase.PASS;
 
             string rx_status = null;
             using (var aria = new AriaS())
@@ -144,10 +149,10 @@ namespace VMS.TPS
                     }
 
                     if (_Doctors.Contains(CurrentPlan.RTPrescription.HistoryUserName) && rx_status.ToString().ToUpper().Contains("APPROVED"))
-                    { PrescriptionApprovalTestCase.SetResult(TestCase.PASS); return PrescriptionApprovalTestCase; }
-                    else { PrescriptionApprovalTestCase.SetResult(TestCase.FAIL); return PrescriptionApprovalTestCase; }
+                    { PrescriptionApprovalTestCase.Result = TestCase.PASS; return PrescriptionApprovalTestCase; }
+                    else { PrescriptionApprovalTestCase.Result = TestCase.FAIL; return PrescriptionApprovalTestCase; }
                 }
-                catch { PrescriptionApprovalTestCase.SetResult(TestCase.FAIL); return PrescriptionApprovalTestCase; }
+                catch { PrescriptionApprovalTestCase.Result = TestCase.FAIL; return PrescriptionApprovalTestCase; }
             }
         }
 

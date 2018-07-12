@@ -48,12 +48,13 @@ namespace VMS.TPS
             Environment.SetEnvironmentVariable("ROOT_PATH", @"Z:\\Users\\Jbertini\\ESAPI\\StanfordPlanningReport-standalone-fast");
 
             Patient patient = app.OpenPatientById(PID);
-            Course course = patient.Courses.Last();
-            PlanSetup currentPlan = course.PlanSetups.Last();
+            Course course = patient.Courses.First();
+            PlanSetup currentPlan = course.PlanSetups.First();
 
             PhysicsCheck physics = new PhysicsCheck(currentPlan);
 
             // PDF CREATION
+            /*
             MasterReport report = new MasterReport(patient, course, currentPlan)
             {
                 TestResults = physics.Results
@@ -61,6 +62,26 @@ namespace VMS.TPS
             
             report.CreateReports();
             report.ShowReports();
+            */
+            
+            InteractiveReport iReport = new InteractiveReport(patient, currentPlan, course, physics.Results);
+
+            iReport.LaunchInteractiveReport();
+
+            while (!iReport.ExportReports);
+
+            iReport.Server.Stop();
+
+            Console.WriteLine("Export reports! ... :)");
+            MasterReport report = new MasterReport(patient, course, currentPlan)
+            {
+                TestResults = iReport.TestResults
+            };
+
+            report.CreateReports();
+            report.ShowReports();
+
+
         }
 
     }

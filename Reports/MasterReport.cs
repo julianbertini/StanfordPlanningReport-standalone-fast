@@ -100,6 +100,7 @@ namespace VMS.TPS
             htmlToPdf.Document.Margins = new PdfMargins(1.0F);
             htmlToPdf.Document.FitPageHeight = false;
             htmlToPdf.ConvertHtmlToFile(reportContent, null, reportSourceFile);
+
             htmlToPdf.Document.FitPageHeight = true;
             htmlToPdf.Document.FitPageWidth = true;
             htmlToPdf.ConvertHtmlToFile(physicsReportContent, null, physicsSourceFile);

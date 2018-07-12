@@ -27,71 +27,69 @@ namespace VMS.TPS
         private TestCase ShiftNoteJournalTestCase;
 
         private string[] Doctors;
-        private double TargetVolume;
 
         public GeneralTests(PlanSetup cPlan, string[] doctors) : base(cPlan)
         {
             Doctors = doctors;
-            TargetVolume = GetTargetVolume();
 
             // per Beam tests
-            CouchTestCase = new TestCase("Couch Check", "(VMAT) Test performed to ensure correct couch is included in plan.", TestCase.PASS);
+            CouchTestCase = new TestCase("Couch Structure (VMAT)", "Correct couch structure is included in plan.", TestCase.PASS);
             this.Tests.Add(CouchTestCase);
-            this.testMethods.Add(CouchTestCase.GetName(), CouchCheck);
+            this.TestMethods.Add(CouchTestCase.Name, CouchCheck);
 
-            PlanNormalizationTestCase = new TestCase("Plan Normalization Check", "(VMAT) Test performed to ensure plan normalization set to: 100.00% covers 95.00% of Target Volume.", TestCase.PASS);
+            PlanNormalizationTestCase = new TestCase("Plan Normalization (VMAT)", "Plan normalization: 100% covers 95% of Target Volume.", TestCase.PASS);
             this.Tests.Add(PlanNormalizationTestCase);
-            this.testMethods.Add(PlanNormalizationTestCase.GetName(), PlanNormalizationCheck);
+            this.TestMethods.Add(PlanNormalizationTestCase.Name, PlanNormalizationCheck);
 
-            DoseAlgorithmTestCase = new TestCase("Dose Algorithm Check", "Test performed to ensure photon dose calculation algorithm is either AAA_V13623 or AcurosXB_V13623.", TestCase.PASS);
+            DoseAlgorithmTestCase = new TestCase("Dose Algorithm", "Photon dose calc. is AAA_V13623 or AcurosXB_V13623.", TestCase.PASS);
             this.Tests.Add(DoseAlgorithmTestCase);
-            this.testMethods.Add(DoseAlgorithmTestCase.GetName(), DoseAlgorithmCheck);
+            this.TestMethods.Add(DoseAlgorithmTestCase.Name, DoseAlgorithmCheck);
 
-            JawMaxTestCase = new TestCase("Jaw Max Check", "Test performed to ensure each jaw does not exceed 20.0 cm.", TestCase.PASS);
+            JawMaxTestCase = new TestCase("Jaw Max", "Each jaw does not exceed 20.0cm.", TestCase.PASS);
             this.Tests.Add(JawMaxTestCase);
-            this.testMethods.Add(JawMaxTestCase.GetName(), JawMaxCheck);
+            this.TestMethods.Add(JawMaxTestCase.Name, JawMaxCheck);
 
-            JawMinTestCase = new TestCase("Jaw Min Check", "Test performed to ensure jaw X & Y >= 3.0 cm (3D plan) or 1.0 cm (control points for VMAT).", TestCase.PASS);
+            JawMinTestCase = new TestCase("Jaw Min", "Each jaw X & Y >= 3.0cm (3D plan) or 1.0cm (VMAT).", TestCase.PASS);
             this.Tests.Add(JawMinTestCase);
-            this.testMethods.Add(JawMinTestCase.GetName(), JawMinCheck);
+            this.TestMethods.Add(JawMinTestCase.Name, JawMinCheck);
 
-            JawLimitTestCase = new TestCase("Jaw limit Check", "(VMAT) Test performed to ensure X <= 14.5cm for CLINACs; Y1 & Y2 <= 10.5cm for TrueBeam HD MLC.", TestCase.PASS);
+            JawLimitTestCase = new TestCase("Jaw Limit (VMAT)", "X <= 14.5cm (CLINACs); Y1 & Y2 <= 10.5cm (TrueBeam HD MLC).", TestCase.PASS);
             this.Tests.Add(JawLimitTestCase);
-            this.testMethods.Add(JawLimitTestCase.GetName(), JawLimitCheck);
+            this.TestMethods.Add(JawLimitTestCase.Name, JawLimitCheck);
 
-            TableHeightTestCase = new TestCase("Table Height Check", "(VMAT) Test performed to ensure table height is less than 21.0 cm.", TestCase.PASS);
+            TableHeightTestCase = new TestCase("Table Top (VMAT)", "Table height < 21.0cm.", TestCase.PASS);
             this.Tests.Add(TableHeightTestCase);
-            this.testMethods.Add(TableHeightTestCase.GetName(), TableHeightCheck);
+            this.TestMethods.Add(TableHeightTestCase.Name, TableHeightCheck);
 
-            SBRTDoseResolutionTestCase = new TestCase("SBRT Dose Resolution", "Test performed to ensure SRS ARC plans or small target volumes < 5cc use a dose resolution of less than or equal to 1.5 mm.", TestCase.PASS);
+            SBRTDoseResolutionTestCase = new TestCase("Dose Resolution (SBRT)", "Remove target volume < 5cc & check Prescription Tech. SBRT", TestCase.PASS);
             this.Tests.Add(SBRTDoseResolutionTestCase);
-            this.testMethods.Add(SBRTDoseResolutionTestCase.GetName(), SBRTDoseResolutionCheck);
+            this.TestMethods.Add(SBRTDoseResolutionTestCase.Name, SBRTDoseResolutionCheck);
 
-            SBRTCTSliceThicknessTestCase = new TestCase("SBRT CT Slice Thickness", "Test performed to ensure SRS ARC plans or small target volumes < 5cc use a CT slice with thickness less than or equal to 2 mm.", TestCase.PASS);
+            SBRTCTSliceThicknessTestCase = new TestCase("CT Slice Thickness (SBRT)", "SRS ARC plans or target volumes < 5cc use a CT slice thickness <= 2mm.", TestCase.PASS);
             this.Tests.Add(SBRTCTSliceThicknessTestCase);
-            this.testMethods.Add(SBRTCTSliceThicknessTestCase.GetName(), SBRTCTSliceThicknessCheck);
+            this.TestMethods.Add(SBRTCTSliceThicknessTestCase.Name, SBRTCTSliceThicknessCheck);
 
 
             //standalone 
-            HighMUTestCase = new TestCase("High MU Check", "Test performed to ensure total MU is less than 4 times the prescribed dose per fraction in cGy.", TestCase.PASS);
+            HighMUTestCase = new TestCase("MU Factor", "Total MU < 4x Rx dose per fraction in cGy.", TestCase.PASS);
             this.Tests.Add(HighMUTestCase);
 
-            UserOriginTestCase = new TestCase("User Origin Check", "Test performed to ensure user origin is not set to (0.0, 0.0, 0.0).", TestCase.PASS);
+            UserOriginTestCase = new TestCase("User Origin", "User origin is not set to (0, 0, 0).", TestCase.PASS);
             this.Tests.Add(UserOriginTestCase);
 
-            ImageDateTestCase = new TestCase("Image Date Check", "Test performed to ensure date of image is within 14 days of the date the plan was created.", TestCase.PASS);
+            ImageDateTestCase = new TestCase("Current Plan CT", "Plan CT date <= 14 days from plan creation.", TestCase.PASS);
             this.Tests.Add(ImageDateTestCase);
 
-            PatientOrientationTestCase = new TestCase("Patient Orientation Check", "Test performed to check if treatment orientation is the same as the CT image orientation.", TestCase.PASS);
+            PatientOrientationTestCase = new TestCase("Patient Orientation", "Tx orientation is same as CT orientation.", TestCase.PASS);
             this.Tests.Add(PatientOrientationTestCase);
 
-            PlanningApprovalTestCase = new TestCase("Planning Approval Check", "Test performed to ensure plan was planning approved by an approved person (faculty).", TestCase.PASS);
+            PlanningApprovalTestCase = new TestCase("Planning Approval", "Plan is planning approved by MD.", TestCase.PASS);
             this.Tests.Add(PlanningApprovalTestCase);
 
-            TargetVolumeTestCase = new TestCase("Target Volume Check", "Test performed to ensure target volume does not contain string TS and contains the string PTV.", TestCase.PASS);
+            TargetVolumeTestCase = new TestCase("Target Volume", "Target volume does not contain \"TS\" & contains \"PTV\".", TestCase.PASS);
             this.Tests.Add(TargetVolumeTestCase);
 
-            ShiftNoteJournalTestCase = new TestCase("Shift Note Journal Existence Check", "Test performed to ensure that shift notes have been created for the therapists.", TestCase.PASS);
+            ShiftNoteJournalTestCase = new TestCase("Shift Note in Journal", "Shift note has been inserted into journal.", TestCase.PASS);
             this.Tests.Add(ShiftNoteJournalTestCase);
         }
 
@@ -110,16 +108,22 @@ namespace VMS.TPS
         {
             if (runPerBeam)
             {
-                string removedTest = null;
+                List<string> testsToRemove = new List<string>();
+                string testName = null;
+                foreach (KeyValuePair<string, TestCase.Test> test in TestMethods)
+                {
+                    testName = test.Value(b).AddToListOnFail(this.TestResults, this.Tests);
 
-                foreach (KeyValuePair<string, TestCase.Test> test in testMethods)
-                {
-                    removedTest = test.Value(b).AddToListOnFail(this.TestResults, this.Tests);
+                    if (testName != null)
+                    {
+                        testsToRemove.Add(testName);
+                    }
                 }
-                if (removedTest != null)
+                foreach (string name in testsToRemove)
                 {
-                    testMethods.Remove(removedTest);
+                    TestMethods.Remove(name);
                 }
+
             }
             else //standalone tests
             {
@@ -130,7 +134,7 @@ namespace VMS.TPS
                 PlanningApprovalCheck().AddToListOnFail(this.TestResults, this.Tests);
                 TargetVolumeCheck().AddToListOnFail(this.TestResults, this.Tests);
                 AcitveCourseCheck().AddToListOnFail(this.TestResults, this.Tests);
-                CourseNameTestCase.AddToListOnFail(this.TestResults, this.Tests);
+                CourseNameCheck().AddToListOnFail(this.TestResults, this.Tests);
                 ShiftNotesJournalCheck().AddToListOnFail(this.TestResults, this.Tests);
 
                 TestResults.AddRange(this.Tests);
@@ -142,58 +146,59 @@ namespace VMS.TPS
         {
             try
             {
-                CouchTestCase.SetResult(TestCase.FAIL);
+                CouchTestCase.Result = TestCase.FAIL;
 
-
-                if (!b.IsSetupField && b.MLCPlanType.ToString().ToUpper() == "VMAT")
+                if (!b.IsSetupField && (b.MLCPlanType.ToString().ToUpper() == "VMAT" || b.MLCPlanType.ToString().ToUpper().Contains("ARC")))
                 {
-
                     foreach (Structure s in CurrentPlan.StructureSet.Structures)
                     {
                         if (b.TreatmentUnit.Id == "LA-12" || b.TreatmentUnit.Id == "LA-11")
                         {
-                            if (s.Name.Contains("Exact Couch with Unipanel")) { CouchTestCase.SetResult(TestCase.PASS); }
+                            if (s.Name.Contains("Exact Couch with Unipanel")) { CouchTestCase.Result = TestCase.PASS; }
                         }
                         else if (b.TreatmentUnit.Id == "SB_LA_1")
                         {
-                            if (s.Name.Contains("Exact Couch with Flat panel")) { CouchTestCase.SetResult(TestCase.PASS); }
+                            if (s.Name.Contains("Exact Couch with Flat panel")) { CouchTestCase.Result = TestCase.PASS; }
                         }
                         else
                         {
-                            if (s.Name.Contains("Exact IGRT")) { CouchTestCase.SetResult(TestCase.PASS); }
+                            if (s.Name.Contains("Exact IGRT")) { CouchTestCase.Result = TestCase.PASS; }
                         }
                     }
                 }
 
-                else if (!b.IsSetupField && !(b.MLCPlanType.ToString().ToUpper() == "VMAT"))
+                else if (b.IsSetupField || b.MLCPlanType.ToString().ToUpper() != "VMAT")
                 {
-                    CouchTestCase.SetResult(TestCase.PASS);
+                    CouchTestCase.Result = TestCase.PASS;
                 }
 
                 return CouchTestCase;
             }
-            catch { CouchTestCase.SetResult(TestCase.FAIL); return CouchTestCase; }
+            catch (Exception ex)
+            {
+                return CouchTestCase.HandleTestError(ex);
+            }
         }
 
         public TestCase PlanNormalizationCheck(Beam b)
         {
             try
             {
-                PlanNormalizationTestCase.SetResult(TestCase.FAIL);
+                PlanNormalizationTestCase.Result = TestCase.FAIL;
 
                 if (!b.IsSetupField && b.MLCPlanType.ToString() == "VMAT")
                 {
-                    if (CurrentPlan.PlanNormalizationMethod.ToString() != "100.00% covers 95.00% of Target Volume") { PlanNormalizationTestCase.SetResult(TestCase.FAIL); return PlanNormalizationTestCase; }
-                    else { PlanNormalizationTestCase.SetResult(TestCase.PASS); return PlanNormalizationTestCase; }
-                }
-                else if (!b.IsSetupField && !(b.MLCPlanType.ToString().ToUpper() == "VMAT"))
+                    if (CurrentPlan.PlanNormalizationMethod.ToString() != "100.00% covers 95.00% of Target Volume") { PlanNormalizationTestCase.Result = TestCase.FAIL; return PlanNormalizationTestCase; }
+                    else { PlanNormalizationTestCase.Result = TestCase.PASS; return PlanNormalizationTestCase; }
+                } 
+                else if (b.IsSetupField || b.MLCPlanType.ToString().ToUpper() != "VMAT")
                 {
-                    PlanNormalizationTestCase.SetResult(TestCase.PASS);
+                    PlanNormalizationTestCase.Result = TestCase.PASS;
                 }
 
                 return PlanNormalizationTestCase;
             }
-            catch { PlanNormalizationTestCase.SetResult(TestCase.FAIL); return PlanNormalizationTestCase; }
+            catch { PlanNormalizationTestCase.Result = TestCase.FAIL; return PlanNormalizationTestCase; }
         }
 
         public TestCase DoseAlgorithmCheck(Beam b)
@@ -205,17 +210,17 @@ namespace VMS.TPS
                 {
                     if (b.EnergyModeDisplayName.ToString() == "6X" || b.EnergyModeDisplayName.ToString() == "15X" || b.EnergyModeDisplayName.ToString() == "6X-FFF" || b.EnergyModeDisplayName.ToString() == "10X-FFF")
                     {
-                        if (CurrentPlan.PhotonCalculationModel.ToString() != "AAA_V13623" && CurrentPlan.PhotonCalculationModel.ToString() != "AcurosXB_V13623") { DoseAlgorithmTestCase.SetResult(TestCase.FAIL); return DoseAlgorithmTestCase; }
+                        if (CurrentPlan.PhotonCalculationModel.ToString() != "AAA_V13623" && CurrentPlan.PhotonCalculationModel.ToString() != "AcurosXB_V13623") { DoseAlgorithmTestCase.Result = TestCase.FAIL; return DoseAlgorithmTestCase; }
                     }
                     else if (b.EnergyModeDisplayName.ToString().Contains("E"))
                     {
-                        if (CurrentPlan.ElectronCalculationModel.ToString() != "EMC_V13623") { DoseAlgorithmTestCase.SetResult(TestCase.FAIL); return DoseAlgorithmTestCase; }
+                        if (CurrentPlan.ElectronCalculationModel.ToString() != "EMC_V13623") { DoseAlgorithmTestCase.Result = TestCase.FAIL; return DoseAlgorithmTestCase; }
                     }
                 }
 
                 return DoseAlgorithmTestCase;
             }
-            catch { DoseAlgorithmTestCase.SetResult(TestCase.FAIL); return DoseAlgorithmTestCase; }
+            catch { DoseAlgorithmTestCase.Result = TestCase.FAIL; return DoseAlgorithmTestCase; }
         }
 
         public TestCase JawMaxCheck(Beam b)
@@ -227,13 +232,13 @@ namespace VMS.TPS
                 {
                     foreach (ControlPoint ctr in b.ControlPoints)
                     {
-                        if (((ctr.JawPositions.X1 / 10.0) <= -20.01) || ((ctr.JawPositions.Y1 / 10.0) <= -20.01) || ((ctr.JawPositions.X2 / 10.0) >= 20.01) || ((ctr.JawPositions.Y2 / 10.0) >= 20.01)) { JawMaxTestCase.SetResult(TestCase.FAIL); return JawMaxTestCase; }
+                        if (((ctr.JawPositions.X1 / 10.0) <= -20.01) || ((ctr.JawPositions.Y1 / 10.0) <= -20.01) || ((ctr.JawPositions.X2 / 10.0) >= 20.01) || ((ctr.JawPositions.Y2 / 10.0) >= 20.01)) { JawMaxTestCase.Result = TestCase.FAIL; return JawMaxTestCase; }
                     }
                 }
 
-                JawMaxTestCase.SetResult(TestCase.PASS); return JawMaxTestCase;
+                JawMaxTestCase.Result = TestCase.PASS; return JawMaxTestCase;
             }
-            catch { JawMaxTestCase.SetResult(TestCase.FAIL); return JawMaxTestCase; }
+            catch { JawMaxTestCase.Result = TestCase.FAIL; return JawMaxTestCase; }
         }
 
         // Added jaw min test on 5/30/2018
@@ -248,18 +253,18 @@ namespace VMS.TPS
                     {
                         if (b.MLCPlanType.ToString().ToUpper().Contains("STATIC")) // 3D plans
                         {
-                            if ((Math.Abs(ctr.JawPositions.X1 - ctr.JawPositions.X2) / 10.0) < 3.0 || (Math.Abs(ctr.JawPositions.Y1 - ctr.JawPositions.Y2) / 10.0) < 3.0) { JawMinTestCase.SetResult(TestCase.FAIL); return JawMinTestCase; }
+                            if ((Math.Abs(ctr.JawPositions.X1 - ctr.JawPositions.X2) / 10.0) < 3.0 || (Math.Abs(ctr.JawPositions.Y1 - ctr.JawPositions.Y2) / 10.0) < 3.0) { JawMinTestCase.Result = TestCase.FAIL; return JawMinTestCase; }
                         }
                         else if (b.TreatmentUnit.MachineModel.ToString().ToUpper().Contains("TDS") && CurrentPlan.OptimizationSetup.UseJawTracking)  // TrueBeams with jaw tracking
                         {
-                            if ((Math.Abs(ctr.JawPositions.X1 - ctr.JawPositions.X2) / 10.0) < 1.0 || (Math.Abs(ctr.JawPositions.Y1 - ctr.JawPositions.Y2) / 10.0) < 1.0) { JawMinTestCase.SetResult(TestCase.FAIL); return JawMinTestCase; }
+                            if ((Math.Abs(ctr.JawPositions.X1 - ctr.JawPositions.X2) / 10.0) < 1.0 || (Math.Abs(ctr.JawPositions.Y1 - ctr.JawPositions.Y2) / 10.0) < 1.0) { JawMinTestCase.Result = TestCase.FAIL; return JawMinTestCase; }
                         }
                     }
                 }
                 
                 return JawMinTestCase;
             }
-            catch { JawMinTestCase.SetResult(TestCase.FAIL); return JawMinTestCase; }
+            catch { JawMinTestCase.Result = TestCase.FAIL; return JawMinTestCase; }
         }
 
         // Added Arc field X jaw size < 14.5cm on 5/30/2018
@@ -275,15 +280,15 @@ namespace VMS.TPS
                         {
                             foreach (ControlPoint ctr in b.ControlPoints)
                             {
-                                if (ctr.JawPositions.Y1 / 10.0 < -10.5 && ctr.JawPositions.Y2 / 10.0 > 10.5) { JawLimitTestCase.SetResult(TestCase.FAIL); return JawLimitTestCase; } // Y jaw
-                                if (!CurrentPlan.OptimizationSetup.UseJawTracking && (Math.Abs(ctr.JawPositions.X1 - ctr.JawPositions.X2) / 10.0) > 14.5) { JawLimitTestCase.SetResult(TestCase.FAIL); return JawLimitTestCase; }  // X jaw if not using jaw tracking
+                                if (ctr.JawPositions.Y1 / 10.0 < -10.5 && ctr.JawPositions.Y2 / 10.0 > 10.5) { JawLimitTestCase.Result = TestCase.FAIL; return JawLimitTestCase; } // Y jaw
+                                if (!CurrentPlan.OptimizationSetup.UseJawTracking && (Math.Abs(ctr.JawPositions.X1 - ctr.JawPositions.X2) / 10.0) > 14.5) { JawLimitTestCase.Result = TestCase.FAIL; return JawLimitTestCase; }  // X jaw if not using jaw tracking
                             }
                         }
                         else    // Clinac
                         {
                             foreach (ControlPoint ctr in b.ControlPoints)
                             {
-                                if ((Math.Abs(ctr.JawPositions.X1 - ctr.JawPositions.X2) / 10.0) > 14.5) { JawLimitTestCase.SetResult(TestCase.FAIL); return JawLimitTestCase; } // X jaw
+                                if ((Math.Abs(ctr.JawPositions.X1 - ctr.JawPositions.X2) / 10.0) > 14.5) { JawLimitTestCase.Result = TestCase.FAIL; return JawLimitTestCase; } // X jaw
                             }
                         }
                     }
@@ -291,7 +296,7 @@ namespace VMS.TPS
 
                 return JawLimitTestCase;
             }
-            catch { JawLimitTestCase.SetResult(TestCase.FAIL); return JawLimitTestCase; }
+            catch { JawLimitTestCase.Result = TestCase.FAIL; return JawLimitTestCase; }
         }
 
         public TestCase TableHeightCheck(Beam b)
@@ -302,9 +307,9 @@ namespace VMS.TPS
                 {
                     foreach (ControlPoint ctr in b.ControlPoints)
                     {
-                        if (Math.Abs(ctr.TableTopLateralPosition / 10.0) >= 4.0 && (Math.Abs(ctr.TableTopVerticalPosition / 10.0) >= 21.0 || Math.Abs(ctr.TableTopVerticalPosition / 10.0) <= 4.0)) { TableHeightTestCase.SetResult(TestCase.FAIL); return TableHeightTestCase; }
-                        if (Math.Abs(ctr.TableTopVerticalPosition / 10.0) >= 22.0) { TableHeightTestCase.SetResult(TestCase.FAIL); return TableHeightTestCase; }
-                        if (ctr.TableTopVerticalPosition / 10.0 >= 0.0) { TableHeightTestCase.SetResult(TestCase.FAIL); return TableHeightTestCase; }
+                        if (Math.Abs(ctr.TableTopLateralPosition / 10.0) >= 4.0 && (Math.Abs(ctr.TableTopVerticalPosition / 10.0) >= 21.0 || Math.Abs(ctr.TableTopVerticalPosition / 10.0) <= 4.0)) { TableHeightTestCase.Result = TestCase.FAIL; return TableHeightTestCase; }
+                        if (Math.Abs(ctr.TableTopVerticalPosition / 10.0) >= 22.0) { TableHeightTestCase.Result = TestCase.FAIL; return TableHeightTestCase; }
+                        if (ctr.TableTopVerticalPosition / 10.0 >= 0.0) { TableHeightTestCase.Result = TestCase.FAIL; return TableHeightTestCase; }
 
                         // Need to consider partial arc? - SL 04/26/2018
                     }
@@ -312,19 +317,7 @@ namespace VMS.TPS
                 
                 return TableHeightTestCase;
             }
-            catch { TableHeightTestCase.SetResult(TestCase.FAIL); return TableHeightTestCase; }
-        }
-
-        private double GetTargetVolume()
-        {
-            double targetVolume = 0.0;
-
-            foreach (Structure s in CurrentPlan.StructureSet.Structures)
-            {
-                if (s.Id.ToString() == CurrentPlan.TargetVolumeID.ToString()) { targetVolume = s.Volume; break; }  // in cc
-            }
-
-            return targetVolume;
+            catch { TableHeightTestCase.Result = TestCase.FAIL; return TableHeightTestCase; }
         }
 
         public TestCase SBRTDoseResolutionCheck(Beam b)
@@ -335,17 +328,17 @@ namespace VMS.TPS
                 {
                     if (!b.IsSetupField)
                     {
-                        if (b.Technique.Id.ToString().Contains("SRS ARC") || TargetVolume <= 5.0)
+                        if (b.Technique.Id.ToString().Contains("SRS ARC") || b.Technique.Id.ToString().Contains("SBRT"))
                         {
-                            if (CurrentPlan.Dose.XRes >= 1.51) { SBRTDoseResolutionTestCase.SetResult(TestCase.FAIL); return SBRTDoseResolutionTestCase; }
-                            else if (CurrentPlan.Dose.YRes >= 1.51) { SBRTDoseResolutionTestCase.SetResult(TestCase.FAIL); return SBRTDoseResolutionTestCase; }
-                            //else if (CurrentPlan.Dose.ZRes >= 2.01) { ch.SetResult(TestCase.FAIL); return ch; }
+                            if (CurrentPlan.Dose.XRes >= 1.51) { SBRTDoseResolutionTestCase.Result = TestCase.FAIL; return SBRTDoseResolutionTestCase; }
+                            else if (CurrentPlan.Dose.YRes >= 1.51) { SBRTDoseResolutionTestCase.Result = TestCase.FAIL; return SBRTDoseResolutionTestCase; }
+                            //else if (CurrentPlan.Dose.ZRes >= 2.01) { ch.Result = TestCase.FAIL; return ch; }
                         }
                     }
                 }
                 return SBRTDoseResolutionTestCase;
             }
-            catch { SBRTDoseResolutionTestCase.SetResult(TestCase.FAIL); return SBRTDoseResolutionTestCase; }
+            catch { SBRTDoseResolutionTestCase.Result = TestCase.FAIL; return SBRTDoseResolutionTestCase; }
         }
 
         public TestCase HighMUCheck()
@@ -360,10 +353,10 @@ namespace VMS.TPS
                         MUSum = MUSum + b.Meterset.Value;
                     }
                 }
-                if (MUSum >= 4.0 * CurrentPlan.UniqueFractionation.PrescribedDosePerFraction.Dose) { HighMUTestCase.SetResult(TestCase.FAIL); return HighMUTestCase; }
-                else { HighMUTestCase.SetResult(TestCase.PASS); return HighMUTestCase; }
+                if (MUSum >= 4.0 * CurrentPlan.UniqueFractionation.PrescribedDosePerFraction.Dose) { HighMUTestCase.Result = TestCase.FAIL; return HighMUTestCase; }
+                else { HighMUTestCase.Result = TestCase.PASS; return HighMUTestCase; }
             }
-            catch { HighMUTestCase.SetResult(TestCase.FAIL); return HighMUTestCase; }
+            catch { HighMUTestCase.Result = TestCase.FAIL; return HighMUTestCase; }
         }
 
         public TestCase SBRTCTSliceThicknessCheck(Beam b)
@@ -374,46 +367,52 @@ namespace VMS.TPS
                 {
                     if (!b.IsSetupField)
                     {
-                        if (b.Technique.Id.ToString().Contains("SRS ARC") || TargetVolume <= 5.0)
+                        if (b.Technique.Id.ToString().Contains("SRS ARC") || b.Technique.Id.ToString().Contains("SBRT"))
                         {
-                            if (CurrentPlan.Dose.ZRes >= 2.01) { SBRTCTSliceThicknessTestCase.SetResult(TestCase.FAIL); return SBRTCTSliceThicknessTestCase; }
+                            if (CurrentPlan.Dose.ZRes >= 2.01) { SBRTCTSliceThicknessTestCase.Result = TestCase.FAIL; return SBRTCTSliceThicknessTestCase; }
                         }
                     }
                 }
                 return SBRTCTSliceThicknessTestCase;
             }
-            catch { SBRTCTSliceThicknessTestCase.SetResult(TestCase.FAIL); return SBRTCTSliceThicknessTestCase; }
+            catch { SBRTCTSliceThicknessTestCase.Result = TestCase.FAIL; return SBRTCTSliceThicknessTestCase; }
         }
 
         public override TestCase DoseRateCheck(Beam b)
         {
+            DoseRateTestCase.Description = "Maximum dose rates are set.";
+            DoseRateTestCase.Result = TestCase.PASS;
+
             try
             {
 
                 if (!b.IsSetupField)
                 {
-                    if (b.EnergyModeDisplayName.ToString() == "6X" && b.DoseRate != 600) { DoseRateTestCase.SetResult(TestCase.FAIL); return DoseRateTestCase; }
-                    else if (b.EnergyModeDisplayName.ToString() == "10X" && b.DoseRate != 600) { DoseRateTestCase.SetResult(TestCase.FAIL); return DoseRateTestCase; }
-                    else if (b.EnergyModeDisplayName.ToString() == "15X" && b.DoseRate != 600) { DoseRateTestCase.SetResult(TestCase.FAIL); return DoseRateTestCase; }
-                    else if (b.EnergyModeDisplayName.ToString() == "6X-FFF" && b.DoseRate != 1400) { DoseRateTestCase.SetResult(TestCase.FAIL); return DoseRateTestCase; }
-                    else if (b.EnergyModeDisplayName.ToString() == "10X-FFF" && b.DoseRate != 2400) { DoseRateTestCase.SetResult(TestCase.FAIL); return DoseRateTestCase; }
-                    else if (b.EnergyModeDisplayName.ToString().Contains("E") && b.DoseRate != 600) { DoseRateTestCase.SetResult(TestCase.FAIL); return DoseRateTestCase; }
+                    if (b.EnergyModeDisplayName.ToString() == "6X" && b.DoseRate != 600) { DoseRateTestCase.Result = TestCase.FAIL; return DoseRateTestCase; }
+                    else if (b.EnergyModeDisplayName.ToString() == "10X" && b.DoseRate != 600) { DoseRateTestCase.Result = TestCase.FAIL; return DoseRateTestCase; }
+                    else if (b.EnergyModeDisplayName.ToString() == "15X" && b.DoseRate != 600) { DoseRateTestCase.Result = TestCase.FAIL; return DoseRateTestCase; }
+                    else if (b.EnergyModeDisplayName.ToString() == "6X-FFF" && b.DoseRate != 1400) { DoseRateTestCase.Result = TestCase.FAIL; return DoseRateTestCase; }
+                    else if (b.EnergyModeDisplayName.ToString() == "10X-FFF" && b.DoseRate != 2400) { DoseRateTestCase.Result = TestCase.FAIL; return DoseRateTestCase; }
+                    else if (b.EnergyModeDisplayName.ToString().Contains("E") && b.DoseRate != 600) { DoseRateTestCase.Result = TestCase.FAIL; return DoseRateTestCase; }
                 }
 
                 return DoseRateTestCase;
             }
-            catch { DoseRateTestCase.SetResult(TestCase.FAIL); return DoseRateTestCase; }
+            catch { DoseRateTestCase.Result = TestCase.FAIL; return DoseRateTestCase; }
         }
 
         public override TestCase MachineIdCheck(Beam b)
         {
+            MachineIdTestCase.Description = "All fields have same Tx machine.";
+            MachineIdTestCase.Result = TestCase.PASS;
+
             try
             {
-                if (b.TreatmentUnit.Id.ToString() != MachineName) { MachineIdTestCase.SetResult(TestCase.FAIL); return MachineIdTestCase; }
+                if (b.TreatmentUnit.Id.ToString() != MachineName) { MachineIdTestCase.Result = TestCase.FAIL; return MachineIdTestCase; }
 
                 return MachineIdTestCase;
             }
-            catch { MachineIdTestCase.SetResult(TestCase.FAIL); return MachineIdTestCase; }
+            catch { MachineIdTestCase.Result = TestCase.FAIL; return MachineIdTestCase; }
         }
 
         public TestCase UserOriginCheck()
@@ -421,7 +420,7 @@ namespace VMS.TPS
             try
             {
                 if (CurrentPlan.StructureSet.Image.UserOrigin.x == 0.0 && CurrentPlan.StructureSet.Image.UserOrigin.y == 0.0 && CurrentPlan.StructureSet.Image.UserOrigin.z == 0.0)
-                                                                                                                                                            { UserOriginTestCase.SetResult(TestCase.FAIL); return UserOriginTestCase; }
+                                                                                                                                                            { UserOriginTestCase.Result = TestCase.FAIL; return UserOriginTestCase; }
                 return UserOriginTestCase;
             }
             catch (Exception ex) {
@@ -434,7 +433,7 @@ namespace VMS.TPS
             try
             {
                 if (CurrentPlan.CreationDateTime.Value.DayOfYear - 14 >= CurrentPlan.StructureSet.Image.Series.Study.CreationDateTime.Value.DayOfYear)
-                                                                                                                                                    { ImageDateTestCase.SetResult(TestCase.FAIL); return ImageDateTestCase; }
+                                                                                                                                                    { ImageDateTestCase.Result = TestCase.FAIL; return ImageDateTestCase; }
                 return ImageDateTestCase;
             }
             catch (Exception ex)
@@ -448,7 +447,7 @@ namespace VMS.TPS
             try
             {
                 if (CurrentPlan.TreatmentOrientation.ToString() != CurrentPlan.StructureSet.Image.ImagingOrientation.ToString())
-                                                                                                    { PatientOrientationTestCase.SetResult(TestCase.FAIL); return PatientOrientationTestCase; }
+                                                                                                    { PatientOrientationTestCase.Result = TestCase.FAIL; return PatientOrientationTestCase; }
                 return PatientOrientationTestCase;
             }
             catch (Exception ex)
@@ -466,7 +465,7 @@ namespace VMS.TPS
                 {
                     if (CurrentPlan.PlanningApprover.ToString() == dr.ToString()) { return PlanningApprovalTestCase; }
                 }
-                PlanningApprovalTestCase.SetResult(TestCase.FAIL); return PlanningApprovalTestCase;
+                PlanningApprovalTestCase.Result = TestCase.FAIL; return PlanningApprovalTestCase;
             }
             catch (Exception ex)
             {
@@ -480,7 +479,7 @@ namespace VMS.TPS
             {
                 if ((CurrentPlan.TargetVolumeID.ToString().Contains("TS") || !CurrentPlan.TargetVolumeID.ToString().Contains("PTV")) 
                                                                                                 && CurrentPlan.PlanNormalizationMethod.ToString().Contains("Volume"))
-                                                                                                                                { TargetVolumeTestCase.SetResult(TestCase.FAIL); return TargetVolumeTestCase; }
+                                                                                                                                { TargetVolumeTestCase.Result = TestCase.FAIL; return TargetVolumeTestCase; }
                 return TargetVolumeTestCase;
             }
             catch (Exception ex)
@@ -502,19 +501,19 @@ namespace VMS.TPS
                         var journalEntries = ariaEnm.quick_note.Where(tmp => tmp.pt_id == pt_id_enm).ToList();
                         if (journalEntries.Any())
                         {
-                            ShiftNoteJournalTestCase.SetResult(TestCase.FAIL);
+                            ShiftNoteJournalTestCase.Result = TestCase.FAIL;
                             foreach (var tmp in journalEntries)
                             {
                                 if (DateTime.Compare(tmp.note_tstamp.Value, CurrentPlan.CreationDateTime.Value.AddDays(30)) <= 0 && DateTime.Compare(tmp.note_tstamp.Value, CurrentPlan.CreationDateTime.Value.AddDays(-7)) >= 0 && (tmp.valid_entry_ind == "Y"))
                                 {
-                                    if (tmp.quick_note_text.Contains(CurrentPlan.Id)) { ShiftNoteJournalTestCase.SetResult(TestCase.PASS); break; }
+                                    if (tmp.quick_note_text.Contains(CurrentPlan.Id)) { ShiftNoteJournalTestCase.Result = TestCase.PASS; break; }
                                 }
                             }
                         }
                     }
                     return ShiftNoteJournalTestCase;
                 }
-                catch { ShiftNoteJournalTestCase.SetResult(TestCase.FAIL); return ShiftNoteJournalTestCase; }
+                catch { ShiftNoteJournalTestCase.Result = TestCase.FAIL; return ShiftNoteJournalTestCase; }
             }
         }
 

@@ -4,43 +4,50 @@ using System.Collections.Generic;
 using HtmlAgilityPack;
 using Patient = VMS.TPS.Common.Model.API.Patient;
 using PlanSetup = VMS.TPS.Common.Model.API.PlanSetup;
+using Course = VMS.TPS.Common.Model.API.Course;
 
 namespace VMS.TPS
 {
     class InteractiveReport
     {
-        private const string testResultsHTMLPath = @"Z:\\Users\\Jbertini\\ESAPI\\VMSTPS-standalone-fast\\frontend\\testResultsIndex.html";
+        private string testResultsHTMLPath = System.IO.Path.Combine(Environment.GetEnvironmentVariable("ROOT_PATH"), "frontend\\testResultsIndex.html");
         private const string IndexUrl = @"http://localhost/";
 
         private HtmlDocument importedDoc;
-        private HTTPServer server;
+        public  HTTPServer Server { get; }
         private Patient patient;
         private PlanSetup currentPlan;
+        private Course course;
+        public bool ExportReports { get; set; }
 
         public List<TestCase> TestResults { get; set; }
 
-        public InteractiveReport(Patient p, PlanSetup plan, List<TestCase> results)
+        public InteractiveReport(Patient p, PlanSetup plan, Course c,  List<TestCase> results)
         {
             patient = p;
             currentPlan = plan;
+            course = c;
             TestResults = results;
+
+            ExportReports = false;
 
             importedDoc = new HtmlDocument();
             importedDoc.Load(testResultsHTMLPath);
             FormatHtmlWithResults("testResultsIndexOut.html");
 
-            server = new HTTPServer();
+            Server = new HTTPServer(10);
 
             // These are the routes that the server will respond to. The callback methods will decide what to do when they are called
             Route routes = new Route();
-            server.Routes = routes;
+            Server.Routes = routes;
+
             routes.RoutesList.Add("/update", RouteCallbackUpdate);
             routes.RoutesList.Add("/", RouteCallbackIndex);
             routes.RoutesList.Add("/failDetails", RouteCallbackFailDetails);
             routes.RoutesList.Add("/ackDetails", RouteCallbackAckDetails);
             routes.RoutesList.Add("/prescriptionAlert", RouteCallbackPrescriptionAlert);
             routes.RoutesList.Add("/acknowledge", RouteCallbackAcknowledge);
-           
+            routes.RoutesList.Add("/export", RouteCallbackExport);
 
         }
 
@@ -67,44 +74,44 @@ namespace VMS.TPS
                 // add physics report tests here in a loop
                 foreach (TestCase test in TestResults)
                 {
-                    if (test.GetResult() == TestCase.PASS)
+                    if (test.Result == TestCase.PASS)
                     {
                         string tableRowNodeStr = "<tr class=\"row100 body pass\">" +
-                                                                   "<td class=\"cell100 column1\">" + test.GetName() + "</td>" +
-                                                                   "<td class=\"cell100 column2\">" + test.GetDescription() + "</td>" +
+                                                                   "<td class=\"cell100 column1\">" + test.Name + "</td>" +
+                                                                   "<td class=\"cell100 column2\">" + test.Description + "</td>" +
                                                                    "<td class=\"cell100 column3\">" + TestCase.PASS +  "</td>" +
                                                                "</tr>";
 
                         var tableRowNode = HtmlAgilityPack.HtmlNode.CreateNode(tableRowNodeStr);
                         passedNode.AppendChild(tableRowNode);
                     }
-                    else if (test.GetResult() == TestCase.FAIL)
+                    else if (test.Result == TestCase.FAIL)
                     {
                         string tableRowNodeStr = "<tr class=\"row100 body fail\">" +
-                                                                   "<td class=\"cell100 column1\">" + test.GetName() + "</td>" +
-                                                                   "<td class=\"cell100 column2\">" + test.GetDescription() + "</td>" +
+                                                                   "<td class=\"cell100 column1\">" + test.Name + "</td>" +
+                                                                   "<td class=\"cell100 column2\">" + test.Description + "</td>" +
                                                                    "<td class=\"cell100 column3\">" + TestCase.FAIL + "</td>" +
                                                               "</tr>";
 
                         var tableRowNode = HtmlAgilityPack.HtmlNode.CreateNode(tableRowNodeStr);
                         failedNode.AppendChild(tableRowNode);
                     }
-                    else if (test.GetResult() == TestCase.ACK)
+                    else if (test.Result == TestCase.ACK)
                     {
                         string tableRowNodeStr = "<tr class=\"row100 body ack\">" +
-                                                                   "<td class=\"cell100 column1\">" + test.GetName() + "</td>" +
-                                                                   "<td class=\"cell100 column2\">" + test.GetDescription() + "</td>" +
+                                                                   "<td class=\"cell100 column1\">" + test.Name + "</td>" +
+                                                                   "<td class=\"cell100 column2\">" + test.Description + "</td>" +
                                                                    "<td class=\"cell100 column3\">" + TestCase.ACK + "</td>" +
                                                               "</tr>";
 
                         var tableRowNode = HtmlAgilityPack.HtmlNode.CreateNode(tableRowNodeStr);
                         ackNode.AppendChild(tableRowNode);
                     }
-                    else if (test.GetResult() == TestCase.WARN)
+                    else if (test.Result == TestCase.WARN)
                     {
                         string tableRowNodeStr = "<tr class=\"row100 body warn\">" +
-                                                                    "<td class=\"cell100 column1\">" + test.GetName() + "</td>" +
-                                                                    "<td class=\"cell100 column2\">" + test.GetDescription() + "</td>" +
+                                                                    "<td class=\"cell100 column1\">" + test.Name + "</td>" +
+                                                                    "<td class=\"cell100 column2\">" + test.Description + "</td>" +
                                                                     "<td class=\"cell100 column3\">" + TestCase.WARN + "</td>" +
                                                                 "</tr>";
 
@@ -133,9 +140,20 @@ namespace VMS.TPS
 
         public void LaunchInteractiveReport()
         {
-            server.ServeResources = true;
-            server.Start("http://localhost/");
+            Server.ServeResources = true;
+            Server.Start("http://localhost/");
             System.Diagnostics.Process.Start(IndexUrl);
+        }
+
+        public void CloseInteractiveReport()
+        {
+            Server.Stop();
+        }
+
+        public string RouteCallbackExport(HttpListenerContext context)
+        {
+            ExportReports = true;
+            return null;
         }
 
         public string RouteCallbackAcknowledge(HttpListenerContext context)
@@ -147,8 +165,8 @@ namespace VMS.TPS
             string testComments = request.QueryString.Get("testComments");
 
             // find the test that needs to be updated
-            TestCase t = TestResults.Find(test => test.GetName() == testName);
-            t.SetResult(TestCase.ACK);
+            TestCase t = TestResults.Find(test => test.Name == testName);
+            t.Result = TestCase.ACK;
 
             // grab the comment made by user and save it
             t.Comments = testComments;
@@ -195,7 +213,7 @@ namespace VMS.TPS
         {
             foreach (TestCase test in TestResults)
             {
-                if (test.GetName().ToUpper().Contains("PRESCRIPTION") && test.GetResult() == TestCase.FAIL)
+                if (test.Name.ToUpper().Contains("PRESCRIPTION") && test.Result == TestCase.FAIL)
                 {
                     return "prescriptionAlert.html";
                 }
@@ -208,7 +226,7 @@ namespace VMS.TPS
             HttpListenerRequest request = context.Request;
 
             string testName = request.QueryString.Get("testName");
-            TestCase t = TestResults.Find(test => test.GetName() == testName);
+            TestCase t = TestResults.Find(test => test.Name == testName);
 
             string tableRowNodeStr = "<div>" +
                                                           "<p>" + t.Comments + "</p>" +

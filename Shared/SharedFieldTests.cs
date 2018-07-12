@@ -6,30 +6,25 @@ namespace VMS.TPS
 {
     public abstract class SharedFieldTests
     {
-        public Dictionary<string, TestCase.Test> TestMethods = new Dictionary<string, TestCase.Test>();
+        protected Dictionary<string, TestCase.Test> TestMethods;
 
         protected PlanSetup CurrentPlan;
 
-        protected List<TestCase> TestResults = new List<TestCase>();
-        protected List<TestCase> Tests = new List<TestCase>();
+        public List<TestCase> TestResults { get; }
+        protected List<TestCase> Tests;
 
-        protected TestCase TreatmentFieldNameTest;
+        protected TestCase TreatmentFieldNameTestCase;
 
         public SharedFieldTests(PlanSetup cPlan)
         {
             CurrentPlan = cPlan;
             TestResults = new List<TestCase>();
             Tests = new List<TestCase>();
-
-            // per Beam
-            TreatmentFieldNameTest = new TestCase("Treatment Field Name and Angle Check", "(3D plan) Test performed to verify treatment field names and corresponding gantry angles.", TestCase.PASS);
-            this.Tests.Add(TreatmentFieldNameTest);
-            this.TestMethods.Add(TreatmentFieldNameTest.GetName(), TreatmentFieldNameCheck);
-
+            TestMethods = new Dictionary<string, TestCase.Test>();
         }
 
         // TODO IMPLEMENT (in each child class)
-        public abstract TestCase TreatmentFieldNameCheck(Beam b);
+        public abstract TestCase TreatmentFieldNameCheck(Beam b = null);
 
     }
 }

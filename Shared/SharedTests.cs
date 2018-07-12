@@ -13,7 +13,7 @@ namespace VMS.TPS
     {
         protected PlanSetup CurrentPlan;
 
-        protected Dictionary<string, TestCase.Test> testMethods;
+        protected Dictionary<string, TestCase.Test> TestMethods;
         protected List<TestCase> Tests;
         public List<TestCase> TestResults { get; set; }
         
@@ -33,33 +33,34 @@ namespace VMS.TPS
             CurrentPlan = cPlan;
             Tests = new List<TestCase>();
             TestResults = new List<TestCase>();
-            testMethods = new Dictionary<string, TestCase.Test>();
+            TestMethods = new Dictionary<string, TestCase.Test>();
 
             MachineName = FindMachineName();
 
             // per Beam tests
-            MachineScaleTestCase = new TestCase("Machine Scale Check", "Test performed to ensure machine IEC scale is used.", TestCase.PASS);
+            MachineScaleTestCase = new TestCase("Machine Scale", "Test not completed.", TestCase.FAIL);
             this.Tests.Add(MachineScaleTestCase);
-            this.testMethods.Add(MachineScaleTestCase.GetName(), MachineScaleCheck);
+            this.TestMethods.Add(MachineScaleTestCase.Name, MachineScaleCheck);
 
-            MachineIdTestCase = new TestCase("Machine Constancy Check", "Test performed to ensure all fields have the same treatment machine.", TestCase.PASS);
+            MachineIdTestCase = new TestCase("Machine Constancy", "Test not completed.", TestCase.FAIL);
             this.Tests.Add(MachineIdTestCase);
-            this.testMethods.Add(MachineIdTestCase.GetName(), MachineIdCheck);
+            this.TestMethods.Add(MachineIdTestCase.Name, MachineIdCheck);
 
-            ShortTreatmentTimeTestCase = new TestCase("Short Treatment Time Check", "Test performed to ensure minimum treatment time is met.", TestCase.PASS);
+            ShortTreatmentTimeTestCase = new TestCase("Adequate Tx Time", "Test not completed.", TestCase.FAIL);
             this.Tests.Add(ShortTreatmentTimeTestCase);
-            this.testMethods.Add(ShortTreatmentTimeTestCase.GetName(), ShortTreatmentTimeCheck);
+            this.TestMethods.Add(ShortTreatmentTimeTestCase.Name, ShortTreatmentTimeCheck);
 
-            DoseRateTestCase = new TestCase("Dose Rate Check", "Test performed to ensure maximum dose rates are set.", TestCase.PASS);
+            DoseRateTestCase = new TestCase("Dose Rate", "Test not completed.", TestCase.FAIL);
             this.Tests.Add(DoseRateTestCase);
-            this.testMethods.Add(DoseRateTestCase.GetName(), DoseRateCheck);
+            this.TestMethods.Add(DoseRateTestCase.Name, DoseRateCheck);
 
             // standalone tests
-            CourseNameTestCase = new TestCase("Course Name Check", "Verifies that course names are not blank after the 'C' character.", TestCase.PASS);
+            CourseNameTestCase = new TestCase("Course Name", "Test not completed.", TestCase.FAIL);
             this.Tests.Add(CourseNameTestCase);
 
-            ActiveCourseTestCase = new TestCase("Active Course Check", "Test performed to ensure all courses other than the current course are completed.", TestCase.PASS);
+            ActiveCourseTestCase = new TestCase("Single Active Course", "Test not completed.", TestCase.FAIL);
             this.Tests.Add(ActiveCourseTestCase);
+
         }
 
         public abstract TestCase DoseRateCheck(Beam b);
@@ -81,16 +82,19 @@ namespace VMS.TPS
 
         public TestCase AcitveCourseCheck()
         {
+            ActiveCourseTestCase.Description = "All courses except for current are completed.";
+            ActiveCourseTestCase.Result =  TestCase.PASS;
+
             try
             {
                 foreach (Course c in CurrentPlan.Course.Patient.Courses)
                 {
-                    if (!c.CompletedDateTime.HasValue && CurrentPlan.Course.Id != c.Id) { ActiveCourseTestCase.SetResult(TestCase.FAIL); return ActiveCourseTestCase; }
+                    if (!c.CompletedDateTime.HasValue && CurrentPlan.Course.Id != c.Id) { ActiveCourseTestCase.Result = TestCase.FAIL; return ActiveCourseTestCase; }
                 }
 
                 return ActiveCourseTestCase;
             }
-            catch { ActiveCourseTestCase.SetResult(TestCase.FAIL); return ActiveCourseTestCase; }
+            catch { ActiveCourseTestCase.Result = TestCase.FAIL; return ActiveCourseTestCase; }
         }
 
         /* Makes sure that a course has a name starting with C and is not empty after the C
@@ -104,12 +108,14 @@ namespace VMS.TPS
         */
         public TestCase CourseNameCheck()
         {
+            CourseNameTestCase.Description = "Names are not blank after 'C' character.";
+            CourseNameTestCase.Result = TestCase.PASS;
 
             string name = CurrentPlan.Course.Id;
             string result = Regex.Match(name, @"C\d+").ToString();
             if (string.IsNullOrEmpty(result) || string.IsNullOrEmpty(name.Substring(result.Length, name.Length - result.Length)))
             {
-                CourseNameTestCase.SetResult(TestCase.FAIL); return CourseNameTestCase;
+                CourseNameTestCase.Result = TestCase.FAIL; return CourseNameTestCase;
             }
 
             return CourseNameTestCase;
@@ -118,20 +124,26 @@ namespace VMS.TPS
         // Added machine scale check IEC61217 SL 06/01/2018
         public TestCase MachineScaleCheck(Beam b)
         {
+            MachineScaleTestCase.Description = "Machine IEC61217 scale is used.";
+            MachineScaleTestCase.Result = TestCase.PASS;
+
             try
             {
                 #pragma warning disable 0618
                 // This one is okay
-                if (b.ExternalBeam.MachineScaleDisplayName.ToString() != "IEC61217") { MachineScaleTestCase.SetResult(TestCase.FAIL); return MachineScaleTestCase; }
+                if (b.ExternalBeam.MachineScaleDisplayName.ToString() != "IEC61217") { MachineScaleTestCase.Result = TestCase.FAIL; return MachineScaleTestCase; }
 
                 return MachineScaleTestCase;
             }
-            catch { MachineScaleTestCase.SetResult(TestCase.FAIL); return MachineScaleTestCase; }
+            catch { MachineScaleTestCase.Result = TestCase.FAIL; return MachineScaleTestCase; }
         }
 
         // Updated by SL on 05/27/2018
         public TestCase ShortTreatmentTimeCheck(Beam b)
         {
+            ShortTreatmentTimeTestCase.Description = "Minimum tx time is met.";
+            ShortTreatmentTimeTestCase.Result = TestCase.PASS;
+
             try
             {
                 if (!b.IsSetupField)
@@ -167,28 +179,28 @@ namespace VMS.TPS
                         if (b.MLCPlanType.ToString().ToUpper().Contains("STATIC") || b.MLCPlanType.ToString().ToUpper().Contains("DYNAMIC"))
                         {
                             //Console.WriteLine("{0}", Math.Round((decimal)(b.Meterset.Value / b.DoseRate * 1.19), 1));
-                            if (time_in_eclipse_decimal < Math.Round((decimal)(b.Meterset.Value / b.DoseRate * 1.19), 1)) { ShortTreatmentTimeTestCase.SetResult(TestCase.FAIL); return ShortTreatmentTimeTestCase; }
+                            if (time_in_eclipse_decimal < Math.Round((decimal)(b.Meterset.Value / b.DoseRate * 1.19), 1)) { ShortTreatmentTimeTestCase.Result = TestCase.FAIL; return ShortTreatmentTimeTestCase; }
                         }
                         else if (b.MLCPlanType.ToString().ToUpper().Contains("VMAT") || b.MLCPlanType.ToString().ToUpper().Contains("ARC"))  // VMAT and Conformal Arc
                         {
                             if (b.TreatmentUnit.MachineModel.ToString().ToUpper().Contains("TDS"))  // TrueBeam
                             {
-                                if (time_in_eclipse_decimal < allowed_time_TrueBeam_decimal) { ShortTreatmentTimeTestCase.SetResult(TestCase.FAIL); return ShortTreatmentTimeTestCase; }
+                                if (time_in_eclipse_decimal < allowed_time_TrueBeam_decimal) { ShortTreatmentTimeTestCase.Result = TestCase.FAIL; return ShortTreatmentTimeTestCase; }
                             }
                             else    // Clinac
                             {
-                                if (time_in_eclipse_decimal < allowed_time_Clinac_decimal) { ShortTreatmentTimeTestCase.SetResult(TestCase.FAIL); return ShortTreatmentTimeTestCase; }
+                                if (time_in_eclipse_decimal < allowed_time_Clinac_decimal) { ShortTreatmentTimeTestCase.Result = TestCase.FAIL; return ShortTreatmentTimeTestCase; }
                             }
                         }
                     }
                     else if (CurrentPlan.Beams.First().EnergyModeDisplayName.ToString().ToUpper().Contains("E"))   // for Electron
                     {
-                        if (time_in_eclipse_decimal < Math.Round((decimal)(b.Meterset.Value / b.DoseRate * 1.19), 1)) { ShortTreatmentTimeTestCase.SetResult(TestCase.FAIL); return ShortTreatmentTimeTestCase; }
+                        if (time_in_eclipse_decimal < Math.Round((decimal)(b.Meterset.Value / b.DoseRate * 1.19), 1)) { ShortTreatmentTimeTestCase.Result = TestCase.FAIL; return ShortTreatmentTimeTestCase; }
                     }
                 }
                 return ShortTreatmentTimeTestCase;
             }
-            catch { ShortTreatmentTimeTestCase.SetResult(TestCase.FAIL); return ShortTreatmentTimeTestCase; }
+            catch { ShortTreatmentTimeTestCase.Result = TestCase.FAIL; return ShortTreatmentTimeTestCase; }
         }
 
     }

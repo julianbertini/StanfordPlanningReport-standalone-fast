@@ -39,39 +39,48 @@ namespace VMS.TPS
 
             foreach (TestCase test in this.TestResults)
             {
-                if (test.GetResult() == TestCase.PASS)
-                {
-                    var tableNode = physicsReportHTML.DocumentNode.SelectSingleNode("//body/div/header/div/table");
+                var tableNode = physicsReportHTML.DocumentNode.SelectSingleNode("//body/div/header/div/table");
 
+                if (test.Result == TestCase.PASS)
+                {
                     string tableRowNodeStr = @"<tr>
-                                                                    <td>" + test.GetName() + "</td>" +
+                                                                    <td>" + test.Name + "</td>" +
                                                                    "<td id=\"pass\">PASS</td>" +
-                                                                   "<td id=\"des\">Description: " + test.GetDescription() + "</td>" +
+                                                                   "<td class=\"des\">" + test.Description + "</td>" +
                                                              "</tr>";
                                                                    
                     var tableRowNode = HtmlAgilityPack.HtmlNode.CreateNode(tableRowNodeStr);
 
                     tableNode.AppendChild(tableRowNode);
 
-                    // Added by SL 03/22/2018
-                    string resultFailedString = test.GetName().ToString();
                 }
-                if (test.GetResult() == TestCase.FAIL)
-                {
-                    var tableNode = physicsReportHTML.DocumentNode.SelectSingleNode("//body/div/header/div/table");
 
+                else if (test.Result == TestCase.FAIL)
+                {
                     string tableRowNodeStr = @"<tr>
-                                                                    <td>" + test.GetName() + "</td>" +
+                                                                    <td>" + test.Name + "</td>" +
                                                                    "<td id=\"fail\">WARN</td>" +
-                                                                   "<td id=\"des\">Description: " + test.GetDescription() + "</td>" +
+                                                                   "<td class=\"des\">" + test.Description + "</td>" +
                                                              "</tr>";
 
                     var tableRowNode = HtmlAgilityPack.HtmlNode.CreateNode(tableRowNodeStr);
 
                     tableNode.AppendChild(tableRowNode);
 
-                    // Added by SL 03/22/2018
-                    string resultPassedString = test.GetName();
+                }
+
+                else if (test.Result == TestCase.ACK)
+                {
+                    string tableRowNodeStr = @"<tr>
+                                                                    <td>" + test.Name + "</td>" +
+                                               "<td id=\"ack\">ACK</td>" +
+                                               "<td class=\"des\">" + test.Description + "</td>" +
+                                               "<td class=\"comments\"> Comments:" + test.Comments + "</td>" +
+                                         "</tr>";
+
+                    var tableRowNode = HtmlAgilityPack.HtmlNode.CreateNode(tableRowNodeStr);
+
+                    tableNode.AppendChild(tableRowNode);
                 }
 
             }

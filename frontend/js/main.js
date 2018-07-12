@@ -2,6 +2,7 @@
 
     onFailTestClick();
     onAckTestClick();
+    onExportClick();
 
     countTests();
 
@@ -20,6 +21,34 @@ var testState = {
     ackDetailsModal: null
 }
 
+var handleExportReport = function () {
+
+    const url = "/export"
+    const method = "GET";
+    var async = true;
+    var postData = "";
+
+    var request = new XMLHttpRequest();
+
+    request.open(method, url, async);
+
+    request.onreadystatechange = function () {
+        if (request.readyState === 4 && request.status === 200) {
+            console.log("reports should be exporting...");
+        }
+    };
+    request.setRequestHeader("Content-type", "text/html; charset=utf-8");
+
+    request.send(postData);
+
+}
+
+var onExportClick = function () {
+    $("#exportPdfButton").click(function () {
+        handleExportReport();
+    });
+}
+     
 var notifyIfPrescriptionErrors = function () {
 
     const url = "/prescriptionAlert";

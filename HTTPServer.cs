@@ -1,11 +1,9 @@
 ﻿using System;
 using System.Net;
-using HtmlAgilityPack;
 using System.Collections.Specialized;
 using System.Collections.Generic;
-using System.Linq;
 using System.Text;
-using System.Threading.Tasks;
+using System.Threading;
 
 namespace VMS.TPS
 {
@@ -13,14 +11,24 @@ namespace VMS.TPS
     {
 
         public bool ServeResources {get; set;}
-        private HttpListener _listener;
         public Route Routes { get; set; }
+
+        private readonly HttpListener _listener;
+        private readonly Thread _listenerThread;
+        private readonly Thread[] _workers;
+        private readonly ManualResetEvent _ready, _stop;
+        private readonly Queue<HttpListenerContext> _queue; 
 
         private const string ResourcesPath = @"frontend";
 
-        public HTTPServer()
+        public HTTPServer(int maxThreads)
         {
-            _listener = null;
+            _listener = new HttpListener();
+            _workers = new Thread[maxThreads];
+            _queue = new Queue<HttpListenerContext>();
+            _stop = new ManualResetEvent(false);
+            _ready = new ManualResetEvent(false);
+            _listenerThread = new Thread(HandleRequests);
             ServeResources = false;
             Routes = new Route();
         }
@@ -31,33 +39,78 @@ namespace VMS.TPS
             if (prefix == null || prefix.Length == 0)
                 throw new ArgumentException("prefixes");
 
-            // If listener is already listening, let it be
-            if (_listener == null) this._listener = new HttpListener();
-            else if (_listener.IsListening) return;
+            // If listener is already listening, do not start again
+            if (_listener.IsListening) return;
 
             // Add the prefixes.
             this._listener.Prefixes.Add(prefix);
 
             this._listener.Start();
+            this._listenerThread.Start();
 
-
-            IAsyncResult result = _listener.BeginGetContext(new AsyncCallback(ListenerCallback), this._listener);
-            Console.WriteLine("Listening...");
-
-            // Here, in this space, is where I need to launch the InteractiveReport page; otherwise, the server will just terminate. 
-
+            for (int i = 0; i < _workers.Length; i++)
+            {
+                _workers[i] = new Thread(Worker);
+                _workers[i].Start();
+            }
         }
 
-        public void ListenerCallback(IAsyncResult result)
+        public void HandleRequests()
         {
-            if (this._listener == null) return;
+            Console.WriteLine("Listening...");
+            while (_listener.IsListening)
+            {
+                var context = _listener.BeginGetContext(ContextReady, null);
 
-            HttpListenerContext context = this._listener.EndGetContext(result);
+                if (WaitHandle.WaitAny(new[] { _stop, context.AsyncWaitHandle }) == 0)
+                    return;
+            }
+        }
 
-            // start listening for the next request 
-            this._listener.BeginGetContext(new AsyncCallback(ListenerCallback), this._listener);
+        public void ContextReady(IAsyncResult result)
+        {
+            try
+            {
+                lock (_queue)
+                {
+                    _queue.Enqueue(_listener.EndGetContext(result));
+                    _ready.Set();
+                }
+            }
+            catch { return; }
+        }
 
-            this.ProcessRequest(context);
+        public void Worker()
+        {
+            WaitHandle[] wait = new[] { _ready, _stop };
+
+            while (WaitHandle.WaitAny(wait) == 0)
+            {
+                HttpListenerContext context;
+                
+                lock (_queue)
+                {
+                    if (_queue.Count > 0)
+                        context = _queue.Dequeue();
+                    else
+                    {
+                        _ready.Reset();
+                        continue;
+                    }
+                }
+                try { ProcessRequest(context);  }
+                catch (Exception e) { Console.Error.WriteLine(e);  }
+            }
+        }
+
+        public void Stop()
+        {
+            Console.WriteLine("Closing...");
+            _stop.Set();
+            _listenerThread.Join();
+            foreach (Thread worker in _workers)
+                worker.Join();
+            _listener.Stop();
         }
 
         public void ProcessRequest(HttpListenerContext context)
@@ -98,14 +151,6 @@ namespace VMS.TPS
                 Console.WriteLine("Error - only accepting GET requests");
             }
 
-        }
-
-        public void Stop()
-        {
-            if (this._listener == null) return;
-
-            this._listener.Close();
-            this._listener = null;
         }
 
         public void HandleGET(HttpListenerContext context)
@@ -179,10 +224,10 @@ namespace VMS.TPS
                 output.Write(buffer, 0, buffer.Length);
 
                 // You must close the output stream.
-                output.Close();
+                output.Flush();
             }
 
-             response.Close();
+            response.Close();
         }
 
         public NameValueCollection GetQueryParams(HttpListenerRequest request)

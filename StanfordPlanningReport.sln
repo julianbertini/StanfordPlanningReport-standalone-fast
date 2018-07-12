@@ -9,6 +9,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AriaEnmSmall", "..\AriaEnmS
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AriaSysSmall", "..\AriaSysSmall\AriaSysSmall.csproj", "{09BBF9E4-8673-48C2-96D7-3CEB78FBADC3}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ShiftNotesModal", "C:\Users\varian.RADONC\source\repos\WindowsFormsApp1\WindowsFormsApp1\ShiftNotesModal.csproj", "{FDBF267E-C2D8-4A4B-85EB-75387CCD0C89}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -39,6 +41,14 @@ Global
 		{09BBF9E4-8673-48C2-96D7-3CEB78FBADC3}.Release|Any CPU.Build.0 = Release|Any CPU
 		{09BBF9E4-8673-48C2-96D7-3CEB78FBADC3}.Release|x64.ActiveCfg = Release|Any CPU
 		{09BBF9E4-8673-48C2-96D7-3CEB78FBADC3}.Release|x64.Build.0 = Release|Any CPU
+		{FDBF267E-C2D8-4A4B-85EB-75387CCD0C89}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{FDBF267E-C2D8-4A4B-85EB-75387CCD0C89}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{FDBF267E-C2D8-4A4B-85EB-75387CCD0C89}.Debug|x64.ActiveCfg = Debug|x64
+		{FDBF267E-C2D8-4A4B-85EB-75387CCD0C89}.Debug|x64.Build.0 = Debug|x64
+		{FDBF267E-C2D8-4A4B-85EB-75387CCD0C89}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{FDBF267E-C2D8-4A4B-85EB-75387CCD0C89}.Release|Any CPU.Build.0 = Release|Any CPU
+		{FDBF267E-C2D8-4A4B-85EB-75387CCD0C89}.Release|x64.ActiveCfg = Release|Any CPU
+		{FDBF267E-C2D8-4A4B-85EB-75387CCD0C89}.Release|x64.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

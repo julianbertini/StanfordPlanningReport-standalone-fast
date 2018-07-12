@@ -17,7 +17,7 @@ namespace VMS.TPS
          */
         public TSEIPrescriptionTests(PlanSetup cPlan, string[] doctors) : base(cPlan, doctors)
         {
-            PrescriptionBolusTestCase = new TestCase("Prescription Bolus Check", "Verifies that there is no bolus present in Rx or treatment plan.", TestCase.PASS);
+            PrescriptionBolusTestCase = null;
         }
 
         /* Verifies the fractionation. In the case of TSEI, fractionation will be 1/2 of total plan fractions, since 
@@ -33,13 +33,15 @@ namespace VMS.TPS
          */
         public override TestCase PrescriptionFractionationCheck()
         {
+            PrescriptionFractionationTestCase = new TestCase("Prescription Fractionation", "Planned fractionation matches linked Rx.", TestCase.PASS);
+
             try
             {
                 foreach (RTPrescriptionTarget t in CurrentPlan.RTPrescription.Targets)
                 {
                     if (t.NumberOfFractions == (CurrentPlan.UniqueFractionation.NumberOfFractions/2)) { return PrescriptionFractionationTestCase; }
                 }
-                PrescriptionFractionationTestCase.SetResult(TestCase.FAIL); return PrescriptionFractionationTestCase;
+                PrescriptionFractionationTestCase.Result = TestCase.FAIL; return PrescriptionFractionationTestCase;
             }
             catch (Exception ex)
             { 
@@ -61,6 +63,8 @@ namespace VMS.TPS
          */
         public override TestCase PrescriptionDoseCheck()
         {
+            PrescriptionDoseTestCase = new TestCase("Prescription Dose Check", "Planned total dose matches linked Rx.", TestCase.PASS);
+
             try
             {
                 foreach (RTPrescriptionTarget t in CurrentPlan.RTPrescription.Targets)
@@ -69,7 +73,7 @@ namespace VMS.TPS
                                                                                                                         CurrentPlan.UniqueFractionation.NumberOfFractions.Value) ) <= 0.1)
                     { return PrescriptionDoseTestCase; }
                 }
-                PrescriptionDoseTestCase.SetResult(TestCase.FAIL); return PrescriptionDoseTestCase;
+                PrescriptionDoseTestCase.Result = TestCase.FAIL; return PrescriptionDoseTestCase;
             }
             catch (Exception ex) {
                 return PrescriptionDoseTestCase.HandleTestError(ex);
@@ -88,6 +92,7 @@ namespace VMS.TPS
          */
         public override TestCase PrescriptionEnergyCheck(Beam b)
         {
+            PrescriptionEnergyTestCase = new TestCase("Prescription Energy", "Planned energy matches linked Rx.", TestCase.PASS);
             string TSEIEnergy = "9E";
 
             try
@@ -98,7 +103,7 @@ namespace VMS.TPS
 
                     if (!CurrentPlan.RTPrescription.Energies.Any(l => (l.Contains(value) && l == TSEIEnergy)))
                     {
-                        PrescriptionEnergyTestCase.SetResult(TestCase.FAIL); return PrescriptionEnergyTestCase;
+                        PrescriptionEnergyTestCase.Result = TestCase.FAIL; return PrescriptionEnergyTestCase;
                     }
                 }
                 return PrescriptionEnergyTestCase;
@@ -122,13 +127,15 @@ namespace VMS.TPS
         */
         public override TestCase PrescriptionBolusCheck(Beam b)
         {
+            PrescriptionBolusTestCase = new TestCase("Prescription Bolus", "No bolus present in Rx or Tx plan.", TestCase.PASS);
+
             try
             {
                 if (!b.IsSetupField)
                 {
                     if (b.Boluses.Count() != 0 || _BolusInfo[0] != null || _BolusInfo[1] != null)
                     {
-                        PrescriptionBolusTestCase.SetResult(TestCase.FAIL); return PrescriptionBolusTestCase;
+                        PrescriptionBolusTestCase.Result = TestCase.FAIL; return PrescriptionBolusTestCase;
                     }
                 }
 
