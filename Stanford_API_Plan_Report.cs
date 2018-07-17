@@ -26,7 +26,17 @@ namespace VMS.TPS
 
             PhysicsCheck physics = new PhysicsCheck(currentPlan);
 
-            // PDF CREATION
+            /*
+            InteractiveReport iReport = new InteractiveReport(patient, currentPlan, course, physics.Results);
+
+            iReport.LaunchInteractiveReport();
+
+            while (!iReport.ExportReports) ;
+
+            iReport.Server.Stop();
+            */
+
+            Console.WriteLine("Export reports! ... :)");
             MasterReport report = new MasterReport(patient, course, currentPlan)
             {
                 TestResults = physics.Results
@@ -34,7 +44,7 @@ namespace VMS.TPS
 
             report.CreateReports();
             report.ShowReports();
-            
+
         }
     }
 }

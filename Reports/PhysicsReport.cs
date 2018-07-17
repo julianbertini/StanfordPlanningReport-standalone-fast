@@ -75,7 +75,7 @@ namespace VMS.TPS
                                                                     <td>" + test.Name + "</td>" +
                                                "<td id=\"ack\">ACK</td>" +
                                                "<td class=\"des\">" + test.Description + "</td>" +
-                                               "<td class=\"comments\"> Comments:" + test.Comments + "</td>" +
+                                               "<td class=\"comments\"> Comment: " + test.Comments + "</td>" +
                                          "</tr>";
 
                     var tableRowNode = HtmlAgilityPack.HtmlNode.CreateNode(tableRowNodeStr);

@@ -33,10 +33,6 @@ namespace VMS.TPS
             Doctors = doctors;
 
             // per Beam tests
-            CouchTestCase = new TestCase("Couch Structure (VMAT)", "Correct couch structure is included in plan.", TestCase.PASS);
-            this.Tests.Add(CouchTestCase);
-            this.TestMethods.Add(CouchTestCase.Name, CouchCheck);
-
             PlanNormalizationTestCase = new TestCase("Plan Normalization (VMAT)", "Plan normalization: 100% covers 95% of Target Volume.", TestCase.PASS);
             this.Tests.Add(PlanNormalizationTestCase);
             this.TestMethods.Add(PlanNormalizationTestCase.Name, PlanNormalizationCheck);
@@ -44,6 +40,10 @@ namespace VMS.TPS
             DoseAlgorithmTestCase = new TestCase("Dose Algorithm", "Photon dose calc. is AAA_V13623 or AcurosXB_V13623.", TestCase.PASS);
             this.Tests.Add(DoseAlgorithmTestCase);
             this.TestMethods.Add(DoseAlgorithmTestCase.Name, DoseAlgorithmCheck);
+
+            CouchTestCase = new TestCase("Couch Structure (VMAT)", "Correct couch structure is included in plan.", TestCase.PASS);
+            this.Tests.Add(CouchTestCase);
+            this.TestMethods.Add(CouchTestCase.Name, CouchCheck);
 
             JawMaxTestCase = new TestCase("Jaw Max", "Each jaw does not exceed 20.0cm.", TestCase.PASS);
             this.Tests.Add(JawMaxTestCase);
@@ -61,21 +61,18 @@ namespace VMS.TPS
             this.Tests.Add(TableHeightTestCase);
             this.TestMethods.Add(TableHeightTestCase.Name, TableHeightCheck);
 
-            SBRTDoseResolutionTestCase = new TestCase("Dose Resolution (SBRT)", "Remove target volume < 5cc & check Prescription Tech. SBRT", TestCase.PASS);
+            SBRTDoseResolutionTestCase = new TestCase("Dose Resolution (SBRT)", "For SRS ARC plans or Rx tech. SBRT dose resolution <= 1.5mm.", TestCase.PASS);
             this.Tests.Add(SBRTDoseResolutionTestCase);
             this.TestMethods.Add(SBRTDoseResolutionTestCase.Name, SBRTDoseResolutionCheck);
 
-            SBRTCTSliceThicknessTestCase = new TestCase("CT Slice Thickness (SBRT)", "SRS ARC plans or target volumes < 5cc use a CT slice thickness <= 2mm.", TestCase.PASS);
+            SBRTCTSliceThicknessTestCase = new TestCase("CT Slice Thickness (SBRT)", "For SRS ARC plans or Rx tech. SBRT CT slice thickness <= 2mm.", TestCase.PASS);
             this.Tests.Add(SBRTCTSliceThicknessTestCase);
             this.TestMethods.Add(SBRTCTSliceThicknessTestCase.Name, SBRTCTSliceThicknessCheck);
 
 
             //standalone 
-            HighMUTestCase = new TestCase("MU Factor", "Total MU < 4x Rx dose per fraction in cGy.", TestCase.PASS);
-            this.Tests.Add(HighMUTestCase);
-
-            UserOriginTestCase = new TestCase("User Origin", "User origin is not set to (0, 0, 0).", TestCase.PASS);
-            this.Tests.Add(UserOriginTestCase);
+            PlanningApprovalTestCase = new TestCase("Planning Approval", "Plan is planning approved by MD.", TestCase.PASS);
+            this.Tests.Add(PlanningApprovalTestCase);
 
             ImageDateTestCase = new TestCase("Current Plan CT", "Plan CT date <= 14 days from plan creation.", TestCase.PASS);
             this.Tests.Add(ImageDateTestCase);
@@ -83,11 +80,14 @@ namespace VMS.TPS
             PatientOrientationTestCase = new TestCase("Patient Orientation", "Tx orientation is same as CT orientation.", TestCase.PASS);
             this.Tests.Add(PatientOrientationTestCase);
 
-            PlanningApprovalTestCase = new TestCase("Planning Approval", "Plan is planning approved by MD.", TestCase.PASS);
-            this.Tests.Add(PlanningApprovalTestCase);
+            UserOriginTestCase = new TestCase("User Origin", "User origin is not set to (0, 0, 0).", TestCase.PASS);
+            this.Tests.Add(UserOriginTestCase);
 
             TargetVolumeTestCase = new TestCase("Target Volume", "Target volume does not contain \"TS\" & contains \"PTV\".", TestCase.PASS);
             this.Tests.Add(TargetVolumeTestCase);
+
+            HighMUTestCase = new TestCase("MU Factor", "Total MU < 4x Rx dose per fraction in cGy.", TestCase.PASS);
+            this.Tests.Add(HighMUTestCase);
 
             ShiftNoteJournalTestCase = new TestCase("Shift Note in Journal", "Shift note has been inserted into journal.", TestCase.PASS);
             this.Tests.Add(ShiftNoteJournalTestCase);
@@ -485,6 +485,28 @@ namespace VMS.TPS
             catch (Exception ex)
             {
                 return TargetVolumeTestCase.HandleTestError(ex);
+            }
+        }
+
+        public override TestCase ToleranceTableCheck(Beam b)
+        {
+            ToleranceTableTestCase.Description = "Non-empty value.";
+            ToleranceTableTestCase.Result = TestCase.PASS;
+
+            int empty = 0;
+             
+            try
+            {
+                if (!b.IsSetupField)
+                {
+                    if (b.ToleranceTableLabel.Length == empty)
+                        ToleranceTableTestCase.Result = TestCase.FAIL;
+                }
+                return ToleranceTableTestCase;
+            }
+            catch (Exception e)
+            {
+                return ToleranceTableTestCase.HandleTestError(e);
             }
         }
 

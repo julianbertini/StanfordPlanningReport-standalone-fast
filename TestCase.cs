@@ -38,6 +38,20 @@ namespace VMS.TPS
             comments = null;
         }
 
+        public static bool NearlyEqual(double a, double b, double epsilon)
+        {
+            double absA = Math.Abs(a);
+            double absB = Math.Abs(b);
+            double diff = Math.Abs(b - a);
+
+            if (a == b)
+                return true;
+            else if (a == 0 || b == 0 || diff < float.Epsilon)
+                return diff < (epsilon * float.Epsilon);
+            else
+                return diff / (absA + absB) < epsilon;
+        }
+
         /* Defines equality for any two arbitrary tests
          * 
          * Updated: JB 6/13/18

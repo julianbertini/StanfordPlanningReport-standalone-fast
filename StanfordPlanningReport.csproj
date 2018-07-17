@@ -9,7 +9,7 @@
     <OutputType>Exe</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
     <RootNamespace>StanfordPlanningReport</RootNamespace>
-    <AssemblyName>StanfordPlanningReportTEST8.esapi</AssemblyName>
+    <AssemblyName>JBTest.esapi</AssemblyName>
     <TargetFrameworkVersion>v4.6.1</TargetFrameworkVersion>
     <TargetFrameworkProfile>
     </TargetFrameworkProfile>
@@ -86,12 +86,6 @@
     <Reference Include="System.Core" />
     <Reference Include="System.Data.DataSetExtensions" />
     <Reference Include="System.Drawing" />
-    <Reference Include="System.Net.Http, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
-      <HintPath>packages\Microsoft.Net.Http.2.0.20505.0\lib\net40\System.Net.Http.dll</HintPath>
-    </Reference>
-    <Reference Include="System.Net.Http.WebRequest, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
-      <HintPath>packages\Microsoft.Net.Http.2.0.20505.0\lib\net40\System.Net.Http.WebRequest.dll</HintPath>
-    </Reference>
     <Reference Include="System.Windows.Forms" />
     <Reference Include="System.Xml" />
     <Reference Include="VMS.TPS.Common.Model.API, Version=13.6.32.20182, Culture=neutral, processorArchitecture=AMD64">
@@ -127,7 +121,7 @@
     <Compile Include="Shared\SharedPrescriptionTests.cs" />
     <Compile Include="Shared\SharedTests.cs" />
     <Compile Include="TestCase.cs" />
-    <Compile Include="Testing\julianPlayground.cs" />
+    <Compile Include="Testing\testMain.cs" />
     <Compile Include="Testing\StanfordPlanningReport.cs" />
     <Compile Include="TSEI\TSEIFieldTests.cs" />
     <Compile Include="TSEI\TSEITests.cs" />
@@ -251,6 +245,10 @@
     </BootstrapperPackage>
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\AriaConnect\AriaConnect.csproj">
+      <Project>{1bc86069-34a0-4fb1-b922-7e4876adfb9f}</Project>
+      <Name>AriaConnect</Name>
+    </ProjectReference>
     <ProjectReference Include="..\AriaEnmSmall\AriaEnmSmall.csproj">
       <Project>{6017e4ad-fa6e-4994-b6fe-eddbfb7ae3fb}</Project>
       <Name>AriaEnmSmall</Name>

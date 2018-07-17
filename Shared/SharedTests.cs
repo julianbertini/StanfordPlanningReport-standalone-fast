@@ -24,6 +24,7 @@ namespace VMS.TPS
         protected TestCase CourseNameTestCase;
         protected TestCase ActiveCourseTestCase;
         protected TestCase DoseRateTestCase;
+        protected TestCase ToleranceTableTestCase;
 
         protected string MachineName;
 
@@ -36,6 +37,15 @@ namespace VMS.TPS
             TestMethods = new Dictionary<string, TestCase.Test>();
 
             MachineName = FindMachineName();
+
+            // standalone test
+            CourseNameTestCase = new TestCase("Course Name", "Test not completed.", TestCase.FAIL);
+            this.Tests.Add(CourseNameTestCase);
+            
+            // standalone test
+            ActiveCourseTestCase = new TestCase("Single Active Course", "Test not completed.", TestCase.FAIL);
+            this.Tests.Add(ActiveCourseTestCase);
+
 
             // per Beam tests
             MachineScaleTestCase = new TestCase("Machine Scale", "Test not completed.", TestCase.FAIL);
@@ -54,17 +64,15 @@ namespace VMS.TPS
             this.Tests.Add(DoseRateTestCase);
             this.TestMethods.Add(DoseRateTestCase.Name, DoseRateCheck);
 
-            // standalone tests
-            CourseNameTestCase = new TestCase("Course Name", "Test not completed.", TestCase.FAIL);
-            this.Tests.Add(CourseNameTestCase);
-
-            ActiveCourseTestCase = new TestCase("Single Active Course", "Test not completed.", TestCase.FAIL);
-            this.Tests.Add(ActiveCourseTestCase);
+            ToleranceTableTestCase = new TestCase("Tolerance Table", "Test not completed.", TestCase.FAIL);
+            this.Tests.Add(ToleranceTableTestCase);
+            this.TestMethods.Add(ToleranceTableTestCase.Name, ToleranceTableCheck);
 
         }
 
         public abstract TestCase DoseRateCheck(Beam b);
         public abstract TestCase MachineIdCheck(Beam b);
+        public abstract TestCase ToleranceTableCheck(Beam b);
 
         private string FindMachineName()
         {

@@ -23,22 +23,9 @@ namespace VMS.TPS
          */
         public GeneralFieldTests(PlanSetup cPlan): base(cPlan)
         {
-            // per Beam tests
-            SetupFieldNameTestCase = new TestCase("Setup Field Name", "Test not completed.", TestCase.FAIL);
-            this.Tests.Add(SetupFieldNameTestCase);
-            this.TestMethods.Add(SetupFieldNameTestCase.Name, SetupFieldNameCheck);
-
-            DRRAllFieldsTestCase = new TestCase("DRR Presence", "Test not completed.", TestCase.FAIL);
-            this.Tests.Add(DRRAllFieldsTestCase);
-            this.TestMethods.Add(DRRAllFieldsTestCase.Name, DRRAllFieldsCheck);
-
             ArcFieldNameTestCase = new TestCase("Arc Field Name (VMAT)", "Test not completed.", TestCase.FAIL);
             this.Tests.Add(ArcFieldNameTestCase);
             this.TestMethods.Add(ArcFieldNameTestCase.Name, ArcFieldNameCheck);
-
-            SetupFieldBolusTestCase = new TestCase("Setup Field Bolus", "Test not completed.", TestCase.FAIL);
-            this.Tests.Add(SetupFieldBolusTestCase);
-            this.TestMethods.Add(SetupFieldBolusTestCase.Name, SetupFieldBolusCheck);
 
             TreatmentFieldNameTestCase = new TestCase("Tx Field Name and Angle (3D)", "Test not completed.", TestCase.FAIL);
             this.Tests.Add(TreatmentFieldNameTestCase);
@@ -47,6 +34,19 @@ namespace VMS.TPS
             // standalone tests
             SetupFieldAngleTestCase = new TestCase("Setup Fields Presence", "Test not completed.", TestCase.FAIL);
             this.Tests.Add(SetupFieldAngleTestCase);
+
+            // per Beam tests
+            SetupFieldNameTestCase = new TestCase("Setup Field Name", "Test not completed.", TestCase.FAIL);
+            this.Tests.Add(SetupFieldNameTestCase);
+            this.TestMethods.Add(SetupFieldNameTestCase.Name, SetupFieldNameCheck);
+
+            SetupFieldBolusTestCase = new TestCase("Setup Field Bolus", "Test not completed.", TestCase.FAIL);
+            this.Tests.Add(SetupFieldBolusTestCase);
+            this.TestMethods.Add(SetupFieldBolusTestCase.Name, SetupFieldBolusCheck);
+
+            DRRAllFieldsTestCase = new TestCase("DRR Presence", "Test not completed.", TestCase.FAIL);
+            this.Tests.Add(DRRAllFieldsTestCase);
+            this.TestMethods.Add(DRRAllFieldsTestCase.Name, DRRAllFieldsCheck);
         }
 
         /* Getter method for List of field test results

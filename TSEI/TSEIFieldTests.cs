@@ -67,9 +67,9 @@ namespace VMS.TPS
 
             if (nWrong == 0)
             {
-                if (nAP == nRPO && nRPO == nLPO && nLPO == 2) // transitivity ;)
+                if (CurrentPlan.Id.ToString().Contains("AP") && nAP == nRPO && nRPO == nLPO && nLPO == 2) // transitivity ;)
                     return TreatmentFieldNameTestCase;
-                if (nPA == nRAO && nRAO == nLAO && nLAO == 2)
+                if (CurrentPlan.Id.ToString().Contains("PA") && nPA == nRAO && nRAO == nLAO && nLAO == 2)
                     return TreatmentFieldNameTestCase;
             }
             

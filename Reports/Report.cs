@@ -136,7 +136,7 @@ namespace VMS.TPS
                         {
                             IsoHtml.WriteLine("{0}{1}{2}{3}{4}{5}{6}{7}", "<h3> Isocenter Group 1:</h3><h4> ", CurrentPlan.Id, "<br>Isoshift from CT REF:</h4><div class=\"tab\"><h4>", "No Shifts", "<br>", "</h4><h4>TT: ", (b.ControlPoints.First().TableTopVerticalPosition / 10.0).ToString("N1"), " cm</h4><br></div>");
                             shiftInfo[0] = "No Shifts";
-                            shiftInfo[1] = (b.ControlPoints.First().TableTopVerticalPosition / 10.0).ToString("N1");
+                            shiftInfo[1] = "TT = " + (b.ControlPoints.First().TableTopVerticalPosition / 10.0).ToString("N1");
                             ShiftGroups["Group1"] = shiftInfo;
                             isoGroup1Flag = true;
                         }
@@ -146,7 +146,7 @@ namespace VMS.TPS
                             shiftInfo[0] = ShiftNote(b, CurrentPlan)[0];
                             shiftInfo[1] = ShiftNote(b, CurrentPlan)[1];
                             shiftInfo[2] = ShiftNote(b, CurrentPlan)[2];
-                            shiftInfo[3] = (b.ControlPoints.First().TableTopVerticalPosition / 10.0).ToString("N1");
+                            shiftInfo[3] = "TT = " + (b.ControlPoints.First().TableTopVerticalPosition / 10.0).ToString("N1");
                             ShiftGroups["Group1"] = shiftInfo;
                             isoGroup1Flag = true;
                         }
@@ -157,17 +157,17 @@ namespace VMS.TPS
                         {
                             IsoHtml.WriteLine("{0}{1}{2}{3}{4}{5}{6}{7}", "<h3> Isocenter Group 2:</h3><h4> ", CurrentPlan.Id, "<br>Isoshift from CT REF:</h4><div class=\"tab\"><h4>", "No Shifts", "<br>", "</h4><h4>TT: ", (b.ControlPoints.First().TableTopVerticalPosition / 10.0).ToString("N1"), " cm</h4><br></div>");
                             shiftInfo[0] = "No Shifts";
-                            shiftInfo[1] = (b.ControlPoints.First().TableTopVerticalPosition / 10.0).ToString("N1");
+                            shiftInfo[1] = "TT = " + (b.ControlPoints.First().TableTopVerticalPosition / 10.0).ToString("N1");
                             ShiftGroups["Group2"] = shiftInfo;
                             isoGroup2Flag = true;
                         }
                         else
                         {
                             IsoHtml.WriteLine("{0}{1}{2}{3}{4}{5}{6}{7}{8}{9}{10}{11}", "<h3> Isocenter Group 2:</h3><h4> ", CurrentPlan.Id, "<br>Isoshift from CT REF:</h4><div class=\"tab\"><h4>", ShiftNote(b, CurrentPlan)[0].ToString(), "<br>", ShiftNote(b, CurrentPlan)[1].ToString(), "<br>", ShiftNote(b, CurrentPlan)[2].ToString(), "<br>", "</h4><h4>TT: ", (b.ControlPoints.First().TableTopVerticalPosition / 10.0).ToString("N1"), " cm</h4><br></div>");
-                            shiftInfo[0] = ShiftNote(b, CurrentPlan)[0];
-                            shiftInfo[1] = ShiftNote(b, CurrentPlan)[1];
-                            shiftInfo[2] = ShiftNote(b, CurrentPlan)[2];
-                            shiftInfo[3] = (b.ControlPoints.First().TableTopVerticalPosition / 10.0).ToString("N1");
+                            shiftInfo[0] =  ShiftNote(b, CurrentPlan)[0];
+                            shiftInfo[1] =  ShiftNote(b, CurrentPlan)[1];
+                            shiftInfo[2] =  ShiftNote(b, CurrentPlan)[2];
+                            shiftInfo[3] = "TT = " + (b.ControlPoints.First().TableTopVerticalPosition / 10.0).ToString("N1");
                             ShiftGroups["Group2"] = shiftInfo;
                             isoGroup2Flag = true;
                         }
@@ -178,7 +178,7 @@ namespace VMS.TPS
                         {
                             IsoHtml.WriteLine("{0}{1}{2}{3}{4}{5}{6}{7}", "<h3> Isocenter Group 3:</h3><h4> ", CurrentPlan.Id, "<br>Isoshift from CT REF:</h4><div class=\"tab\"><h4>", "No Shifts", "<br>", "</h4><h4>TT: ", (b.ControlPoints.First().TableTopVerticalPosition / 10.0).ToString("N1"), " cm</h4><br></div>");
                             shiftInfo[0] = "No Shifts";
-                            shiftInfo[1] = (b.ControlPoints.First().TableTopVerticalPosition / 10.0).ToString("N1");
+                            shiftInfo[1] = "TT = " + (b.ControlPoints.First().TableTopVerticalPosition / 10.0).ToString("N1");
                             ShiftGroups["Group3"] = shiftInfo;
                             isoGroup3Flag = true;
                         }
@@ -188,7 +188,7 @@ namespace VMS.TPS
                             shiftInfo[0] = ShiftNote(b, CurrentPlan)[0];
                             shiftInfo[1] = ShiftNote(b, CurrentPlan)[1];
                             shiftInfo[2] = ShiftNote(b, CurrentPlan)[2];
-                            shiftInfo[3] = (b.ControlPoints.First().TableTopVerticalPosition / 10.0).ToString("N1");
+                            shiftInfo[3] = "TT = " + (b.ControlPoints.First().TableTopVerticalPosition / 10.0).ToString("N1");
                             ShiftGroups["Group3"] = shiftInfo;
                             isoGroup3Flag = true;
                         }

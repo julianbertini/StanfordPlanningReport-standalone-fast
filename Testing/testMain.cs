@@ -5,6 +5,7 @@ using Application = VMS.TPS.Common.Model.API.Application;
 using PlanSetup = VMS.TPS.Common.Model.API.PlanSetup;
 using Patient = VMS.TPS.Common.Model.API.Patient;
 using Course = VMS.TPS.Common.Model.API.Course;
+using VMS.TPS.Common.Model.API;
 
 namespace VMS.TPS
 {
@@ -53,6 +54,10 @@ namespace VMS.TPS
 
             PhysicsCheck physics = new PhysicsCheck(currentPlan);
 
+            TSEITests t = new TSEITests(currentPlan);
+
+            t.CouchParametersCheck();
+
             // PDF CREATION
             /*
             MasterReport report = new MasterReport(patient, course, currentPlan)
@@ -64,6 +69,8 @@ namespace VMS.TPS
             report.ShowReports();
             */
             
+            
+            /*
             InteractiveReport iReport = new InteractiveReport(patient, currentPlan, course, physics.Results);
 
             iReport.LaunchInteractiveReport();
@@ -80,7 +87,7 @@ namespace VMS.TPS
 
             report.CreateReports();
             report.ShowReports();
-
+            */
 
         }
 
