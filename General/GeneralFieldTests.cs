@@ -23,29 +23,30 @@ namespace VMS.TPS
          */
         public GeneralFieldTests(PlanSetup cPlan): base(cPlan)
         {
+            // standalone tests
+            SetupFieldAngleTestCase = new TestCase("Setup Fields Presence", "Test not completed.", TestCase.FAIL);
+            this.StandaloneTests.Add(SetupFieldAngleTestCase);
+            this.StandaloneTestMethods.Add(SetupFieldAngleTestCase.Name, SetupFieldAngleCheck);
+
+            // per Beam tests
             ArcFieldNameTestCase = new TestCase("Arc Field Name (VMAT)", "Test not completed.", TestCase.FAIL);
-            this.Tests.Add(ArcFieldNameTestCase);
+            this.PerBeamTests.Add(ArcFieldNameTestCase);
             this.TestMethods.Add(ArcFieldNameTestCase.Name, ArcFieldNameCheck);
 
             TreatmentFieldNameTestCase = new TestCase("Tx Field Name and Angle (3D)", "Test not completed.", TestCase.FAIL);
-            this.Tests.Add(TreatmentFieldNameTestCase);
+            this.PerBeamTests.Add(TreatmentFieldNameTestCase);
             this.TestMethods.Add(TreatmentFieldNameTestCase.Name, TreatmentFieldNameCheck);
 
-            // standalone tests
-            SetupFieldAngleTestCase = new TestCase("Setup Fields Presence", "Test not completed.", TestCase.FAIL);
-            this.Tests.Add(SetupFieldAngleTestCase);
-
-            // per Beam tests
             SetupFieldNameTestCase = new TestCase("Setup Field Name", "Test not completed.", TestCase.FAIL);
-            this.Tests.Add(SetupFieldNameTestCase);
+            this.PerBeamTests.Add(SetupFieldNameTestCase);
             this.TestMethods.Add(SetupFieldNameTestCase.Name, SetupFieldNameCheck);
 
             SetupFieldBolusTestCase = new TestCase("Setup Field Bolus", "Test not completed.", TestCase.FAIL);
-            this.Tests.Add(SetupFieldBolusTestCase);
+            this.PerBeamTests.Add(SetupFieldBolusTestCase);
             this.TestMethods.Add(SetupFieldBolusTestCase.Name, SetupFieldBolusCheck);
 
             DRRAllFieldsTestCase = new TestCase("DRR Presence", "Test not completed.", TestCase.FAIL);
-            this.Tests.Add(DRRAllFieldsTestCase);
+            this.PerBeamTests.Add(DRRAllFieldsTestCase);
             this.TestMethods.Add(DRRAllFieldsTestCase.Name, DRRAllFieldsCheck);
         }
 
@@ -56,47 +57,6 @@ namespace VMS.TPS
         public List<TestCase> GetTestResults()
         {
             return TestResults;
-        }
-
-        /* Iterates through each beam in the current plan and runs all field tests for each beam.
-         * It modifies the FieldTestResults List to include the resulting test cases. 
-         * It's organized such that failed tests will come before passed tests in the list (useful for later formatting).
-         * 
-         * Params: 
-         *          None
-         * Returns: 
-         *          None
-         *          
-         * Updated: JB 6/13/18
-         */
-        public void ExecuteTests(bool runPerBeam, Beam b = null)
-        {
-            if (runPerBeam)
-            {
-                List<string> testsToRemove = new List<string>();
-                string testName = null;
-
-                foreach (KeyValuePair<string, TestCase.Test> test in TestMethods)
-                {
-                    testName = test.Value(b).AddToListOnFail(this.TestResults, this.Tests);
-
-                    if (testName != null)
-                    {
-                        testsToRemove.Add(testName);
-                    }
-                }
-                foreach (string name in testsToRemove)
-                {
-                    TestMethods.Remove(name);
-                }
-
-            }
-            else //standalone tests
-            {
-                SetupFieldAngleCheck().AddToListOnFail(this.TestResults, this.Tests);
-
-                TestResults.AddRange(this.Tests);
-            }
         }
 
         //Added by SL 03/02/2018 - SetupFieldBolusCheck
@@ -121,7 +81,7 @@ namespace VMS.TPS
 
 
         //TODO: documentation
-        public TestCase SetupFieldAngleCheck(Beam beam = null)
+        public TestCase SetupFieldAngleCheck()
         {
             SetupFieldAngleTestCase.Description = "4 cardinal angle setup fields provided.";
             SetupFieldAngleTestCase.Result = TestCase.PASS;
@@ -239,7 +199,7 @@ namespace VMS.TPS
         }
 
         //TODO: documentation
-        public override TestCase TreatmentFieldNameCheck(Beam b)
+        public  TestCase TreatmentFieldNameCheck(Beam b)
         {
             TreatmentFieldNameTestCase.Description = "Tx field names and corresponding gantry angles match.";
             TreatmentFieldNameTestCase.Result = TestCase.PASS;

@@ -106,6 +106,7 @@
       <DesignTimeSharedInput>True</DesignTimeSharedInput>
       <DependentUpon>Settings.settings</DependentUpon>
     </Compile>
+    <Compile Include="Shared\SharedExecute.cs" />
     <Compile Include="Stanford_API_Plan_Report.cs" />
     <Compile Include="Reports\Report.cs" />
     <Compile Include="General\GeneralFieldTests.cs" />

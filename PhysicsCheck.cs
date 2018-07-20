@@ -19,21 +19,15 @@ namespace VMS.TPS
             GeneralPrescriptionTests generalPrescriptionTests = new GeneralPrescriptionTests(CurrentPlan, docs);
             GeneralFieldTests fieldTests = new GeneralFieldTests(CurrentPlan);
 
-            // run all tests that loop through all beams
-            bool runPerBeam = true;
-            foreach (Beam b in CurrentPlan.Beams)
-            {
-                generalTests.ExecuteTests(runPerBeam, b);
-                generalPrescriptionTests.ExecuteTests(runPerBeam, b);
-                fieldTests.ExecuteTests(runPerBeam, b);
-            }
+            /*
+            TSEITests tsei = new TSEITests(CurrentPlan);
+            TSEIFieldTests tseiField = new TSEIFieldTests(CurrentPlan);
+            TSEIPrescriptionTests itseiPres = new TSEIPrescriptionTests(CurrentPlan, docs);
+            */
 
-            // run remainder of tests that don't rely on beams or have to be standalone 
-            runPerBeam = false;
-
-            generalPrescriptionTests.ExecuteTests(runPerBeam);
-            fieldTests.ExecuteTests(runPerBeam);
-            generalTests.ExecuteTests(runPerBeam);
+            generalTests.ExecuteTests(CurrentPlan.Beams);
+            generalPrescriptionTests.ExecuteTests(CurrentPlan.Beams);
+            fieldTests.ExecuteTests(CurrentPlan.Beams);
 
             Results.AddRange(generalPrescriptionTests.TestResults);
             Results.AddRange(fieldTests.TestResults);

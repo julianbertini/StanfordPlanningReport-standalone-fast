@@ -4,27 +4,16 @@ using PlanSetup = VMS.TPS.Common.Model.API.PlanSetup;
 
 namespace VMS.TPS
 {
-    public abstract class SharedFieldTests
+    public abstract class SharedFieldTests : SharedExecute
     {
-        protected Dictionary<string, TestCase.Test> TestMethods;
-
         protected PlanSetup CurrentPlan;
-
-        public List<TestCase> TestResults { get; }
-        protected List<TestCase> Tests;
 
         protected TestCase TreatmentFieldNameTestCase;
 
-        public SharedFieldTests(PlanSetup cPlan)
+        public SharedFieldTests(PlanSetup cPlan) : base()
         {
             CurrentPlan = cPlan;
-            TestResults = new List<TestCase>();
-            Tests = new List<TestCase>();
-            TestMethods = new Dictionary<string, TestCase.Test>();
         }
-
-        // TODO IMPLEMENT (in each child class)
-        public abstract TestCase TreatmentFieldNameCheck(Beam b = null);
 
     }
 }

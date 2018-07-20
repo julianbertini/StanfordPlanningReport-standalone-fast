@@ -40,51 +40,54 @@ namespace VMS.TPS
 
             // per Beam 
             TechniqueTestCase = new TestCase("Technique Check", "Test not completed.", TestCase.FAIL);
-            this.Tests.Add(TechniqueTestCase);
+            this.PerBeamTests.Add(TechniqueTestCase);
             this.TestMethods.Add(TechniqueTestCase.Name, TechniqueCheck);
 
             MUTestCase = new TestCase("MU Check", "Test not completed.", TestCase.FAIL);
-            this.Tests.Add(MUTestCase);
+            this.PerBeamTests.Add(MUTestCase);
             this.TestMethods.Add(MUTestCase.Name, MUCheck);
 
             GantryTestCase = new TestCase("Gantry Check", "Test not completed.", TestCase.FAIL);
-            this.Tests.Add(GantryTestCase);
+            this.PerBeamTests.Add(GantryTestCase);
             this.TestMethods.Add(GantryTestCase.Name, GantryCheck);
 
             CollimatorTestCase = new TestCase("Collimator Check", "Test not completed.", TestCase.FAIL);
-            this.Tests.Add(CollimatorTestCase);
+            this.PerBeamTests.Add(CollimatorTestCase);
             this.TestMethods.Add(CollimatorTestCase.Name, CollimatorCheck);
 
             FieldSizeTestCase = new TestCase("Field Size Check", "Test not completed.", TestCase.FAIL);
-            this.Tests.Add(FieldSizeTestCase);
+            this.PerBeamTests.Add(FieldSizeTestCase);
             this.TestMethods.Add(FieldSizeTestCase.Name, FieldSizeCheck);
 
             MLCTestCase = new TestCase("MLC Check", "Test not comlpeted.", TestCase.FAIL);
-            this.Tests.Add(MLCTestCase);
+            this.PerBeamTests.Add(MLCTestCase);
             this.TestMethods.Add(MLCTestCase.Name, MLCCheck);
 
             //standalone 
             CouchParametersTestCase = new TestCase("Couch Parameters Check", "Test not completed.", TestCase.FAIL);
-            this.Tests.Add(CouchParametersTestCase);
+            this.StandaloneTests.Add(CouchParametersTestCase);
+            this.StandaloneTestMethods.Add(CouchParametersTestCase.Name, CouchParametersCheck);
 
             ReferencePointTestCase = new TestCase("Reference Point Check", "Test not completed.", TestCase.FAIL);
-            this.Tests.Add(ReferencePointTestCase);
+            this.StandaloneTests.Add(ReferencePointTestCase);
+            this.StandaloneTestMethods.Add(ReferencePointTestCase.Name, ReferencePointCheck);
 
             SchedulingTestCase = new TestCase("Scheduling Check", "Test not completed.", TestCase.FAIL);
-            this.Tests.Add(SchedulingTestCase);
+            this.StandaloneTests.Add(SchedulingTestCase);
+            this.StandaloneTestMethods.Add(SchedulingTestCase.Name, SchedulingCheck);
 
             IntMountTestCase = new TestCase("Int Mount Check", "Test not completed.", TestCase.FAIL);
-            this.Tests.Add(IntMountTestCase);
-
+            this.StandaloneTests.Add(IntMountTestCase);
+            this.StandaloneTestMethods.Add(IntMountTestCase.Name, IntMountCheck);
         }
 
         public override TestCase DoseRateCheck(Beam b)
         {
+            DoseRateTestCase.Description = "Maximum dose rates are set.";
+            DoseRateTestCase.Result = TestCase.PASS;
+
             try
             {
-                DoseRateTestCase.Description = "Maximum dose rates are set.";
-                DoseRateTestCase.Result = TestCase.PASS;
-
                 if (!b.IsSetupField)
                 {
                     if (b.DoseRate != _doseRate)
@@ -127,6 +130,9 @@ namespace VMS.TPS
 
         public TestCase TechniqueCheck(Beam b)
         {
+            TechniqueTestCase.Description = "HDTSE used for treatment.";
+            TechniqueTestCase.Result = TestCase.PASS;
+
             try
             {
                 if (!b.IsSetupField)
@@ -292,6 +298,9 @@ namespace VMS.TPS
 
         public TestCase CollimatorCheck(Beam b)
         {
+            CollimatorTestCase.Description = "Angle set to 0.";
+            CollimatorTestCase.Result = TestCase.PASS;
+
             double angleZero = 0.0, epsilon = 0.0001;
 
             try
@@ -320,6 +329,9 @@ namespace VMS.TPS
 
         public TestCase FieldSizeCheck(Beam b)
         {
+            FieldSizeTestCase.Description = "X = Y = 36.0 cm.";
+            FieldSizeTestCase.Result = TestCase.PASS;
+
             double expectedFieldSize = 36.0, epsilon = 0.0001, cmConvert = 10.0;
 
             try
@@ -345,7 +357,11 @@ namespace VMS.TPS
 
         public TestCase MLCCheck(Beam b)
         {
+            MLCTestCase.Description = "MLC set to 'NONE'.";
+            MLCTestCase.Result = TestCase.PASS;
+
             string expectedMLCType = "NONE";
+
             try
             {
                 if (!b.IsSetupField)
@@ -363,6 +379,9 @@ namespace VMS.TPS
 
         public TestCase CouchParametersCheck()
         {
+            CouchParametersTestCase.Description = "CouchVrt = -66; CouchLng = 23; CouchLat = 0; Couch Rtn = 0.";
+            CouchParametersTestCase.Result = TestCase.PASS;
+
             double epsilon = 0.0001;
 
             try
@@ -411,6 +430,9 @@ namespace VMS.TPS
 
         public TestCase ReferencePointCheck()
         {
+            ReferencePointTestCase.Description = "Ref. pt tracking correctly & Tolerance Dose vals set accordingly.";
+            ReferencePointTestCase.Result = TestCase.PASS;
+
             short freqType = 7;
             double epsilon = 0.0001, totalRxDose = 0.0;
             string prescriptionNotes = "";
@@ -489,6 +511,9 @@ namespace VMS.TPS
 
         public TestCase SchedulingCheck()
         {
+            SchedulingTestCase.Description = "# scheduled fx = # of fx for plan.";
+            SchedulingTestCase.Result = TestCase.PASS;
+
             string status = "", template = "", fieldId = "";
             int nScheduledFractions = 0;
 
@@ -551,8 +576,11 @@ namespace VMS.TPS
             }
         }
 
-        public TestCase IntMountCheck()
+        private TestCase IntMountCheck()
         {
+            IntMountTestCase.Description = "Set to HDTS9e-.";
+            IntMountTestCase.Result = TestCase.PASS;
+
             string IntMountId = "HDTS9e-";
 
             try

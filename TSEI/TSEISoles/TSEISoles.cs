@@ -1,16 +1,9 @@
-﻿using System;
-using System.Collections.Generic;
-using AriaConnect;
-using PlanSetup = VMS.TPS.Common.Model.API.PlanSetup;
-using VMS.TPS.Common.Model.API;
-using System.Linq;
-using ControlPoint = VMS.TPS.Common.Model.API.ControlPoint;
+﻿using PlanSetup = VMS.TPS.Common.Model.API.PlanSetup;
 
 namespace VMS.TPS
 {
     class TSEISoles :  TSEIPerineum
     {
-
         public TSEISoles(PlanSetup cPlan) : base(cPlan)
         {
             base._accMount = "A25";

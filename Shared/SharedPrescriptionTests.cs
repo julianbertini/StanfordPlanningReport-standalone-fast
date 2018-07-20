@@ -6,13 +6,9 @@ using VMS.TPS.Common.Model.API;
 
 namespace VMS.TPS
 {
-    public abstract class SharedPrescriptionTests
+    public abstract class SharedPrescriptionTests : SharedExecute
     {
         protected PlanSetup CurrentPlan;
-
-        public List<TestCase> TestResults { get; set; }
-        protected List<TestCase> Tests;
-        public Dictionary<string, TestCase.Test> TestMethods = new Dictionary<string, TestCase.Test>();
 
         // All field tests here
         protected TestCase PrescriptionApprovalTestCase;
@@ -25,10 +21,8 @@ namespace VMS.TPS
         protected string[] _Doctors;
         protected string[] _BolusInfo;
 
-        public SharedPrescriptionTests(PlanSetup cPlan, string[] doctors)
+        public SharedPrescriptionTests(PlanSetup cPlan, string[] doctors) : base()
         {
-            TestResults = new List<TestCase>();
-            Tests = new List<TestCase>();
             _Doctors = doctors;
             CurrentPlan = cPlan;
 
@@ -36,25 +30,24 @@ namespace VMS.TPS
 
             // standalone
             PrescriptionApprovalTestCase = new TestCase("Prescription Approval", "Test not completed.", TestCase.FAIL);
-            this.Tests.Add(PrescriptionApprovalTestCase);
+            this.StandaloneTests.Add(PrescriptionApprovalTestCase);
 
             //per Beam
             PrescriptionEnergyTestCase = new TestCase("Prescription Energy", "Test not completed.", TestCase.FAIL);
-            this.Tests.Add(PrescriptionEnergyTestCase);
+            this.PerBeamTests.Add(PrescriptionEnergyTestCase);
             this.TestMethods.Add(PrescriptionEnergyTestCase.Name, PrescriptionEnergyCheck);
 
             PrescriptionDosePerFractionTestCase = new TestCase("Prescription Dose Per Fraction", "Test not completed.", TestCase.FAIL);
-            this.Tests.Add(PrescriptionDosePerFractionTestCase);
+            this.PerBeamTests.Add(PrescriptionDosePerFractionTestCase);
 
             PrescriptionFractionationTestCase = new TestCase("Prescription Fractionation", "Test not completed.", TestCase.FAIL);
-            this.Tests.Add(PrescriptionFractionationTestCase);
+            this.PerBeamTests.Add(PrescriptionFractionationTestCase);
 
             PrescriptionDoseTestCase = new TestCase("Prescription Dose", "Test not completed", TestCase.FAIL);
-            this.Tests.Add(PrescriptionDoseTestCase);
+            this.PerBeamTests.Add(PrescriptionDoseTestCase);
 
-            // per Beam
             PrescriptionBolusTestCase = new TestCase("Prescription Bolus", "Test not completed.", TestCase.FAIL);
-            this.Tests.Add(PrescriptionBolusTestCase);
+            this.PerBeamTests.Add(PrescriptionBolusTestCase);
             this.TestMethods.Add(PrescriptionBolusTestCase.Name, PrescriptionBolusCheck);
 
         }

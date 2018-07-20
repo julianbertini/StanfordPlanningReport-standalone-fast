@@ -6,7 +6,8 @@ namespace VMS.TPS
 {
     public class TestCase : IEquatable<TestCase>
     {
-        public delegate TestCase Test(Beam b);
+        public delegate TestCase PerBeamTest(Beam b);
+        public delegate TestCase StandaloneTest();
 
         public const string PASS = "PASS";
         public const string FAIL = "FAIL";

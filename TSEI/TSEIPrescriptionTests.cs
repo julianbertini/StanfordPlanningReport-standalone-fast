@@ -20,7 +20,22 @@ namespace VMS.TPS
         public TSEIPrescriptionTests(PlanSetup cPlan, string[] doctors) : base(cPlan, doctors)
         {
             TSEIEnergy = "9E";
-            PrescriptionBolusTestCase = null;
+
+            PrescriptionBolusTestCase = new TestCase("Prescription Bolus", "Test not completed.", TestCase.FAIL);
+            this.PerBeamTests.Add(PrescriptionBolusTestCase);
+            this.TestMethods.Add(PrescriptionBolusTestCase.Name, PrescriptionBolusCheck);
+
+            PrescriptionEnergyTestCase = new TestCase("Prescription Energy", "Test not completed.", TestCase.FAIL);
+            this.PerBeamTests.Add(PrescriptionEnergyTestCase);
+            this.TestMethods.Add(PrescriptionEnergyTestCase.Name, PrescriptionEnergyCheck);
+
+            PrescriptionFractionationTestCase = new TestCase("Prescription Fractionation", "Test not completed.", TestCase.FAIL);
+            this.StandaloneTests.Add(PrescriptionFractionationTestCase);
+            this.StandaloneTestMethods.Add(PrescriptionFractionationTestCase.Name, PrescriptionFractionationCheck);
+
+            PrescriptionDoseTestCase = new TestCase("Prescription Dose Check", "Test not completed.", TestCase.FAIL);
+            this.StandaloneTests.Add(PrescriptionDoseTestCase);
+            this.StandaloneTestMethods.Add(PrescriptionDoseTestCase.Name, PrescriptionDoseCheck);
         }
 
         /* Verifies the fractionation. In the case of TSEI, fractionation will be 1/2 of total plan fractions, since 
@@ -36,7 +51,8 @@ namespace VMS.TPS
          */
         public override TestCase PrescriptionFractionationCheck()
         {
-            PrescriptionFractionationTestCase = new TestCase("Prescription Fractionation", "Planned fractionation matches linked Rx.", TestCase.PASS);
+            PrescriptionFractionationTestCase.Description = "Planned fractionation matches linked Rx.";
+            PrescriptionFractionationTestCase.Result = TestCase.PASS;
 
             try
             {
@@ -66,7 +82,8 @@ namespace VMS.TPS
          */
         public override TestCase PrescriptionDoseCheck()
         {
-            PrescriptionDoseTestCase = new TestCase("Prescription Dose Check", "Planned total dose matches linked Rx.", TestCase.PASS);
+            PrescriptionDoseTestCase.Description = "Planned total dose matches linked Rx.";
+            PrescriptionDoseTestCase.Result = TestCase.PASS;
 
             try
             {
@@ -95,7 +112,8 @@ namespace VMS.TPS
          */
         public override TestCase PrescriptionEnergyCheck(Beam b)
         {
-            PrescriptionEnergyTestCase = new TestCase("Prescription Energy", "Planned energy matches linked Rx.", TestCase.PASS);
+            PrescriptionEnergyTestCase.Description = "Planned energy matches linked Rx.";
+            PrescriptionEnergyTestCase.Result = TestCase.PASS;
 
             try
             {
@@ -129,7 +147,8 @@ namespace VMS.TPS
         */
         public override TestCase PrescriptionBolusCheck(Beam b)
         {
-            PrescriptionBolusTestCase = new TestCase("Prescription Bolus", "No bolus present in Rx or Tx plan.", TestCase.PASS);
+            PrescriptionBolusTestCase.Description = "No bolus present in Rx or Tx plan.";
+            PrescriptionBolusTestCase.Result = TestCase.PASS;
 
             try
             {

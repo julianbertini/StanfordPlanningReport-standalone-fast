@@ -34,112 +34,69 @@ namespace VMS.TPS
 
             // per Beam tests
             PlanNormalizationTestCase = new TestCase("Plan Normalization (VMAT)", "Plan normalization: 100% covers 95% of Target Volume.", TestCase.PASS);
-            this.Tests.Add(PlanNormalizationTestCase);
+            this.PerBeamTests.Add(PlanNormalizationTestCase);
             this.TestMethods.Add(PlanNormalizationTestCase.Name, PlanNormalizationCheck);
 
             DoseAlgorithmTestCase = new TestCase("Dose Algorithm", "Photon dose calc. is AAA_V13623 or AcurosXB_V13623.", TestCase.PASS);
-            this.Tests.Add(DoseAlgorithmTestCase);
+            this.PerBeamTests.Add(DoseAlgorithmTestCase);
             this.TestMethods.Add(DoseAlgorithmTestCase.Name, DoseAlgorithmCheck);
 
             CouchTestCase = new TestCase("Couch Structure (VMAT)", "Correct couch structure is included in plan.", TestCase.PASS);
-            this.Tests.Add(CouchTestCase);
+            this.PerBeamTests.Add(CouchTestCase);
             this.TestMethods.Add(CouchTestCase.Name, CouchCheck);
 
             JawMaxTestCase = new TestCase("Jaw Max", "Each jaw does not exceed 20.0cm.", TestCase.PASS);
-            this.Tests.Add(JawMaxTestCase);
+            this.PerBeamTests.Add(JawMaxTestCase);
             this.TestMethods.Add(JawMaxTestCase.Name, JawMaxCheck);
 
             JawMinTestCase = new TestCase("Jaw Min", "Each jaw X & Y >= 3.0cm (3D plan) or 1.0cm (VMAT).", TestCase.PASS);
-            this.Tests.Add(JawMinTestCase);
+            this.PerBeamTests.Add(JawMinTestCase);
             this.TestMethods.Add(JawMinTestCase.Name, JawMinCheck);
 
             JawLimitTestCase = new TestCase("Jaw Limit (VMAT)", "X <= 14.5cm (CLINACs); Y1 & Y2 <= 10.5cm (TrueBeam HD MLC).", TestCase.PASS);
-            this.Tests.Add(JawLimitTestCase);
+            this.PerBeamTests.Add(JawLimitTestCase);
             this.TestMethods.Add(JawLimitTestCase.Name, JawLimitCheck);
 
             TableHeightTestCase = new TestCase("Table Top (VMAT)", "Table height < 21.0cm.", TestCase.PASS);
-            this.Tests.Add(TableHeightTestCase);
+            this.PerBeamTests.Add(TableHeightTestCase);
             this.TestMethods.Add(TableHeightTestCase.Name, TableHeightCheck);
 
             SBRTDoseResolutionTestCase = new TestCase("Dose Resolution (SBRT)", "For SRS ARC plans or Rx tech. SBRT dose resolution <= 1.5mm.", TestCase.PASS);
-            this.Tests.Add(SBRTDoseResolutionTestCase);
+            this.PerBeamTests.Add(SBRTDoseResolutionTestCase);
             this.TestMethods.Add(SBRTDoseResolutionTestCase.Name, SBRTDoseResolutionCheck);
 
             SBRTCTSliceThicknessTestCase = new TestCase("CT Slice Thickness (SBRT)", "For SRS ARC plans or Rx tech. SBRT CT slice thickness <= 2mm.", TestCase.PASS);
-            this.Tests.Add(SBRTCTSliceThicknessTestCase);
+            this.PerBeamTests.Add(SBRTCTSliceThicknessTestCase);
             this.TestMethods.Add(SBRTCTSliceThicknessTestCase.Name, SBRTCTSliceThicknessCheck);
-
 
             //standalone 
             PlanningApprovalTestCase = new TestCase("Planning Approval", "Plan is planning approved by MD.", TestCase.PASS);
-            this.Tests.Add(PlanningApprovalTestCase);
+            this.StandaloneTests.Add(PlanningApprovalTestCase);
+            this.StandaloneTestMethods.Add(PlanningApprovalTestCase.Name, PlanningApprovalCheck);
 
             ImageDateTestCase = new TestCase("Current Plan CT", "Plan CT date <= 14 days from plan creation.", TestCase.PASS);
-            this.Tests.Add(ImageDateTestCase);
+            this.StandaloneTests.Add(ImageDateTestCase);
+            this.StandaloneTestMethods.Add(ImageDateTestCase.Name, ImageDateCheck);
 
             PatientOrientationTestCase = new TestCase("Patient Orientation", "Tx orientation is same as CT orientation.", TestCase.PASS);
-            this.Tests.Add(PatientOrientationTestCase);
+            this.StandaloneTests.Add(PatientOrientationTestCase);
+            this.StandaloneTestMethods.Add(PatientOrientationTestCase.Name, PatientOrientationCheck);
 
             UserOriginTestCase = new TestCase("User Origin", "User origin is not set to (0, 0, 0).", TestCase.PASS);
-            this.Tests.Add(UserOriginTestCase);
+            this.StandaloneTests.Add(UserOriginTestCase);
+            this.StandaloneTestMethods.Add(UserOriginTestCase.Name, UserOriginCheck);
 
             TargetVolumeTestCase = new TestCase("Target Volume", "Target volume does not contain \"TS\" & contains \"PTV\".", TestCase.PASS);
-            this.Tests.Add(TargetVolumeTestCase);
+            this.StandaloneTests.Add(TargetVolumeTestCase);
+            this.StandaloneTestMethods.Add(TargetVolumeTestCase.Name, TargetVolumeCheck);
 
             HighMUTestCase = new TestCase("MU Factor", "Total MU < 4x Rx dose per fraction in cGy.", TestCase.PASS);
-            this.Tests.Add(HighMUTestCase);
+            this.StandaloneTests.Add(HighMUTestCase);
+            this.StandaloneTestMethods.Add(HighMUTestCase.Name, HighMUCheck);
 
             ShiftNoteJournalTestCase = new TestCase("Shift Note in Journal", "Shift note has been inserted into journal.", TestCase.PASS);
-            this.Tests.Add(ShiftNoteJournalTestCase);
-        }
-
-        /* Iterates through each beam in the current plan and runs all field tests for each beam.
-        * It modifies the fieldTestResults List to include the resulting test cases. 
-        * It's organized such that failed tests will come before passed tests in the list (useful for later formatting).
-        * 
-        * Params: 
-        *          None
-        * Returns: 
-        *          None
-        *          
-        * Updated: JB 6/13/18
-        */
-        public void ExecuteTests(bool runPerBeam, Beam b = null)
-        {
-            if (runPerBeam)
-            {
-                List<string> testsToRemove = new List<string>();
-                string testName = null;
-                foreach (KeyValuePair<string, TestCase.Test> test in TestMethods)
-                {
-                    testName = test.Value(b).AddToListOnFail(this.TestResults, this.Tests);
-
-                    if (testName != null)
-                    {
-                        testsToRemove.Add(testName);
-                    }
-                }
-                foreach (string name in testsToRemove)
-                {
-                    TestMethods.Remove(name);
-                }
-
-            }
-            else //standalone tests
-            {
-                HighMUCheck().AddToListOnFail(this.TestResults, this.Tests);
-                UserOriginCheck().AddToListOnFail(this.TestResults, this.Tests);
-                ImageDateCheck().AddToListOnFail(this.TestResults, this.Tests);
-                PatientOrientationCheck().AddToListOnFail(this.TestResults, this.Tests);
-                PlanningApprovalCheck().AddToListOnFail(this.TestResults, this.Tests);
-                TargetVolumeCheck().AddToListOnFail(this.TestResults, this.Tests);
-                AcitveCourseCheck().AddToListOnFail(this.TestResults, this.Tests);
-                CourseNameCheck().AddToListOnFail(this.TestResults, this.Tests);
-                ShiftNotesJournalCheck().AddToListOnFail(this.TestResults, this.Tests);
-
-                TestResults.AddRange(this.Tests);
-            }
-
+            this.StandaloneTests.Add(ShiftNoteJournalTestCase);
+            this.StandaloneTestMethods.Add(ShiftNoteJournalTestCase.Name, ShiftNotesJournalCheck);
         }
 
         public TestCase CouchCheck(Beam b)

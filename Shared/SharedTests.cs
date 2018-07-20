@@ -9,14 +9,9 @@ using VMS.TPS.Common.Model.API;
 
 namespace VMS.TPS
 {
-    public abstract class SharedTests
+    public abstract class SharedTests : SharedExecute
     {
         protected PlanSetup CurrentPlan;
-
-        protected Dictionary<string, TestCase.Test> TestMethods;
-        protected List<TestCase> Tests;
-        public List<TestCase> TestResults { get; set; }
-        
 
         protected TestCase MachineScaleTestCase; // Added checking IEC scale 06/01/2018
         protected TestCase MachineIdTestCase;
@@ -29,43 +24,39 @@ namespace VMS.TPS
         protected string MachineName;
 
 
-        public SharedTests(PlanSetup cPlan)
+        public SharedTests(PlanSetup cPlan) : base()
         {
             CurrentPlan = cPlan;
-            Tests = new List<TestCase>();
-            TestResults = new List<TestCase>();
-            TestMethods = new Dictionary<string, TestCase.Test>();
 
             MachineName = FindMachineName();
 
-            // standalone test
+            // standalone tests
             CourseNameTestCase = new TestCase("Course Name", "Test not completed.", TestCase.FAIL);
-            this.Tests.Add(CourseNameTestCase);
+            this.StandaloneTests.Add(CourseNameTestCase);
             
-            // standalone test
             ActiveCourseTestCase = new TestCase("Single Active Course", "Test not completed.", TestCase.FAIL);
-            this.Tests.Add(ActiveCourseTestCase);
+            this.StandaloneTests.Add(ActiveCourseTestCase);
 
 
             // per Beam tests
             MachineScaleTestCase = new TestCase("Machine Scale", "Test not completed.", TestCase.FAIL);
-            this.Tests.Add(MachineScaleTestCase);
+            this.PerBeamTests.Add(MachineScaleTestCase);
             this.TestMethods.Add(MachineScaleTestCase.Name, MachineScaleCheck);
 
             MachineIdTestCase = new TestCase("Machine Constancy", "Test not completed.", TestCase.FAIL);
-            this.Tests.Add(MachineIdTestCase);
+            this.PerBeamTests.Add(MachineIdTestCase);
             this.TestMethods.Add(MachineIdTestCase.Name, MachineIdCheck);
 
             ShortTreatmentTimeTestCase = new TestCase("Adequate Tx Time", "Test not completed.", TestCase.FAIL);
-            this.Tests.Add(ShortTreatmentTimeTestCase);
+            this.PerBeamTests.Add(ShortTreatmentTimeTestCase);
             this.TestMethods.Add(ShortTreatmentTimeTestCase.Name, ShortTreatmentTimeCheck);
 
             DoseRateTestCase = new TestCase("Dose Rate", "Test not completed.", TestCase.FAIL);
-            this.Tests.Add(DoseRateTestCase);
+            this.PerBeamTests.Add(DoseRateTestCase);
             this.TestMethods.Add(DoseRateTestCase.Name, DoseRateCheck);
 
             ToleranceTableTestCase = new TestCase("Tolerance Table", "Test not completed.", TestCase.FAIL);
-            this.Tests.Add(ToleranceTableTestCase);
+            this.PerBeamTests.Add(ToleranceTableTestCase);
             this.TestMethods.Add(ToleranceTableTestCase.Name, ToleranceTableCheck);
 
         }

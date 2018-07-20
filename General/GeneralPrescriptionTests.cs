@@ -18,53 +18,8 @@ namespace VMS.TPS
         public GeneralPrescriptionTests(PlanSetup cPlan, string[] doctors) : base(cPlan, doctors)
         {
             PrescribedDosePercentageTestCase = new TestCase("Prescribed Dose Percentage", "Test not completed.", TestCase.FAIL);
-            this.Tests.Add(PrescribedDosePercentageTestCase);
-        }
-
-        /* Iterates through each beam in the current plan and runs all field tests for each beam.
-         * It modifies the FieldTestResults List to include the resulting test cases. 
-         * It's organized such that failed tests will come before passed tests in the list (useful for later formatting).
-         * 
-         * Params: 
-         *          None
-         * Returns: 
-         *          None
-         *          
-         * Updated: JB 6/13/18
-         */
-        public void ExecuteTests(bool runPerBeam, Beam b = null) {
-            if (runPerBeam)
-            {
-                List<string> testsToRemove = new List<string>();
-                string testName = null;
-
-                foreach (KeyValuePair<string, TestCase.Test> test in TestMethods)
-                {
-                    testName = test.Value(b).AddToListOnFail(this.TestResults, this.Tests);
-
-                    if (testName != null)
-                    {
-                        testsToRemove.Add(testName);
-                    }
-                }
-                foreach (string name in testsToRemove)
-                {
-                    TestMethods.Remove(name);
-                }
-
-            }
-            else //standalone tests
-            {
-                PrescriptionFractionationCheck().AddToListOnFail(this.TestResults, this.Tests);
-                PrescriptionDoseCheck().AddToListOnFail(this.TestResults, this.Tests);
-                PrescriptionDosePerFractionCheck().AddToListOnFail(this.TestResults, this.Tests);
-                PrescriptionApprovalCheck().AddToListOnFail(this.TestResults, this.Tests);
-                PrescribedDosePercentageCheck().AddToListOnFail(this.TestResults, this.Tests);
-
-                TestResults.AddRange(this.Tests);
-            }
-
-
+            this.StandaloneTests.Add(PrescribedDosePercentageTestCase);
+            this.StandaloneTestMethods.Add(PrescribedDosePercentageTestCase.Name, PrescribedDosePercentageCheck);
         }
 
         public TestCase PrescribedDosePercentageCheck()

@@ -12,37 +12,15 @@ namespace VMS.TPS
 
         public TSEIFieldTests(PlanSetup cPlan): base(cPlan)
         {
-            TreatmentFieldNameTestCase = null ;
+            TreatmentFieldNameTestCase = new TestCase("Tx Field Name Check", "Test not completed.", TestCase.FAIL);
+            this.StandaloneTests.Add(TreatmentFieldNameTestCase);
+            this.StandaloneTestMethods.Add(TreatmentFieldNameTestCase.Name, TreatmentFieldNameCheck);
         }
 
-        public void ExecuteTests(bool runPerBeam, Beam b = null)
+        public TestCase TreatmentFieldNameCheck()
         {
-            if (runPerBeam)
-            {
-                string removedTest = null;
-
-                foreach (KeyValuePair<string, TestCase.Test> test in TestMethods)
-                {
-                    removedTest = test.Value(b).AddToListOnFail(this.TestResults, this.Tests);
-                }
-                if (removedTest != null)
-                {
-                    TestMethods.Remove(removedTest);
-                }
-            }
-            else //standalone tests
-            {
-                TreatmentFieldNameCheck().AddToListOnFail(this.TestResults, this.Tests);
-
-                TestResults.AddRange(this.Tests);
-            }
-
-        }
-
-        public override TestCase TreatmentFieldNameCheck(Beam beam = null)
-        {
-            TreatmentFieldNameTestCase = new TestCase("Tx Field Name and Angle", "Verify AP/PA field names", TestCase.PASS);
-            this.Tests.Add(TreatmentFieldNameTestCase);
+            TreatmentFieldNameTestCase.Description = "Verify AP/PA field names";
+            TreatmentFieldNameTestCase.Result = TestCase.PASS;
 
             int nAP = 0, nRPO = 0, nLPO = 0, nPA = 0, nRAO = 0, nLAO = 0;
             int nWrong = 0;
