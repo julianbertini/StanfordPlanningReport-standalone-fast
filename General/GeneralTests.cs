@@ -156,7 +156,7 @@ namespace VMS.TPS
                         {
                             if (s.Name.Contains("Exact Couch with Unipanel")) { CouchTestCase.Result = TestCase.PASS; }
                         }
-                        else if (b.TreatmentUnit.Id == "SB_LA_1")
+                        else if (b.TreatmentUnit.Id == "SB_LA_1" || b.TreatmentUnit.Id.Contains("ROP_LA_1"))
                         {
                             if (s.Name.Contains("Exact Couch with Flat panel")) { CouchTestCase.Result = TestCase.PASS; }
                         }
@@ -461,10 +461,9 @@ namespace VMS.TPS
         {
             try
             {
-                foreach (string dr in Doctors)
-                {
-                    if (CurrentPlan.PlanningApprover.ToString() == dr.ToString()) { return PlanningApprovalTestCase; }
-                }
+                if (Doctors.Contains(CurrentPlan.PlanningApprover.ToString()))
+                    return PlanningApprovalTestCase;
+
                 PlanningApprovalTestCase.Result = TestCase.FAIL; return PlanningApprovalTestCase;
             }
             catch (Exception ex)

@@ -132,14 +132,21 @@ namespace VMS.TPS
         // Added machine scale check IEC61217 SL 06/01/2018
         public TestCase MachineScaleCheck(Beam b)
         {
-            MachineScaleTestCase.Description = "Machine IEC61217 scale is used.";
+            MachineScaleTestCase.Description = "Machine IEC61217 scale is used for CCPA & CCSB; Varian IEC for Pleasanton.";
             MachineScaleTestCase.Result = TestCase.PASS;
 
             try
             {
-                #pragma warning disable 0618
+#pragma warning disable 0618
                 // This one is okay
-                if (b.ExternalBeam.MachineScaleDisplayName.ToString() != "IEC61217") { MachineScaleTestCase.Result = TestCase.FAIL; return MachineScaleTestCase; }
+                if (MachineName.Contains("ROP_LA_1"))
+                {
+                    if (b.ExternalBeam.MachineScaleDisplayName.ToString() != "Varian IEC") { MachineScaleTestCase.Result = TestCase.FAIL; return MachineScaleTestCase; }
+                }
+                else
+                {
+                    if (b.ExternalBeam.MachineScaleDisplayName.ToString() != "IEC61217") { MachineScaleTestCase.Result = TestCase.FAIL; return MachineScaleTestCase; }
+                }
 
                 return MachineScaleTestCase;
             }

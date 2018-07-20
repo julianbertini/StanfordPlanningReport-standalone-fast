@@ -1,7 +1,9 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Linq;
+using System.Text.RegularExpressions;
+using System.Collections.Generic;
 using VMS.TPS.Common.Model.API;
 using PlanSetup = VMS.TPS.Common.Model.API.PlanSetup;
-
 
 namespace VMS.TPS
 {
@@ -47,22 +49,25 @@ namespace VMS.TPS
 
             foreach (Beam b in CurrentPlan.Beams)
             {
-                string ID = b.Id.ToString();
+                if (!b.IsSetupField)
+                {
+                    string ID = b.Id.ToString();
 
-                if (ID.Contains("AP"))
-                    nAP++;
-                else if (ID.Contains("PA"))
-                    nPA++;
-                else if (ID.Contains("RPO"))
-                    nRPO++;
-                else if (ID.Contains("RAO"))
-                    nRAO++;
-                else if (ID.Contains("LPO"))
-                    nLPO++;
-                else if (ID.Contains("LAO"))
-                    nLAO++;
-                else
-                    nWrong++;
+                    if (ID.Contains("AP"))
+                        nAP++;
+                    else if (ID.Contains("PA"))
+                        nPA++;
+                    else if (ID.Contains("RPO"))
+                        nRPO++;
+                    else if (ID.Contains("RAO"))
+                        nRAO++;
+                    else if (ID.Contains("LPO"))
+                        nLPO++;
+                    else if (ID.Contains("LAO"))
+                        nLAO++;
+                    else
+                        nWrong++;
+                }
             }
 
             if (nWrong == 0)

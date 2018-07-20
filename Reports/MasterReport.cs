@@ -61,6 +61,10 @@ namespace VMS.TPS
                 targetPath = String.Format(@"\\tigger-new.radonc.local\Public\SouthBayCTR\CCSB - Isodose Plans\{0}\{1} {2}\{3}, {4}", yearNumber, monthNumber, monthName, patient.LastName.ToString(), patient.FirstName.ToString());
 
             }
+            else if (CurrentPlan.Beams.FirstOrDefault().TreatmentUnit.Id.Contains("ROP_LA_1"))
+            {
+                targetPath = String.Format(@"\\tigger-new.radonc.local\Public\PleasantonCTR\Dosimetry\{0}\{1} {2}\{3}, {4}", yearNumber, monthNumber, monthName, patient.LastName.ToString(), patient.FirstName.ToString());
+            }
             else
             {
                 targetPath = String.Format(@"\\tigger-new.radonc.local\Public\CancerCTR\SHC - Isodose Plans\{0}\{1} {2}\{3}, {4}", yearNumber, monthNumber, monthName, patient.LastName.ToString(), patient.FirstName.ToString());

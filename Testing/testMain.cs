@@ -45,21 +45,24 @@ namespace VMS.TPS
 
         static void ExecuteTestingEnv(Application app, string PID)
         {
+            string[] docs = { "rhoppe", "mgens", "igibbs", "mbuyyou", "dchang", "khorst", "ekidd", "bwloo", "bbeadle", "pswift", "marquezc", "lmillion", "ssoltys",
+                                                    "erqiliu", "hbagshaw", "wh", "csalem", "diehn", "nitrakul", "shiniker", "sknox", "slha", "qle", "nitrakul" };
+
             // Set develpoment folder path. This is not the same path as the one used for system script. 
             Environment.SetEnvironmentVariable("ROOT_PATH", @"Z:\\Users\\Jbertini\\ESAPI\\StanfordPlanningReport-standalone-fast");
 
             Patient patient = app.OpenPatientById(PID);
-            Course course = patient.Courses.First();
-            PlanSetup currentPlan = course.PlanSetups.First();
+            Course course = patient.Courses.Last();
+            PlanSetup currentPlan = course.PlanSetups.ToArray()[2];
 
             PhysicsCheck physics = new PhysicsCheck(currentPlan);
 
-            TSEITests t = new TSEITests(currentPlan);
+            TSEIPerineum t = new TSEIPerineum(currentPlan);
 
-            t.CouchParametersCheck();
+            t.ApplicatorInsertCheck();
 
-            // PDF CREATION
             /*
+            // PDF CREATION
             MasterReport report = new MasterReport(patient, course, currentPlan)
             {
                 TestResults = physics.Results
@@ -68,6 +71,7 @@ namespace VMS.TPS
             report.CreateReports();
             report.ShowReports();
             */
+            
             
             
             /*

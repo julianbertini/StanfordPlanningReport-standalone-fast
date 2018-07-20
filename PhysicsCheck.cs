@@ -8,7 +8,7 @@ namespace VMS.TPS
     {
         //Changed by SL 03/02/2018, Defined at the begining a static string array including all the MDs' IDs, can be updated here---
         public static string[] docs = { "rhoppe", "mgens", "igibbs", "mbuyyou", "dchang", "khorst", "ekidd", "bwloo", "bbeadle", "pswift", "marquezc", "lmillion", "ssoltys",
-                                                    "erqiliu", "hbagshaw", "wh", "csalem", "diehn", "nitrakul", "shiniker", "sknox", "slha", "qle" };
+                                                    "erqiliu", "hbagshaw", "wh", "csalem", "diehn", "nitrakul", "shiniker", "sknox", "slha", "qle", "nitrakul" };
 
         public List<TestCase> Results = new List<TestCase>();
 

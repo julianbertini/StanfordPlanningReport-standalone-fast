@@ -10,6 +10,8 @@ namespace VMS.TPS
 {
     class TSEIPrescriptionTests: SharedPrescriptionTests
     {
+        protected string TSEIEnergy;
+
         /* Constructor for TSEIPrescriptionTests. Calls base class constructor (SharedPrescriptionTests).
          * Sets PrescribedDosePercentageTestCase as null since it does not apply here
          * 
@@ -17,6 +19,7 @@ namespace VMS.TPS
          */
         public TSEIPrescriptionTests(PlanSetup cPlan, string[] doctors) : base(cPlan, doctors)
         {
+            TSEIEnergy = "9E";
             PrescriptionBolusTestCase = null;
         }
 
@@ -93,7 +96,6 @@ namespace VMS.TPS
         public override TestCase PrescriptionEnergyCheck(Beam b)
         {
             PrescriptionEnergyTestCase = new TestCase("Prescription Energy", "Planned energy matches linked Rx.", TestCase.PASS);
-            string TSEIEnergy = "9E";
 
             try
             {

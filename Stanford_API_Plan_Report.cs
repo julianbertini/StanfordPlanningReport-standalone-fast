@@ -12,10 +12,6 @@ namespace VMS.TPS
         {
         }
 
-        //Changed by SL 03/02/2018, Defined at the begining a static string array including all the MDs' IDs, can be updated here---
-        public static string[] docs = { "rhoppe", "mgens", "igibbs", "mbuyyou", "dchang", "khorst", "ekidd", "bwloo", "bbeadle", "pswift", "marquezc", "lmillion", "ssoltys",
-                                                    "erqiliu", "hbagshaw", "wh", "csalem", "diehn", "nitrakul", "shiniker", "sknox", "slha", "qle" };
-
         public void Execute(ScriptContext context /*, System.Windows.Window window*/)
         {
             Environment.SetEnvironmentVariable("ROOT_PATH", @"\\shariapfcap102\\va_data$\\filedata\\ProgramData\\Vision\\PublishedScripts");

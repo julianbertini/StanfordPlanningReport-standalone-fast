@@ -9,7 +9,7 @@
     <OutputType>Exe</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
     <RootNamespace>StanfordPlanningReport</RootNamespace>
-    <AssemblyName>JBTest.esapi</AssemblyName>
+    <AssemblyName>Stanford_API_Plan_Report_v2.5.esapi</AssemblyName>
     <TargetFrameworkVersion>v4.6.1</TargetFrameworkVersion>
     <TargetFrameworkProfile>
     </TargetFrameworkProfile>
@@ -123,7 +123,13 @@
     <Compile Include="TestCase.cs" />
     <Compile Include="Testing\testMain.cs" />
     <Compile Include="Testing\StanfordPlanningReport.cs" />
+    <Compile Include="TSEI\TSEIPerineum\TSEIPerineumFieldTests.cs" />
+    <Compile Include="TSEI\TSEIPerineum\TSEIPerineumPrescriptionTests.cs" />
+    <Compile Include="TSEI\TSEISoles\TSEISoles.cs" />
+    <Compile Include="TSEI\TSEIPerineum\TSEIPerineum.cs" />
     <Compile Include="TSEI\TSEIFieldTests.cs" />
+    <Compile Include="TSEI\TSEISoles\TSEISolesFieldTests.cs" />
+    <Compile Include="TSEI\TSEISoles\TSEISolesPrescriptionTests.cs" />
     <Compile Include="TSEI\TSEITests.cs" />
     <Compile Include="TSEI\TSEIPrescriptionTests.cs" />
     <Compile Include="Warnings\Warnings.cs" />
