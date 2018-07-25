@@ -7,14 +7,20 @@ using PlanSetup = VMS.TPS.Common.Model.API.PlanSetup;
 
 namespace VMS.TPS
 {
-    class TSEIFieldTests : SharedFieldTests
+    public class TSEIFieldTests : SharedFieldTests
     {
+
+        protected TestCase FieldSizeTestCase;
 
         public TSEIFieldTests(PlanSetup cPlan): base(cPlan)
         {
             TreatmentFieldNameTestCase = new TestCase("Tx Field Name Check", "Test not completed.", TestCase.FAIL);
             this.StandaloneTests.Add(TreatmentFieldNameTestCase);
             this.StandaloneTestMethods.Add(TreatmentFieldNameTestCase.Name, TreatmentFieldNameCheck);
+
+            FieldSizeTestCase = new TestCase("Field Size Check", "Test not completed.", TestCase.FAIL);
+            this.PerBeamTests.Add(FieldSizeTestCase);
+            this.TestMethods.Add(FieldSizeTestCase.Name, FieldSizeCheck);
         }
 
         public TestCase TreatmentFieldNameCheck()
@@ -58,6 +64,34 @@ namespace VMS.TPS
             
             TreatmentFieldNameTestCase.Result = TestCase.FAIL;
             return TreatmentFieldNameTestCase;
+        }
+
+        public TestCase FieldSizeCheck(Beam b)
+        {
+            FieldSizeTestCase.Description = "X = Y = 36.0 cm.";
+            FieldSizeTestCase.Result = TestCase.PASS;
+
+            double expectedFieldSize = 36.0, epsilon = 0.0001, cmConvert = 10.0;
+
+            try
+            {
+                if (!b.IsSetupField)
+                {
+                    foreach (var ctr in b.ControlPoints)
+                    {
+                        if (!TestCase.NearlyEqual((Math.Abs(ctr.JawPositions.X1 - ctr.JawPositions.X2) / cmConvert), expectedFieldSize, epsilon))
+                            FieldSizeTestCase.Result = TestCase.FAIL;
+                        if (!TestCase.NearlyEqual((Math.Abs(ctr.JawPositions.Y1 - ctr.JawPositions.Y2) / cmConvert), expectedFieldSize, epsilon))
+                            FieldSizeTestCase.Result = TestCase.FAIL;
+                    }
+                }
+
+                return FieldSizeTestCase;
+            }
+            catch (Exception e)
+            {
+                return FieldSizeTestCase.HandleTestError(e);
+            }
         }
 
     }

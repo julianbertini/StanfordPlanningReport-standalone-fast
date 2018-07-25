@@ -8,7 +8,7 @@ using ControlPoint = VMS.TPS.Common.Model.API.ControlPoint;
 
 namespace VMS.TPS
 {
-    class TSEITests : SharedTests
+    public class TSEITests : SharedTests
     {
         protected double _MUScaleFactor;
         protected int _doseRate;
@@ -22,8 +22,6 @@ namespace VMS.TPS
         protected TestCase MUTestCase;
         protected TestCase GantryTestCase;
         protected TestCase CollimatorTestCase;
-        protected TestCase FieldSizeTestCase;
-        protected TestCase MLCTestCase;
         protected TestCase IntMountTestCase;
         protected TestCase CouchParametersTestCase;
         protected TestCase ReferencePointTestCase;
@@ -55,13 +53,7 @@ namespace VMS.TPS
             this.PerBeamTests.Add(CollimatorTestCase);
             this.TestMethods.Add(CollimatorTestCase.Name, CollimatorCheck);
 
-            FieldSizeTestCase = new TestCase("Field Size Check", "Test not completed.", TestCase.FAIL);
-            this.PerBeamTests.Add(FieldSizeTestCase);
-            this.TestMethods.Add(FieldSizeTestCase.Name, FieldSizeCheck);
 
-            MLCTestCase = new TestCase("MLC Check", "Test not comlpeted.", TestCase.FAIL);
-            this.PerBeamTests.Add(MLCTestCase);
-            this.TestMethods.Add(MLCTestCase.Name, MLCCheck);
 
             //standalone 
             CouchParametersTestCase = new TestCase("Couch Parameters Check", "Test not completed.", TestCase.FAIL);
@@ -106,17 +98,24 @@ namespace VMS.TPS
 
         public override TestCase MachineIdCheck(Beam b)
         {
+            string[] specialChars = new string[] { "-", "_"," "};
+            string beamMachine = b.TreatmentUnit.Id.ToString(), planId = CurrentPlan.Id, machineName = MachineName;
             MachineIdTestCase.Description = "All fields have same Tx machine.";
             MachineIdTestCase.Result = TestCase.PASS;
 
+            foreach(string specialChar in specialChars)
+            {
+                beamMachine = beamMachine.Replace(specialChar, "");
+                machineName = machineName.Replace(specialChar, "");
+                planId = planId.Replace(specialChar, "");
+            }
+
             try
             {
-                string beamMachine = b.TreatmentUnit.Id.ToString();
-
-                if (beamMachine != MachineName)
+                if (beamMachine != machineName)
                     MachineIdTestCase.Result = TestCase.FAIL;
 
-                if (!CurrentPlan.Id.ToString().Contains(beamMachine))
+                if (!planId.Contains(beamMachine))
                     MachineIdTestCase.Result = TestCase.FAIL;
 
                 return MachineIdTestCase;
@@ -166,7 +165,7 @@ namespace VMS.TPS
                     var targets = CurrentPlan.RTPrescription.Targets;
                     foreach (var target in targets)
                     {
-                        if (TestCase.NearlyEqual(b.Meterset.Value, target.DosePerFraction.Dose * _MUScaleFactor, epsilon))
+                        if (!TestCase.NearlyEqual(b.Meterset.Value, target.DosePerFraction.Dose * _MUScaleFactor, epsilon))
                         {
                             MUTestCase.Result = TestCase.FAIL;
                         }
@@ -327,46 +326,16 @@ namespace VMS.TPS
             }
         }
 
-        public TestCase FieldSizeCheck(Beam b)
-        {
-            FieldSizeTestCase.Description = "X = Y = 36.0 cm.";
-            FieldSizeTestCase.Result = TestCase.PASS;
-
-            double expectedFieldSize = 36.0, epsilon = 0.0001, cmConvert = 10.0;
-
-            try
-            {
-                if (!b.IsSetupField)
-                {
-                    foreach (var ctr in b.ControlPoints)
-                    {
-                        if (!TestCase.NearlyEqual((Math.Abs(ctr.JawPositions.X1 - ctr.JawPositions.X2) / cmConvert), expectedFieldSize, epsilon))
-                            FieldSizeTestCase.Result = TestCase.FAIL;
-                        if (!TestCase.NearlyEqual((Math.Abs(ctr.JawPositions.Y1 - ctr.JawPositions.Y2) / cmConvert), expectedFieldSize, epsilon))
-                            FieldSizeTestCase.Result = TestCase.FAIL;
-                    }
-                }
-
-                return FieldSizeTestCase;
-            }
-            catch (Exception e)
-            {
-                return FieldSizeTestCase.HandleTestError(e);
-            }
-        }
-
-        public TestCase MLCCheck(Beam b)
+        public override TestCase MLCCheck(Beam b)
         {
             MLCTestCase.Description = "MLC set to 'NONE'.";
             MLCTestCase.Result = TestCase.PASS;
 
-            string expectedMLCType = "NONE";
-
             try
             {
                 if (!b.IsSetupField)
                 {
-                    if (!b.MLCPlanType.ToString().ToUpper().Equals(expectedMLCType))
+                    if (!(b.MLC == null))
                         MLCTestCase.Result = TestCase.FAIL;
                 }
                 return MLCTestCase;
@@ -379,7 +348,7 @@ namespace VMS.TPS
 
         public TestCase CouchParametersCheck()
         {
-            CouchParametersTestCase.Description = "CouchVrt = -66; CouchLng = 23; CouchLat = 0; Couch Rtn = 0.";
+            CouchParametersTestCase.Description = "CouchVrt = " + _couchVrt + "; CouchLng = " + _couchLng + "; CouchLat = 0.";
             CouchParametersTestCase.Result = TestCase.PASS;
 
             double epsilon = 0.0001;
@@ -407,7 +376,7 @@ namespace VMS.TPS
                                     {
                                         var radiationSer = r.RadiationSer;
                                         var externalFieldCommon = aria.ExternalFieldCommons.Where(tmp => tmp.RadiationSer == radiationSer);
-
+                                        var s = externalFieldCommon.First().CouchLng;
                                         if (!TestCase.NearlyEqual(externalFieldCommon.First().CouchLng.Value, _couchLng, epsilon))
                                             CouchParametersTestCase.Result = TestCase.FAIL;
                                         if (!TestCase.NearlyEqual(externalFieldCommon.First().CouchVrt.Value, _couchVrt, epsilon))

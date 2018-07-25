@@ -8,17 +8,24 @@ using PlanSetup = VMS.TPS.Common.Model.API.PlanSetup;
 
 namespace VMS.TPS
 {
-    class TSEIPerineumFieldTests: TSEIFieldTests
+    class TSEIPerineumFieldTests: SharedFieldTests
     {
         protected string _fieldName;
 
         public TSEIPerineumFieldTests(PlanSetup cPlan): base(cPlan)
         {
             _fieldName = "Perineum";
+
+            TreatmentFieldNameTestCase = new TestCase("Tx Field Name Check", "Test not completed.", TestCase.FAIL);
+            this.PerBeamTests.Add(TreatmentFieldNameTestCase);
+            this.TestMethods.Add(TreatmentFieldNameTestCase.Name, TreatmentFieldNameCheck);
         }
 
-        public new TestCase TreatmentFieldNameCheck(Beam b)
+        public TestCase TreatmentFieldNameCheck(Beam b)
         {
+            TreatmentFieldNameTestCase.Description = "Verify " + _fieldName + " field names.";
+            TreatmentFieldNameTestCase.Result = TestCase.PASS;
+
             try
             {
                 if (!b.IsSetupField)
@@ -34,6 +41,5 @@ namespace VMS.TPS
                 return TreatmentFieldNameTestCase.HandleTestError(e);
             }
         }
-
     }
 }

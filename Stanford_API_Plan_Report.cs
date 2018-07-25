@@ -24,11 +24,8 @@ namespace VMS.TPS
 
             /*
             InteractiveReport iReport = new InteractiveReport(patient, currentPlan, course, physics.Results);
-
             iReport.LaunchInteractiveReport();
-
             while (!iReport.ExportReports) ;
-
             iReport.Server.Stop();
             */
 

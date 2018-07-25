@@ -101,7 +101,7 @@ namespace VMS.TPS
 
             HtmlToPdf htmlToPdf = new HtmlToPdf();
             htmlToPdf.Document.PageOrientation = PdfPageOrientation.Landscape;
-            htmlToPdf.Document.Margins = new PdfMargins(1.0F);
+            htmlToPdf.Document.Margins = new PdfMargins(5);
             htmlToPdf.Document.FitPageHeight = false;
             htmlToPdf.ConvertHtmlToFile(reportContent, null, reportSourceFile);
 

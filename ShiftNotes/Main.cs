@@ -1,12 +1,12 @@
 ﻿using System;
 using System.Linq;
 using CommandLine;
+using System.Windows.Forms;
+using System.Collections.Generic;
 using Application = VMS.TPS.Common.Model.API.Application;
 using PlanSetup = VMS.TPS.Common.Model.API.PlanSetup;
 using Patient = VMS.TPS.Common.Model.API.Patient;
 using Course = VMS.TPS.Common.Model.API.Course;
-using System.Windows.Forms;
-using System.Collections.Generic;
 
 namespace VMS.TPS
 {

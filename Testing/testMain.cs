@@ -53,15 +53,10 @@ namespace VMS.TPS
 
             Patient patient = app.OpenPatientById(PID);
             Course course = patient.Courses.Last();
-            PlanSetup currentPlan = course.PlanSetups.ToArray()[2];
+            PlanSetup currentPlan = course.PlanSetups.ToArray()[0];
 
             PhysicsCheck physics = new PhysicsCheck(currentPlan);
 
-            TSEIPerineum t = new TSEIPerineum(currentPlan);
-
-            t.ApplicatorInsertCheck();
-
-            /*
             // PDF CREATION
             MasterReport report = new MasterReport(patient, course, currentPlan)
             {
@@ -70,9 +65,6 @@ namespace VMS.TPS
             
             report.CreateReports();
             report.ShowReports();
-            */
-            
-            
             
             /*
             InteractiveReport iReport = new InteractiveReport(patient, currentPlan, course, physics.Results);

@@ -14,10 +14,14 @@ namespace VMS.TPS
         public TSEIPerineumPrescriptionTests(PlanSetup cPlan, string[] doctors) : base(cPlan, doctors)
         {
             base.TSEIEnergy = "6E";
-        }
+            base._nFractionsDivisor = 1;
+    }
 
         public override TestCase PrescriptionBolusCheck(Beam b)
         {
+            PrescriptionBolusTestCase.Description = "1cm bolus present.";
+            PrescriptionBolusTestCase.Result = TestCase.PASS;
+
             string bolusThickness = "1 cm", bolusId = "Bolus_1cm";
 
             try

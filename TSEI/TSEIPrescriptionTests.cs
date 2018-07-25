@@ -8,9 +8,10 @@ using VMS.TPS.Common.Model.API;
 
 namespace VMS.TPS
 {
-    class TSEIPrescriptionTests: SharedPrescriptionTests
+    public class TSEIPrescriptionTests: SharedPrescriptionTests
     {
         protected string TSEIEnergy;
+        protected int _nFractionsDivisor = 2;
 
         /* Constructor for TSEIPrescriptionTests. Calls base class constructor (SharedPrescriptionTests).
          * Sets PrescribedDosePercentageTestCase as null since it does not apply here
@@ -20,22 +21,6 @@ namespace VMS.TPS
         public TSEIPrescriptionTests(PlanSetup cPlan, string[] doctors) : base(cPlan, doctors)
         {
             TSEIEnergy = "9E";
-
-            PrescriptionBolusTestCase = new TestCase("Prescription Bolus", "Test not completed.", TestCase.FAIL);
-            this.PerBeamTests.Add(PrescriptionBolusTestCase);
-            this.TestMethods.Add(PrescriptionBolusTestCase.Name, PrescriptionBolusCheck);
-
-            PrescriptionEnergyTestCase = new TestCase("Prescription Energy", "Test not completed.", TestCase.FAIL);
-            this.PerBeamTests.Add(PrescriptionEnergyTestCase);
-            this.TestMethods.Add(PrescriptionEnergyTestCase.Name, PrescriptionEnergyCheck);
-
-            PrescriptionFractionationTestCase = new TestCase("Prescription Fractionation", "Test not completed.", TestCase.FAIL);
-            this.StandaloneTests.Add(PrescriptionFractionationTestCase);
-            this.StandaloneTestMethods.Add(PrescriptionFractionationTestCase.Name, PrescriptionFractionationCheck);
-
-            PrescriptionDoseTestCase = new TestCase("Prescription Dose Check", "Test not completed.", TestCase.FAIL);
-            this.StandaloneTests.Add(PrescriptionDoseTestCase);
-            this.StandaloneTestMethods.Add(PrescriptionDoseTestCase.Name, PrescriptionDoseCheck);
         }
 
         /* Verifies the fractionation. In the case of TSEI, fractionation will be 1/2 of total plan fractions, since 
@@ -58,7 +43,7 @@ namespace VMS.TPS
             {
                 foreach (RTPrescriptionTarget t in CurrentPlan.RTPrescription.Targets)
                 {
-                    if (t.NumberOfFractions == (CurrentPlan.UniqueFractionation.NumberOfFractions/2)) { return PrescriptionFractionationTestCase; }
+                    if (t.NumberOfFractions/_nFractionsDivisor == (CurrentPlan.UniqueFractionation.NumberOfFractions)) { return PrescriptionFractionationTestCase; }
                 }
                 PrescriptionFractionationTestCase.Result = TestCase.FAIL; return PrescriptionFractionationTestCase;
             }
@@ -89,7 +74,7 @@ namespace VMS.TPS
             {
                 foreach (RTPrescriptionTarget t in CurrentPlan.RTPrescription.Targets)
                 {
-                    if (Math.Abs( (t.DosePerFraction.Dose*t.NumberOfFractions/2) - (CurrentPlan.UniqueFractionation.PrescribedDosePerFraction.Dose *
+                    if (Math.Abs( (t.DosePerFraction.Dose*t.NumberOfFractions/_nFractionsDivisor) - (CurrentPlan.UniqueFractionation.PrescribedDosePerFraction.Dose *
                                                                                                                         CurrentPlan.UniqueFractionation.NumberOfFractions.Value) ) <= 0.1)
                     { return PrescriptionDoseTestCase; }
                 }

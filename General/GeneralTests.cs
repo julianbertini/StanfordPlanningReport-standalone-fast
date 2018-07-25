@@ -99,6 +99,26 @@ namespace VMS.TPS
             this.StandaloneTestMethods.Add(ShiftNoteJournalTestCase.Name, ShiftNotesJournalCheck);
         }
 
+        public override TestCase MLCCheck(Beam b)
+        {
+            MLCTestCase.Description = "MLC is not set to 'NONE'.";
+            MLCTestCase.Result = TestCase.PASS;
+
+            try
+            {
+                if (!b.IsSetupField)
+                {
+                    if (b.MLC == null)
+                        MLCTestCase.Result = TestCase.FAIL;
+                }
+                return MLCTestCase;
+            }
+            catch (Exception e)
+            {
+                return MLCTestCase.HandleTestError(e);
+            }
+        }
+
         public TestCase CouchCheck(Beam b)
         {
             try

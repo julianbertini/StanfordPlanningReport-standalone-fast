@@ -1,6 +1,7 @@
 ﻿using System.Collections.Generic;
 using PlanSetup = VMS.TPS.Common.Model.API.PlanSetup;
-using VMS.TPS.Common.Model.API;
+using AriaConnect;
+using System.Linq;
 
 namespace VMS.TPS
 {
@@ -14,25 +15,57 @@ namespace VMS.TPS
 
         public PhysicsCheck(PlanSetup CurrentPlan)
         {
+            SharedTests tests = null;
+            SharedFieldTests fieldTests = null;
+            SharedPrescriptionTests presTests = null;
 
-            GeneralTests generalTests = new GeneralTests(CurrentPlan, docs);
-            GeneralPrescriptionTests generalPrescriptionTests = new GeneralPrescriptionTests(CurrentPlan, docs);
-            GeneralFieldTests fieldTests = new GeneralFieldTests(CurrentPlan);
+            using (var aria = new Aria())
+            {
+                var patient = aria.Patients.Where(tmp => tmp.PatientId ==  CurrentPlan.Course.Patient.Id).First();
+                var images = patient.Images.Where(tmp => tmp.ImageId.ToUpper().Contains("TSEI PHANTOM"));
 
-            /*
-            TSEITests tsei = new TSEITests(CurrentPlan);
-            TSEIFieldTests tseiField = new TSEIFieldTests(CurrentPlan);
-            TSEIPrescriptionTests itseiPres = new TSEIPrescriptionTests(CurrentPlan, docs);
-            */
+                if (images.Count() > 0)
+                {
+                    if (CurrentPlan.Id.ToUpper().Contains("PERINEUM"))
+                    {
+                        tests = new TSEIPerineum(CurrentPlan);
+                        fieldTests = new TSEIPerineumFieldTests(CurrentPlan);
+                         presTests = new TSEIPerineumPrescriptionTests(CurrentPlan, docs);
+                    }
+                    else if (CurrentPlan.Id.ToUpper().Contains("SOLES"))
+                    {
+                        tests = new TSEISoles(CurrentPlan);
+                        fieldTests = new TSEISolesFieldTests(CurrentPlan);
+                        presTests = new TSEISolesPrescriptionTests(CurrentPlan, docs);
+                    }
+                    else
+                    {
+                        tests = new TSEITests(CurrentPlan);
+                        fieldTests = new TSEIFieldTests(CurrentPlan);
+                        presTests = new TSEIPrescriptionTests(CurrentPlan, docs);
+                    }
+                }
+                else if (CurrentPlan.Id.ToUpper().Contains("TSEI"))
+                {
+                    tests = new TSEITests(CurrentPlan);
+                    fieldTests = new TSEIFieldTests(CurrentPlan);
+                    presTests = new TSEIPrescriptionTests(CurrentPlan, docs);
+                }
+                else
+                {
+                    tests = new GeneralTests(CurrentPlan, docs);
+                    presTests = new GeneralPrescriptionTests(CurrentPlan, docs);
+                    fieldTests = new GeneralFieldTests(CurrentPlan);
+                }
 
-            generalTests.ExecuteTests(CurrentPlan.Beams);
-            generalPrescriptionTests.ExecuteTests(CurrentPlan.Beams);
-            fieldTests.ExecuteTests(CurrentPlan.Beams);
+                tests.ExecuteTests(CurrentPlan.Beams);
+                presTests.ExecuteTests(CurrentPlan.Beams);
+                fieldTests.ExecuteTests(CurrentPlan.Beams);
 
-            Results.AddRange(generalPrescriptionTests.TestResults);
-            Results.AddRange(fieldTests.TestResults);
-            Results.AddRange(generalTests.TestResults);
-
+                Results.AddRange(presTests.TestResults);
+                Results.AddRange(fieldTests.TestResults);
+                Results.AddRange(tests.TestResults);
+            }
         }
 
     }

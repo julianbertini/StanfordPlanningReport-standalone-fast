@@ -28,23 +28,25 @@ namespace VMS.TPS
 
             _BolusInfo = GetBolusFreqAndThickness();
 
-            // standalone
             PrescriptionApprovalTestCase = new TestCase("Prescription Approval", "Test not completed.", TestCase.FAIL);
             this.StandaloneTests.Add(PrescriptionApprovalTestCase);
+            this.StandaloneTestMethods.Add(PrescriptionApprovalTestCase.Name, PrescriptionApprovalCheck);
 
-            //per Beam
             PrescriptionEnergyTestCase = new TestCase("Prescription Energy", "Test not completed.", TestCase.FAIL);
             this.PerBeamTests.Add(PrescriptionEnergyTestCase);
             this.TestMethods.Add(PrescriptionEnergyTestCase.Name, PrescriptionEnergyCheck);
 
             PrescriptionDosePerFractionTestCase = new TestCase("Prescription Dose Per Fraction", "Test not completed.", TestCase.FAIL);
-            this.PerBeamTests.Add(PrescriptionDosePerFractionTestCase);
+            this.StandaloneTests.Add(PrescriptionDosePerFractionTestCase);
+            this.StandaloneTestMethods.Add(PrescriptionDosePerFractionTestCase.Name, PrescriptionDosePerFractionCheck);
 
             PrescriptionFractionationTestCase = new TestCase("Prescription Fractionation", "Test not completed.", TestCase.FAIL);
-            this.PerBeamTests.Add(PrescriptionFractionationTestCase);
+            this.StandaloneTests.Add(PrescriptionFractionationTestCase);
+            this.StandaloneTestMethods.Add(PrescriptionFractionationTestCase.Name, PrescriptionFractionationCheck);
 
             PrescriptionDoseTestCase = new TestCase("Prescription Dose", "Test not completed", TestCase.FAIL);
-            this.PerBeamTests.Add(PrescriptionDoseTestCase);
+            this.StandaloneTests.Add(PrescriptionDoseTestCase);
+            this.StandaloneTestMethods.Add(PrescriptionDoseTestCase.Name, PrescriptionDoseCheck);
 
             PrescriptionBolusTestCase = new TestCase("Prescription Bolus", "Test not completed.", TestCase.FAIL);
             this.PerBeamTests.Add(PrescriptionBolusTestCase);

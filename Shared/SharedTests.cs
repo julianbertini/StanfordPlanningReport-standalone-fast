@@ -20,6 +20,7 @@ namespace VMS.TPS
         protected TestCase ActiveCourseTestCase;
         protected TestCase DoseRateTestCase;
         protected TestCase ToleranceTableTestCase;
+        protected TestCase MLCTestCase;
 
         protected string MachineName;
 
@@ -33,9 +34,11 @@ namespace VMS.TPS
             // standalone tests
             CourseNameTestCase = new TestCase("Course Name", "Test not completed.", TestCase.FAIL);
             this.StandaloneTests.Add(CourseNameTestCase);
+            this.StandaloneTestMethods.Add(CourseNameTestCase.Name, CourseNameCheck);
             
             ActiveCourseTestCase = new TestCase("Single Active Course", "Test not completed.", TestCase.FAIL);
             this.StandaloneTests.Add(ActiveCourseTestCase);
+            this.StandaloneTestMethods.Add(ActiveCourseTestCase.Name, ActiveCourseCheck);
 
 
             // per Beam tests
@@ -59,11 +62,16 @@ namespace VMS.TPS
             this.PerBeamTests.Add(ToleranceTableTestCase);
             this.TestMethods.Add(ToleranceTableTestCase.Name, ToleranceTableCheck);
 
+            MLCTestCase = new TestCase("MLC Check", "Test not comlpeted.", TestCase.FAIL);
+            this.PerBeamTests.Add(MLCTestCase);
+            this.TestMethods.Add(MLCTestCase.Name, MLCCheck);
+
         }
 
         public abstract TestCase DoseRateCheck(Beam b);
         public abstract TestCase MachineIdCheck(Beam b);
         public abstract TestCase ToleranceTableCheck(Beam b);
+        public abstract TestCase MLCCheck(Beam b);
 
         private string FindMachineName()
         {
@@ -79,7 +87,7 @@ namespace VMS.TPS
             return machineName;
         }
 
-        public TestCase AcitveCourseCheck()
+        public TestCase ActiveCourseCheck()
         {
             ActiveCourseTestCase.Description = "All courses except for current are completed.";
             ActiveCourseTestCase.Result =  TestCase.PASS;
