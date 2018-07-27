@@ -24,8 +24,6 @@ namespace VMS.TPS
         protected TestCase CollimatorTestCase;
         protected TestCase IntMountTestCase;
         protected TestCase CouchParametersTestCase;
-        protected TestCase ReferencePointTestCase;
-        protected TestCase SchedulingTestCase;
 
         public TSEITests(PlanSetup cPlan) : base(cPlan)
         {
@@ -59,14 +57,6 @@ namespace VMS.TPS
             CouchParametersTestCase = new TestCase("Couch Parameters Check", "Test not completed.", TestCase.FAIL);
             this.StandaloneTests.Add(CouchParametersTestCase);
             this.StandaloneTestMethods.Add(CouchParametersTestCase.Name, CouchParametersCheck);
-
-            ReferencePointTestCase = new TestCase("Reference Point Check", "Test not completed.", TestCase.FAIL);
-            this.StandaloneTests.Add(ReferencePointTestCase);
-            this.StandaloneTestMethods.Add(ReferencePointTestCase.Name, ReferencePointCheck);
-
-            SchedulingTestCase = new TestCase("Scheduling Check", "Test not completed.", TestCase.FAIL);
-            this.StandaloneTests.Add(SchedulingTestCase);
-            this.StandaloneTestMethods.Add(SchedulingTestCase.Name, SchedulingCheck);
 
             IntMountTestCase = new TestCase("Int Mount Check", "Test not completed.", TestCase.FAIL);
             this.StandaloneTests.Add(IntMountTestCase);
@@ -397,154 +387,6 @@ namespace VMS.TPS
             }
         }
 
-        public TestCase ReferencePointCheck()
-        {
-            ReferencePointTestCase.Description = "Ref. pt tracking correctly & Tolerance Dose vals set accordingly.";
-            ReferencePointTestCase.Result = TestCase.PASS;
-
-            short freqType = 7;
-            double epsilon = 0.0001, totalRxDose = 0.0;
-            string prescriptionNotes = "";
-            string prescriptionFreq = "";
-            string[] BIDfreqOptions = {"10 Times a week", "10 TIMES A WEEK", "2 times/day", "2-3 times daily", "3 times/day, 11 fractions in 1 week",
-                                                    "5 times a week,bid on last tx", "6 times/week, BID one day/week", "bid on last day", "Twice Daily", "TWICE DAILY"};
-            string[] ThreeFracOptions = { "Thrice Daily", "THRICE DAILY" };
-            try
-            { // get the prescription frequency notes and frequency value
-                using (var aria = new Aria())
-                {
-                    var patient = aria.Patients.Where(tmp => tmp.PatientId == CurrentPlan.Course.Patient.Id);
-                    if (patient.Any())
-                    {
-                        var patientSer = patient.First().PatientSer;
-                        var courses = aria.Courses.Where(tmp => tmp.PatientSer == patientSer && tmp.CourseId == CurrentPlan.Course.Id);
-                        if (courses.Any())
-                        {
-                            var courseSer = courses.First().CourseSer;
-                            var plans = aria.PlanSetups.Where(tmp => tmp.CourseSer == courseSer && tmp.PlanSetupId == CurrentPlan.Id);
-                            if (plans.Any())
-                            {
-                                var prescriptionSer = plans.First().PrescriptionSer;
-                                var prescription = aria.Prescriptions.Where(tmp => tmp.PrescriptionSer == prescriptionSer).First();
-                                var prescriptionProperties = prescription.PrescriptionProperties.Where(tmp => tmp.PrescriptionSer == prescriptionSer);
-                                prescriptionNotes = prescription.Notes;
-                                prescriptionFreq = prescriptionProperties.Where(tmp => tmp.PropertyType == freqType).First().PropertyValue;
-                            }
-                        }
-                    }
-                }
-            }
-            catch (Exception e)
-            {
-                return ReferencePointTestCase.HandleTestError(e);
-            }
-
-            try
-            {
-                foreach (var target in CurrentPlan.RTPrescription.Targets)
-                {
-                    totalRxDose = target.DosePerFraction.Dose * target.NumberOfFractions;
-
-                    if (!TestCase.NearlyEqual(totalRxDose, CurrentPlan.PrimaryReferencePoint.TotalDoseLimit.Dose, epsilon))
-                        ReferencePointTestCase.Result = TestCase.FAIL;
-
-                    if (BIDfreqOptions.Contains(prescriptionFreq) ||
-                                        (prescriptionNotes.ToUpper().Contains("BID") && !prescriptionNotes.ToUpper().Contains("NO BID"))) // daily dose limit == pres dose/fx*2
-                    {
-                        if (!TestCase.NearlyEqual(target.DosePerFraction.Dose * 2, CurrentPlan.PrimaryReferencePoint.DailyDoseLimit.Dose, epsilon))
-                            ReferencePointTestCase.Result = TestCase.FAIL;
-                    }
-                    else if (ThreeFracOptions.Contains(prescriptionFreq))
-                    {
-                        if (!TestCase.NearlyEqual(target.DosePerFraction.Dose * 3, CurrentPlan.PrimaryReferencePoint.DailyDoseLimit.Dose, epsilon))
-                            ReferencePointTestCase.Result = TestCase.FAIL;
-                    }
-                    else
-                    {
-                        if (!TestCase.NearlyEqual(target.DosePerFraction.Dose, CurrentPlan.PrimaryReferencePoint.DailyDoseLimit.Dose, epsilon))
-                            ReferencePointTestCase.Result = TestCase.FAIL;
-                    }
-
-                    if (!TestCase.NearlyEqual(target.DosePerFraction.Dose, CurrentPlan.PrimaryReferencePoint.SessionDoseLimit.Dose, epsilon))
-                        ReferencePointTestCase.Result = TestCase.FAIL;
-                    if (!TestCase.NearlyEqual(target.DosePerFraction.Dose, CurrentPlan.UniqueFractionation.DosePerFractionInPrimaryRefPoint.Dose, epsilon))
-                        ReferencePointTestCase.Result = TestCase.FAIL;
-                }
-                return ReferencePointTestCase;
-            }
-            catch (Exception e)
-            {
-                return ReferencePointTestCase.HandleTestError(e);
-            }
-        }
-
-        public TestCase SchedulingCheck()
-        {
-            SchedulingTestCase.Description = "# scheduled fx = # of fx for plan.";
-            SchedulingTestCase.Result = TestCase.PASS;
-
-            string status = "", template = "", fieldId = "";
-            int nScheduledFractions = 0;
-
-            try
-            {
-                using (var aria = new Aria())
-                {
-                    var patient = aria.Patients.Where(tmp => tmp.PatientId == CurrentPlan.Course.Patient.Id);
-                    if (patient.Any())
-                    {
-                        var patientSer = patient.First().PatientSer;
-                        var courses = aria.Courses.Where(tmp => tmp.PatientSer == patientSer && tmp.CourseId == CurrentPlan.Course.Id);
-                        if (courses.Any())
-                        {
-                            long courseSer = courses.First().CourseSer;
-                            var sessions = aria.Sessions.Where(tmp => tmp.CourseSer == courseSer);
-
-                            foreach (Session sess in sessions)
-                            {
-                                nScheduledFractions++;
-
-                                var sessionProcedures = sess.SessionProcedures;
-                                foreach (SessionProcedure sessProcedure in sessionProcedures)
-                                {
-                                    status = sessProcedure.Status;
-                                    template = sessProcedure.SessionProcedureTemplateId;
-
-                                    if (!status.Equals("SCHEDULE"))
-                                        SchedulingTestCase.Result = TestCase.FAIL;
-
-                                    foreach (SessionProcedurePart sessProcedurePart in sessProcedure.SessionProcedureParts)
-                                    {
-                                        var radiation = aria.Radiations.Where(tmp => tmp.RadiationSer == sessProcedurePart.RadiationSer);
-                                        fieldId = radiation.First().RadiationId;
-
-                                        if (fieldId.Equals("ISO AP") || fieldId.Equals("ISO PA") || fieldId.Equals("ISO RLAT") || fieldId.Equals("ISO LLAT"))
-                                        {
-                                            if (!template.Equals("KV OBI"))
-                                                SchedulingTestCase.Result = TestCase.FAIL;
-                                        }
-                                        else if (fieldId.Equals("CBCT"))
-                                        {
-                                            if (!template.Equals("kV_CBCT"))
-                                                SchedulingTestCase.Result = TestCase.FAIL;
-                                        }
-                                    }
-                                }
-                            }
-                        }
-                    }
-                }
-                if (nScheduledFractions != CurrentPlan.UniqueFractionation.NumberOfFractions)
-                    SchedulingTestCase.Result = TestCase.FAIL;
-
-                return SchedulingTestCase;
-            }
-            catch (Exception e)
-            {
-                return SchedulingTestCase.HandleTestError(e);
-            }
-        }
-
         private TestCase IntMountCheck()
         {
             IntMountTestCase.Description = "Set to HDTS9e-.";
@@ -575,7 +417,7 @@ namespace VMS.TPS
                                     {
                                         var addOn = aria.AddOns.Where(tmp => tmp.AddOnSer == fieldAddOn.AddOnSer).First();
                                         if (!IntMountId.Equals(addOn.AddOnId))
-                                            SchedulingTestCase.Result = TestCase.FAIL;
+                                            IntMountTestCase.Result = TestCase.FAIL;
                                     }
                                 }
                             }

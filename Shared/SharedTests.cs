@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Linq;
 using PlanSetup = VMS.TPS.Common.Model.API.PlanSetup;
 using Course = VMS.TPS.Common.Model.API.Course;
