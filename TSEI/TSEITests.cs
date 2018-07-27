@@ -416,7 +416,7 @@ namespace VMS.TPS
                                     {
                                         var addOn = aria.AddOns.Where(tmp => tmp.AddOnSer == fieldAddOn.AddOnSer).First();
                                         if (!IntMountId.Equals(addOn.AddOnId))
-                                            SchedulingTestCase.Result = TestCase.FAIL;
+                                            IntMountTestCase.Result = TestCase.FAIL;
                                     }
                                 }
                             }
