@@ -1,6 +1,4 @@
-﻿using System.Collections.Generic;
-using VMS.TPS.Common.Model.API;
-using PlanSetup = VMS.TPS.Common.Model.API.PlanSetup;
+﻿using PlanSetup = VMS.TPS.Common.Model.API.PlanSetup;
 
 namespace VMS.TPS
 {
