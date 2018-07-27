@@ -1,7 +1,7 @@
 ﻿using System.Collections.Generic;
 using PlanSetup = VMS.TPS.Common.Model.API.PlanSetup;
-using AriaConnect;
 using System.Linq;
+using AriaConnect;
 
 namespace VMS.TPS
 {
@@ -21,7 +21,7 @@ namespace VMS.TPS
 
             using (var aria = new Aria())
             {
-                var patient = aria.Patients.Where(tmp => tmp.PatientId ==  CurrentPlan.Course.Patient.Id).First();
+                var patient = aria.Patients.Where(tmp => tmp.PatientId == CurrentPlan.Course.Patient.Id).First();
                 var images = patient.Images.Where(tmp => tmp.ImageId.ToUpper().Contains("TSEI PHANTOM"));
 
                 if (images.Count() > 0)
@@ -30,7 +30,7 @@ namespace VMS.TPS
                     {
                         tests = new TSEIPerineum(CurrentPlan);
                         fieldTests = new TSEIPerineumFieldTests(CurrentPlan);
-                         presTests = new TSEIPerineumPrescriptionTests(CurrentPlan, docs);
+                        presTests = new TSEIPerineumPrescriptionTests(CurrentPlan, docs);
                     }
                     else if (CurrentPlan.Id.ToUpper().Contains("SOLES"))
                     {
@@ -70,3 +70,4 @@ namespace VMS.TPS
 
     }
 }
+

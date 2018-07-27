@@ -136,42 +136,65 @@ namespace VMS.TPS
                 {
                     return SetupFieldNameTestCase;
                 }
-                if (this.CurrentPlan.TreatmentOrientation.ToString() == "HeadFirstSupine" && !b.Id.ToString().ToUpper().Contains("CBCT"))
+                if (this.CurrentPlan.TreatmentOrientation.ToString() == "HeadFirstSupine" && !b.Id.ToUpper().Contains("CBCT"))
                 {
-                    if (b.ControlPoints.First().GantryAngle.ToString("N1") == "0.0" && (!b.Id.ToString().ToUpper().Contains("AP")))
-                                                                    { SetupFieldNameTestCase.Result = TestCase.FAIL; return SetupFieldNameTestCase; }
+                    if (b.ControlPoints.First().GantryAngle.ToString("N1") == "0.0" && (!b.Id.ToUpper().Contains("AP")))
+                    { SetupFieldNameTestCase.Result = TestCase.FAIL; return SetupFieldNameTestCase; }
 
-                    else if (b.ControlPoints.First().GantryAngle.ToString("N1") == "90.0" && (!b.Id.ToString().ToUpper().Contains("LLAT")
+                    else if (b.ControlPoints.First().GantryAngle.ToString("N1") == "90.0" && (!b.Id.ToUpper().Contains("LLAT")
                                                                                             && !b.Id.ToString().ToUpper().Contains("L LAT")))
-                                                                            { SetupFieldNameTestCase.Result = TestCase.FAIL; return SetupFieldNameTestCase; }
+                    { SetupFieldNameTestCase.Result = TestCase.FAIL; return SetupFieldNameTestCase; }
 
-                    else if (b.ControlPoints.First().GantryAngle.ToString("N1") == "270.0" && (!b.Id.ToString().ToUpper().Contains("RLAT")
+                    else if (b.ControlPoints.First().GantryAngle.ToString("N1") == "270.0" && (!b.Id.ToUpper().Contains("RLAT")
                                                                                             && !b.Id.ToString().ToUpper().Contains("R LAT")))
-                                                                            { SetupFieldNameTestCase.Result = TestCase.FAIL; return SetupFieldNameTestCase; }
+                    { SetupFieldNameTestCase.Result = TestCase.FAIL; return SetupFieldNameTestCase; }
 
-                    else if (b.ControlPoints.First().GantryAngle.ToString("N1") == "180.0" && (!b.Id.ToString().ToUpper().Contains("PA")))
-                                                                            { SetupFieldNameTestCase.Result = TestCase.FAIL; return SetupFieldNameTestCase; }
+                    else if (b.ControlPoints.First().GantryAngle.ToString("N1") == "180.0" && (!b.Id.ToUpper().Contains("PA")))
+                    { SetupFieldNameTestCase.Result = TestCase.FAIL; return SetupFieldNameTestCase; }
 
-                    else if (b.ControlPoints.First().GantryAngle.ToString("N1") == "45.0" && (!b.Id.ToString().ToUpper().Contains("LAO")))
-                                                                             { SetupFieldNameTestCase.Result = TestCase.FAIL; return SetupFieldNameTestCase; }
+                    else if (b.ControlPoints.First().GantryAngle.ToString("N1") == "45.0" && (!b.Id.ToUpper().Contains("LAO")))
+                    { SetupFieldNameTestCase.Result = TestCase.FAIL; return SetupFieldNameTestCase; }
 
-                    else if (b.ControlPoints.First().GantryAngle.ToString("N1") == "315.0" && (!b.Id.ToString().ToUpper().Contains("RAO")))
-                                                                                { SetupFieldNameTestCase.Result = TestCase.FAIL; return SetupFieldNameTestCase; }
+                    else if (b.ControlPoints.First().GantryAngle.ToString("N1") == "315.0" && (!b.Id.ToUpper().Contains("RAO")))
+                    { SetupFieldNameTestCase.Result = TestCase.FAIL; return SetupFieldNameTestCase; }
+
+                    else if (b.Id.ToUpper().Contains("ISO"))
+                    {
+                        if (b.ControlPoints.First().GantryAngle.ToString("N1") == "135.0" && (!b.Id.ToUpper().Contains("LPO")))
+                        { SetupFieldNameTestCase.Result = TestCase.FAIL; return SetupFieldNameTestCase; }
+
+                        else if (b.ControlPoints.First().GantryAngle.ToString("N1") == "225.0" && (!b.Id.ToUpper().Contains("RPO")))
+                        { SetupFieldNameTestCase.Result = TestCase.FAIL; return SetupFieldNameTestCase; }
+                    }
                 }
                 else if (this.CurrentPlan.TreatmentOrientation.ToString() == "FeetFirstSupine" && b.Id.ToString().ToUpper() != "CBCT")
                 {
                     if (b.ControlPoints.First().GantryAngle.ToString("N1") == "0.0" && (!b.Id.ToString().ToUpper().Contains("AP")))
-                                                                    { SetupFieldNameTestCase.Result = TestCase.FAIL; return SetupFieldNameTestCase; }
+                    { SetupFieldNameTestCase.Result = TestCase.FAIL; return SetupFieldNameTestCase; }
+
                     else if (b.ControlPoints.First().GantryAngle.ToString("N1") == "270.0" && (!b.Id.ToString().ToUpper().Contains("LLAT") && !b.Id.ToString().ToUpper().Contains("L LAT")))
-                                                                                                                                                        { SetupFieldNameTestCase.Result = TestCase.FAIL; return SetupFieldNameTestCase; }
+                    { SetupFieldNameTestCase.Result = TestCase.FAIL; return SetupFieldNameTestCase; }
+
                     else if (b.ControlPoints.First().GantryAngle.ToString("N1") == "90.0" && (!b.Id.ToString().ToUpper().Contains("RLAT") && !b.Id.ToString().ToUpper().Contains("R LAT")))
-                                                                                                                                                        { SetupFieldNameTestCase.Result = TestCase.FAIL; return SetupFieldNameTestCase; }
+                    { SetupFieldNameTestCase.Result = TestCase.FAIL; return SetupFieldNameTestCase; }
+
                     else if (b.ControlPoints.First().GantryAngle.ToString("N1") == "180.0" && (!b.Id.ToString().ToUpper().Contains("PA")))
-                                                                                                                                                        { SetupFieldNameTestCase.Result = TestCase.FAIL; return SetupFieldNameTestCase; }
+                    { SetupFieldNameTestCase.Result = TestCase.FAIL; return SetupFieldNameTestCase; }
+
                     else if (b.ControlPoints.First().GantryAngle.ToString("N1") == "45.0" && (!b.Id.ToString().ToUpper().Contains("RAO")))
-                                                                                                                                                        { SetupFieldNameTestCase.Result = TestCase.FAIL; return SetupFieldNameTestCase; }
+                    { SetupFieldNameTestCase.Result = TestCase.FAIL; return SetupFieldNameTestCase; }
+
                     else if (b.ControlPoints.First().GantryAngle.ToString("N1") == "315.0" && (!b.Id.ToString().ToUpper().Contains("LAO")))
-                                                                                                                                                        { SetupFieldNameTestCase.Result = TestCase.FAIL; return SetupFieldNameTestCase; }
+                    { SetupFieldNameTestCase.Result = TestCase.FAIL; return SetupFieldNameTestCase; }
+
+                    else if (b.Id.ToUpper().Contains("ISO"))
+                    {
+                        if (b.ControlPoints.First().GantryAngle.ToString("N1") == "225.0" && (!b.Id.ToString().ToUpper().Contains("LPO")))
+                        { SetupFieldNameTestCase.Result = TestCase.FAIL; return SetupFieldNameTestCase; }
+
+                        else if (b.ControlPoints.First().GantryAngle.ToString("N1") == "135.0" && (!b.Id.ToString().ToUpper().Contains("RPO")))
+                        { SetupFieldNameTestCase.Result = TestCase.FAIL; return SetupFieldNameTestCase; }
+                    }
                 }
                 else if (this.CurrentPlan.TreatmentOrientation.ToString() == "HeadFirstProne" && b.Id.ToString().ToUpper() != "CBCT")
                 {
@@ -187,6 +210,15 @@ namespace VMS.TPS
                                                                                                                                                          { SetupFieldNameTestCase.Result = TestCase.FAIL; return SetupFieldNameTestCase; }
                     else if (b.ControlPoints.First().GantryAngle.ToString("N1") == "315.0" && (!b.Id.ToString().ToUpper().Contains("LPO")))
                                                                                                                                                          { SetupFieldNameTestCase.Result = TestCase.FAIL; return SetupFieldNameTestCase; }
+
+                    else if (b.Id.ToUpper().Contains("ISO"))
+                    {
+                        if (b.ControlPoints.First().GantryAngle.ToString("N1") == "225.0" && (!b.Id.ToString().ToUpper().Contains("LAO")))
+                        { SetupFieldNameTestCase.Result = TestCase.FAIL; return SetupFieldNameTestCase; }
+
+                        else if (b.ControlPoints.First().GantryAngle.ToString("N1") == "135.0" && (!b.Id.ToString().ToUpper().Contains("RAO")))
+                        { SetupFieldNameTestCase.Result = TestCase.FAIL; return SetupFieldNameTestCase; }
+                    }
                 }
 
                 return SetupFieldNameTestCase;
