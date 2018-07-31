@@ -80,17 +80,17 @@ namespace VMS.TPS
                                         if (addOn.AddOnType.Equals("Applicator"))
                                         {
                                             if (!_accMount.Equals(addOn.AddOnId))
-                                                SchedulingTestCase.Result = TestCase.FAIL;
+                                                ApplicatorInsertTestCase.Result = TestCase.FAIL;
                                         }
                                         else if (addOn.AddOnType.Equals("Tray"))
                                         {
                                             if (!_eAperture.Equals(addOn.AddOnId))
-                                                SchedulingTestCase.Result = TestCase.FAIL;
+                                                ApplicatorInsertTestCase.Result = TestCase.FAIL;
                                         }
                                     }
 
                                     if (nAddOns != 2)
-                                        SchedulingTestCase.Result = TestCase.FAIL;
+                                        ApplicatorInsertTestCase.Result = TestCase.FAIL;
                                 }
                             }
                         }
