@@ -9,7 +9,7 @@
     <ProductVersion>8.0.30703</ProductVersion>
     <SchemaVersion>2.0</SchemaVersion>
     <ProjectGuid>{DE2ADC26-7C29-48BB-9376-18D3F3E7B0CB}</ProjectGuid>
-    <OutputType>Library</OutputType>
+    <OutputType>Exe</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
     <RootNamespace>StanfordPlanningReport</RootNamespace>
     <AssemblyName>Stanford_API_Plan_Report_v2.5.esapi</AssemblyName>
