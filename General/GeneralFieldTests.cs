@@ -396,8 +396,8 @@ namespace VMS.TPS
 
             if (_electronEnergies.Contains(b.EnergyModeDisplayName))
             {
-                SetupFieldAngleTestCase.Description = "N/A for clinical electron plan.";
-                return SetupFieldAngleTestCase;
+                DRRAllFieldsTestCase.Description = "N/A for clinical electron plan.";
+                return DRRAllFieldsTestCase;
             }
 
             try
