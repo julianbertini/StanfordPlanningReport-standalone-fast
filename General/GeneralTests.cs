@@ -82,7 +82,7 @@ namespace VMS.TPS
             this.StandaloneTests.Add(PatientOrientationTestCase);
             this.StandaloneTestMethods.Add(PatientOrientationTestCase.Name, PatientOrientationCheck);
 
-            UserOriginTestCase = new TestCase("User Origin", "User origin is not set to (0, 0, 0).", TestCase.PASS);
+            UserOriginTestCase = new TestCase("User Origin", "Test not completed.", TestCase.FAIL);
             this.StandaloneTests.Add(UserOriginTestCase);
             this.StandaloneTestMethods.Add(UserOriginTestCase.Name, UserOriginCheck);
 
@@ -394,10 +394,22 @@ namespace VMS.TPS
 
         public TestCase UserOriginCheck()
         {
+            UserOriginTestCase.Description = "User origin is not set to(0, 0, 0).";
+            UserOriginTestCase.Result = TestCase.PASS;
+
             try
             {
-                if (CurrentPlan.StructureSet.Image.UserOrigin.x == 0.0 && CurrentPlan.StructureSet.Image.UserOrigin.y == 0.0 && CurrentPlan.StructureSet.Image.UserOrigin.z == 0.0)
-                                                                                                                                                            { UserOriginTestCase.Result = TestCase.FAIL; return UserOriginTestCase; }
+              
+                if (CurrentPlan.StructureSet.Image.Id.ToUpper().Contains("PHANTOM"))
+                {
+                    UserOriginTestCase.Description = "N/A for clinical electron.";
+                    return UserOriginTestCase;
+                }
+
+                if (CurrentPlan.StructureSet.Image.UserOrigin.x == 0.0 && CurrentPlan.StructureSet.Image.UserOrigin.y == 0.0
+                                                                                                  && CurrentPlan.StructureSet.Image.UserOrigin.z == 0.0)
+                { UserOriginTestCase.Result = TestCase.FAIL; return UserOriginTestCase; }
+
                 return UserOriginTestCase;
             }
             catch (Exception ex) {
@@ -423,6 +435,12 @@ namespace VMS.TPS
         {
             try
             {
+                if (CurrentPlan.StructureSet.Image.Id.ToUpper().Contains("PHANTOM"))
+                {
+                    UserOriginTestCase.Description = "N/A for clinical electron.";
+                    return UserOriginTestCase;
+                }
+
                 if (CurrentPlan.TreatmentOrientation.ToString() != CurrentPlan.StructureSet.Image.ImagingOrientation.ToString())
                                                                                                     { PatientOrientationTestCase.Result = TestCase.FAIL; return PatientOrientationTestCase; }
                 return PatientOrientationTestCase;
@@ -438,6 +456,12 @@ namespace VMS.TPS
         {
             try
             {
+                if (CurrentPlan.StructureSet.Image.Id.ToUpper().Contains("PHANTOM"))
+                {
+                    UserOriginTestCase.Description = "N/A for clinical electron.";
+                    return UserOriginTestCase;
+                }
+
                 if (Doctors.Contains(CurrentPlan.PlanningApprover.ToString()))
                     return PlanningApprovalTestCase;
 
@@ -453,6 +477,12 @@ namespace VMS.TPS
         {
             try
             {
+                if (CurrentPlan.StructureSet.Image.Id.ToUpper().Contains("PHANTOM"))
+                {
+                    UserOriginTestCase.Description = "N/A for clinical electron.";
+                    return UserOriginTestCase;
+                }
+
                 if ((CurrentPlan.TargetVolumeID.ToString().Contains("TS") || !CurrentPlan.TargetVolumeID.ToString().Contains("PTV")) 
                                                                                                 && CurrentPlan.PlanNormalizationMethod.ToString().Contains("Volume"))
                                                                                                                                 { TargetVolumeTestCase.Result = TestCase.FAIL; return TargetVolumeTestCase; }

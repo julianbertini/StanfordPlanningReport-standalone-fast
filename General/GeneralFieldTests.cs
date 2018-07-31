@@ -76,7 +76,7 @@ namespace VMS.TPS
             }
             catch (Exception ex)
             {
-                return SetupFieldAngleTestCase.HandleTestError(ex);
+                return SetupFieldBolusTestCase.HandleTestError(ex);
             }
         }
 
