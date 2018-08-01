@@ -256,7 +256,8 @@ namespace VMS.TPS
 
                             if (sessionRTPlans.Count() != CurrentPlan.UniqueFractionation.NumberOfFractions)
                             {
-                                SchedulingTestCase.Result = TestCase.FAIL; return SchedulingTestCase;
+                                SchedulingTestCase.Description = "# of scheduled fractions does not match plan # fractions.";
+                                SchedulingTestCase.Result = TestCase.FAIL;
                             }
 
                             foreach (var sess in sessionRTPlans)
@@ -264,7 +265,8 @@ namespace VMS.TPS
                                 status = sess.Status;
                                 if (!status.Equals("SCHEDULE"))
                                 {
-                                    SchedulingTestCase.Result = TestCase.FAIL; //return SchedulingTestCase;
+                                    SchedulingTestCase.Description = "Status of 1 or more fractions is not set to 'SCHEDULE'.";
+                                    SchedulingTestCase.Result = TestCase.FAIL;
                                 }
                             }
 
