@@ -67,7 +67,9 @@ namespace VMS.TPS
                 }
                 PrescriptionDoseTestCase.Result = TestCase.FAIL; return PrescriptionDoseTestCase;
             }
-            catch { PrescriptionDoseTestCase.Result = TestCase.FAIL; return PrescriptionDoseTestCase; }
+            catch(Exception e) {
+                return PrescriptionDoseTestCase.HandleTestError(e, "No prescription targets found.");
+            }
         }
 
         /* Verifies that the existence of bolus in Rx matches the existence of bolus in treatment fields.
@@ -102,9 +104,9 @@ namespace VMS.TPS
                 return PrescriptionBolusTestCase;
             }
 
-            catch (Exception ex)
+            catch (Exception e)
             {
-                return PrescriptionBolusTestCase.HandleTestError(ex);
+                return PrescriptionBolusTestCase.HandleTestError(e, "Error finding boluses in fields.");
             }
 
         }
@@ -127,9 +129,9 @@ namespace VMS.TPS
                 }
                 return PrescriptionEnergyTestCase;
             }
-            catch (Exception ex)
+            catch (Exception e)
             {
-                return PrescriptionEnergyTestCase.HandleTestError(ex);
+                return PrescriptionEnergyTestCase.HandleTestError(e, "Error finding prescription or field energies.");
             }
         }
 

@@ -337,7 +337,7 @@ namespace VMS.TPS
 
         public TestCase CouchParametersCheck()
         {
-            CouchParametersTestCase.Description = "CouchVrt = " + _couchVrt + "; CouchLng = " + _couchLng + "; CouchLat = 0.";
+            CouchParametersTestCase.Description = "CouchVrt = " + _couchVrt + "; CouchLng = " + _couchLng + "; CouchLat = " + _couchLat + ".";
             CouchParametersTestCase.Result = TestCase.PASS;
 
             double epsilon = 0.0001;
