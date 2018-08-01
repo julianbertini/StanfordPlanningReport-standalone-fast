@@ -88,12 +88,17 @@ namespace VMS.TPS
          *      
          * Updated: JB 6/13/18
          */
-        public TestCase HandleTestError(Exception ex)
+        public TestCase HandleTestError(Exception ex, string desc = null)
         {
-            Console.WriteLine(ex.ToString());
+            if (desc == null)
+                this.Description = "An unknown error occured while attempting to run this test. Please report it, including patient ID or other pertinent details.";
+            else
+                this.Description = desc;
 
             this.Result = TestCase.FAIL;
-            this.Description = "An unknown error occured while attempting to run this test. Please report it, including patient ID or other pertinent details.";
+
+            Console.WriteLine(ex.ToString());
+
             return this;
         }
     }

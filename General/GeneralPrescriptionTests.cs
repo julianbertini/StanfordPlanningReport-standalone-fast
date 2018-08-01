@@ -48,7 +48,7 @@ namespace VMS.TPS
                 PrescriptionFractionationTestCase.Result = TestCase.FAIL; return PrescriptionFractionationTestCase;
             }
             catch(Exception ex) {
-                return PrescriptionFractionationTestCase.HandleTestError(ex);
+                return PrescriptionFractionationTestCase.HandleTestError(ex, "No prescription targets found.");
             }
         }
 

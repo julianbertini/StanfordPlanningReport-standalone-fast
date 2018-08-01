@@ -8,25 +8,28 @@ namespace VMS.TPS
 {
     public class GeneralTests: SharedTests
     {
-        // All depend on a Beams loop
-        private TestCase PlanNormalizationTestCase; 
-        private TestCase CouchTestCase; 
-        private TestCase DoseAlgorithmTestCase;  
-        private TestCase JawMaxTestCase;
-        private TestCase JawMinTestCase;  // Added jaw min test on 5/30/2018
-        private TestCase JawLimitTestCase; // Added Arc field x jaw size < 15cm on 5/30/2018
-        private TestCase HighMUTestCase; 
-        private TestCase TableHeightTestCase; 
-        private TestCase SBRTDoseResolutionTestCase;
-        private TestCase SBRTCTSliceThicknessTestCase;
-        private TestCase UserOriginTestCase;
-        private TestCase ImageDateTestCase;
-        private TestCase PatientOrientationTestCase;
-        private TestCase PlanningApprovalTestCase;
-        private TestCase TargetVolumeTestCase;
-        private TestCase ShiftNoteJournalTestCase;
 
-        private string[] Doctors;
+        // All depend on a Beams loop
+        protected TestCase PlanNormalizationTestCase; 
+        protected TestCase CouchTestCase; 
+        protected TestCase DoseAlgorithmTestCase;  
+        protected TestCase JawMaxTestCase;
+        protected TestCase JawMinTestCase;  // Added jaw min test on 5/30/2018
+        protected TestCase JawLimitTestCase; // Added Arc field x jaw size < 15cm on 5/30/2018
+        protected TestCase HighMUTestCase; 
+        protected TestCase TableHeightTestCase; 
+        protected TestCase SBRTDoseResolutionTestCase;
+        protected TestCase SBRTCTSliceThicknessTestCase;
+        protected TestCase UserOriginTestCase;
+        protected TestCase ImageDateTestCase;
+        protected TestCase PatientOrientationTestCase;
+        protected TestCase PlanningApprovalTestCase;
+        protected TestCase TargetVolumeTestCase;
+        protected TestCase ShiftNoteJournalTestCase;
+        protected TestCase ImagePositionTestCase;
+        protected TestCase CollAngleTestCase;
+
+        protected string[] Doctors;
 
         public GeneralTests(PlanSetup cPlan, string[] doctors) : base(cPlan)
         {
@@ -69,6 +72,10 @@ namespace VMS.TPS
             this.PerBeamTests.Add(SBRTCTSliceThicknessTestCase);
             this.TestMethods.Add(SBRTCTSliceThicknessTestCase.Name, SBRTCTSliceThicknessCheck);
 
+            CollAngleTestCase = new TestCase("Collimator Angle Check (VMAT)", "Test not completed.", TestCase.FAIL);
+            this.PerBeamTests.Add(CollAngleTestCase);
+            this.TestMethods.Add(CollAngleTestCase.Name, CollAngleCheck);
+
             //standalone 
             PlanningApprovalTestCase = new TestCase("Planning Approval", "Plan is planning approved by MD.", TestCase.PASS);
             this.StandaloneTests.Add(PlanningApprovalTestCase);
@@ -97,6 +104,12 @@ namespace VMS.TPS
             ShiftNoteJournalTestCase = new TestCase("Shift Note in Journal", "Shift note has been inserted into journal.", TestCase.PASS);
             this.StandaloneTests.Add(ShiftNoteJournalTestCase);
             this.StandaloneTestMethods.Add(ShiftNoteJournalTestCase.Name, ShiftNotesJournalCheck);
+
+            /*
+            ImagePositionTestCase = new TestCase("Image Position Check", "Test not completed.", TestCase.FAIL);
+            this.StandaloneTests.Add(ImagePositionTestCase);
+            this.StandaloneTestMethods.Add(ImagePositionTestCase.Name, ImagePositionCheck);
+            */
         }
 
         public override TestCase MLCCheck(Beam b)
@@ -399,13 +412,6 @@ namespace VMS.TPS
 
             try
             {
-              
-                if (CurrentPlan.StructureSet.Image.Id.ToUpper().Contains("PHANTOM"))
-                {
-                    UserOriginTestCase.Description = "N/A for clinical electron.";
-                    return UserOriginTestCase;
-                }
-
                 if (CurrentPlan.StructureSet.Image.UserOrigin.x == 0.0 && CurrentPlan.StructureSet.Image.UserOrigin.y == 0.0
                                                                                                   && CurrentPlan.StructureSet.Image.UserOrigin.z == 0.0)
                 { UserOriginTestCase.Result = TestCase.FAIL; return UserOriginTestCase; }
@@ -435,12 +441,6 @@ namespace VMS.TPS
         {
             try
             {
-                if (CurrentPlan.StructureSet.Image.Id.ToUpper().Contains("PHANTOM"))
-                {
-                    UserOriginTestCase.Description = "N/A for clinical electron.";
-                    return UserOriginTestCase;
-                }
-
                 if (CurrentPlan.TreatmentOrientation.ToString() != CurrentPlan.StructureSet.Image.ImagingOrientation.ToString())
                                                                                                     { PatientOrientationTestCase.Result = TestCase.FAIL; return PatientOrientationTestCase; }
                 return PatientOrientationTestCase;
@@ -456,12 +456,6 @@ namespace VMS.TPS
         {
             try
             {
-                if (CurrentPlan.StructureSet.Image.Id.ToUpper().Contains("PHANTOM"))
-                {
-                    UserOriginTestCase.Description = "N/A for clinical electron.";
-                    return UserOriginTestCase;
-                }
-
                 if (Doctors.Contains(CurrentPlan.PlanningApprover.ToString()))
                     return PlanningApprovalTestCase;
 
@@ -477,12 +471,6 @@ namespace VMS.TPS
         {
             try
             {
-                if (CurrentPlan.StructureSet.Image.Id.ToUpper().Contains("PHANTOM"))
-                {
-                    UserOriginTestCase.Description = "N/A for clinical electron.";
-                    return UserOriginTestCase;
-                }
-
                 if ((CurrentPlan.TargetVolumeID.ToString().Contains("TS") || !CurrentPlan.TargetVolumeID.ToString().Contains("PTV")) 
                                                                                                 && CurrentPlan.PlanNormalizationMethod.ToString().Contains("Volume"))
                                                                                                                                 { TargetVolumeTestCase.Result = TestCase.FAIL; return TargetVolumeTestCase; }
@@ -544,6 +532,73 @@ namespace VMS.TPS
                 catch { ShiftNoteJournalTestCase.Result = TestCase.FAIL; return ShiftNoteJournalTestCase; }
             }
         }
+
+        public TestCase CollAngleCheck(Beam b)
+        {
+            CollAngleTestCase.Description = "Coll angle is not 90 or 0.";
+            CollAngleTestCase.Result = TestCase.PASS;
+
+            double ninety = 90.0, zero = 0.0, epsilon = 0.0001;
+
+            try
+            {
+                if (!b.IsSetupField)
+                {
+                    foreach (var controlPt in b.ControlPoints)
+                    {
+                        if (TestCase.NearlyEqual(controlPt.CollimatorAngle,ninety,epsilon) || TestCase.NearlyEqual(controlPt.CollimatorAngle,zero,epsilon))
+                        {
+                            CollAngleTestCase.Description = "Found coll angle: " + controlPt.CollimatorAngle + ". Should not be 0 or 90.";
+                            CollAngleTestCase.Result = TestCase.FAIL;
+                        }
+                    }
+                }
+                return CollAngleTestCase;
+            }
+            catch (Exception e)
+            {
+                return CollAngleTestCase.HandleTestError(e, "Error - Collimator angle could not be found.");
+            }
+        }
+
+        /*
+        public TestCase ImagePositionCheck()
+        {
+            double xPos = -50.0, yPos = 0, zPos = 0, epsilon = 0.0001;
+
+            ImagePositionTestCase.Description = "Image origin: -50,0,0.";
+            ImagePositionTestCase.Result = TestCase.PASS;
+
+            try
+            {
+
+                if (!TestCase.NearlyEqual(CurrentPlan.StructureSet.Image.XSize, xPos, epsilon))
+                {
+                    ImagePositionTestCase.Description = "X val = " + CurrentPlan.StructureSet.Image.XSize + " instead of -50.";
+                    ImagePositionTestCase.Result = TestCase.FAIL;
+                    return ImagePositionTestCase;
+                }
+                else if (!TestCase.NearlyEqual(CurrentPlan.StructureSet.Image.YSize, yPos, epsilon))
+                {
+                    ImagePositionTestCase.Description = "Y val = " + CurrentPlan.StructureSet.Image.YSize + " instead of 0.";
+                    ImagePositionTestCase.Result = TestCase.FAIL;
+                    return ImagePositionTestCase;
+                }
+                else if (!TestCase.NearlyEqual(CurrentPlan.StructureSet.Image.ZSize, zPos, epsilon))
+                {
+                    ImagePositionTestCase.Description = "Z val = " + CurrentPlan.StructureSet.Image.ZSize + " instead of 0.";
+                    ImagePositionTestCase.Result = TestCase.FAIL;
+                    return ImagePositionTestCase;
+                }
+
+                return ImagePositionTestCase;
+            }
+            catch (Exception e)
+            {
+                return ImagePositionTestCase.HandleTestError(e, "Could not find image origin.");
+            }
+        }
+        */
 
     }
 }

@@ -115,6 +115,8 @@
     <Reference Include="PresentationFramework" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="ClinicalElectron\ClinicalElectronFieldTests.cs" />
+    <Compile Include="ClinicalElectron\ClinicalElectronTests.cs" />
     <Compile Include="Properties\Settings.Designer.cs">
       <AutoGen>True</AutoGen>
       <DesignTimeSharedInput>True</DesignTimeSharedInput>

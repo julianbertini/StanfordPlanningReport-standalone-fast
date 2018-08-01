@@ -9,13 +9,12 @@ namespace VMS.TPS
 {
     public class GeneralFieldTests: SharedFieldTests
     {
-        private string[] _electronEnergies = {"6E","9E","12E","16E","20E"};
         // All field tests here
-        private TestCase SetupFieldAngleTestCase;
-        private TestCase SetupFieldNameTestCase;
-        private TestCase DRRAllFieldsTestCase;
-        private TestCase ArcFieldNameTestCase;
-        private TestCase SetupFieldBolusTestCase;
+        protected TestCase SetupFieldAngleTestCase;
+        protected TestCase SetupFieldNameTestCase;
+        protected TestCase DRRAllFieldsTestCase;
+        protected TestCase ArcFieldNameTestCase;
+        protected TestCase SetupFieldBolusTestCase;
 
 
         /* Constructor for FieldTest class to initialize the current plan object
@@ -93,12 +92,6 @@ namespace VMS.TPS
             {
                 foreach (Beam b in this.CurrentPlan.Beams) {
 
-                    if (_electronEnergies.Contains(b.EnergyModeDisplayName))
-                    {
-                        SetupFieldAngleTestCase.Description = "N/A for clinical electron plan.";
-                        return SetupFieldAngleTestCase;
-                    }
-
                     if (b.IsSetupField)
                     {
                         if (b.ControlPoints.First().GantryAngle.ToString("N1") == "0.0")
@@ -144,6 +137,7 @@ namespace VMS.TPS
                 {
                     return SetupFieldNameTestCase;
                 }
+
                 if (this.CurrentPlan.TreatmentOrientation.ToString() == "HeadFirstSupine" && !b.Id.ToUpper().Contains("CBCT"))
                 {
                     if (b.ControlPoints.First().GantryAngle.ToString("N1") == "0.0" && (!b.Id.ToUpper().Contains("AP")))
@@ -175,7 +169,8 @@ namespace VMS.TPS
                         { SetupFieldNameTestCase.Result = TestCase.FAIL; return SetupFieldNameTestCase; }
                     }
                 }
-                else if (this.CurrentPlan.TreatmentOrientation.ToString() == "FeetFirstSupine" && b.Id.ToString().ToUpper() != "CBCT")
+
+                else if (this.CurrentPlan.TreatmentOrientation.ToString() == "FeetFirstSupine" && !b.Id.ToUpper().Contains("CBCT"))
                 {
                     if (b.ControlPoints.First().GantryAngle.ToString("N1") == "0.0" && (!b.Id.ToString().ToUpper().Contains("AP")))
                     { SetupFieldNameTestCase.Result = TestCase.FAIL; return SetupFieldNameTestCase; }
@@ -204,7 +199,8 @@ namespace VMS.TPS
                         { SetupFieldNameTestCase.Result = TestCase.FAIL; return SetupFieldNameTestCase; }
                     }
                 }
-                else if (this.CurrentPlan.TreatmentOrientation.ToString() == "HeadFirstProne" && b.Id.ToString().ToUpper() != "CBCT")
+
+                else if (this.CurrentPlan.TreatmentOrientation.ToString() == "HeadFirstProne" && !b.Id.ToUpper().Contains("CBCT"))
                 {
                     if (b.ControlPoints.First().GantryAngle.ToString("N1") == "180.0" && (!b.Id.ToString().ToUpper().Contains("AP")))
                                                                                                                                                         { SetupFieldNameTestCase.Result = TestCase.FAIL; return SetupFieldNameTestCase; }
@@ -393,12 +389,6 @@ namespace VMS.TPS
         {
             DRRAllFieldsTestCase.Description = "High resolution DRRs present for all fields.";
             DRRAllFieldsTestCase.Result = TestCase.PASS;
-
-            if (_electronEnergies.Contains(b.EnergyModeDisplayName))
-            {
-                DRRAllFieldsTestCase.Description = "N/A for clinical electron plan.";
-                return DRRAllFieldsTestCase;
-            }
 
             try
             {
