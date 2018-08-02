@@ -52,8 +52,8 @@ namespace VMS.TPS
             Environment.SetEnvironmentVariable("ROOT_PATH", @"Z:\\Users\\Jbertini\\ESAPI\\StanfordPlanningReport-standalone-fast");
 
             Patient patient = app.OpenPatientById(PID);
-            Course course = patient.Courses.Last();
-            PlanSetup currentPlan = course.PlanSetups.ToArray()[0];
+            Course course = patient.Courses.First();
+            PlanSetup currentPlan = course.PlanSetups.ToArray()[2];
 
             PhysicsCheck physics = new PhysicsCheck(currentPlan);
 

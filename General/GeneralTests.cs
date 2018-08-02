@@ -128,7 +128,7 @@ namespace VMS.TPS
             }
             catch (Exception e)
             {
-                return MLCTestCase.HandleTestError(e);
+                return MLCTestCase.HandleTestError(e, "Error - could not access MLC.");
             }
         }
 
@@ -140,21 +140,36 @@ namespace VMS.TPS
 
                 if (!b.IsSetupField && (b.MLCPlanType.ToString().ToUpper() == "VMAT" || b.MLCPlanType.ToString().ToUpper().Contains("ARC")))
                 {
-                    foreach (Structure s in CurrentPlan.StructureSet.Structures)
+                    try
                     {
-                        if (b.TreatmentUnit.Id == "LA-12" || b.TreatmentUnit.Id == "LA-11")
+                        foreach (Structure s in CurrentPlan.StructureSet.Structures)
                         {
-                            if (s.Name.Contains("Exact Couch with Unipanel")) { CouchTestCase.Result = TestCase.PASS; }
-                        }
-                        else if (b.TreatmentUnit.Id == "SB_LA_1" || b.TreatmentUnit.Id.Contains("ROP_LA_1"))
-                        {
-                            if (s.Name.Contains("Exact Couch with Flat panel")) { CouchTestCase.Result = TestCase.PASS; }
-                        }
-                        else
-                        {
-                            if (s.Name.Contains("Exact IGRT")) { CouchTestCase.Result = TestCase.PASS; }
+                            try
+                            {
+                                if (b.TreatmentUnit.Id == "LA-12" || b.TreatmentUnit.Id == "LA-11")
+                                {
+                                    if (s.Name.Contains("Exact Couch with Unipanel")) { CouchTestCase.Result = TestCase.PASS; }
+                                }
+                                else if (b.TreatmentUnit.Id == "SB_LA_1" || b.TreatmentUnit.Id.Contains("ROP_LA_1"))
+                                {
+                                    if (s.Name.Contains("Exact Couch with Flat panel")) { CouchTestCase.Result = TestCase.PASS; }
+                                }
+                                else
+                                {
+                                    if (s.Name.Contains("Exact IGRT")) { CouchTestCase.Result = TestCase.PASS; }
+                                }
+                            }
+                            catch (Exception ex)
+                            {
+                                return CouchTestCase.HandleTestError(ex, "Error - could not find a treatment unit.");
+                            }
                         }
                     }
+                    catch (Exception e)
+                    {
+                        return CouchTestCase.HandleTestError(e, "Error - could not find structures.");
+                    }
+                 
                 }
 
                 else if (b.IsSetupField || b.MLCPlanType.ToString().ToUpper() != "VMAT")
@@ -166,7 +181,7 @@ namespace VMS.TPS
             }
             catch (Exception ex)
             {
-                return CouchTestCase.HandleTestError(ex);
+                return CouchTestCase.HandleTestError(ex, "Error - could not find MLC plan type.");
             }
         }
 

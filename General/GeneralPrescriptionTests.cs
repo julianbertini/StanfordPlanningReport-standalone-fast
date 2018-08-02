@@ -48,7 +48,7 @@ namespace VMS.TPS
                 PrescriptionFractionationTestCase.Result = TestCase.FAIL; return PrescriptionFractionationTestCase;
             }
             catch(Exception ex) {
-                return PrescriptionFractionationTestCase.HandleTestError(ex, "No prescription targets found.");
+                return PrescriptionFractionationTestCase.HandleTestError(ex, "Error - no prescription targets found.");
             }
         }
 
@@ -68,7 +68,7 @@ namespace VMS.TPS
                 PrescriptionDoseTestCase.Result = TestCase.FAIL; return PrescriptionDoseTestCase;
             }
             catch(Exception e) {
-                return PrescriptionDoseTestCase.HandleTestError(e, "No prescription targets found.");
+                return PrescriptionDoseTestCase.HandleTestError(e, "Error - no prescription targets found.");
             }
         }
 
@@ -106,7 +106,7 @@ namespace VMS.TPS
 
             catch (Exception e)
             {
-                return PrescriptionBolusTestCase.HandleTestError(e, "Error finding boluses in fields.");
+                return PrescriptionBolusTestCase.HandleTestError(e, "Error - could not find boluses in fields.");
             }
 
         }
@@ -131,7 +131,7 @@ namespace VMS.TPS
             }
             catch (Exception e)
             {
-                return PrescriptionEnergyTestCase.HandleTestError(e, "Error finding prescription or field energies.");
+                return PrescriptionEnergyTestCase.HandleTestError(e, "Error - could not find prescription or field energies.");
             }
         }
 
