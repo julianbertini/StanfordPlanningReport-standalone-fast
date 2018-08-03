@@ -365,13 +365,22 @@ namespace VMS.TPS
                                     {
                                         var radiationSer = r.RadiationSer;
                                         var externalFieldCommon = aria.ExternalFieldCommons.Where(tmp => tmp.RadiationSer == radiationSer);
-                                        var s = externalFieldCommon.First().CouchLng;
+
                                         if (!TestCase.NearlyEqual(externalFieldCommon.First().CouchLng.Value, _couchLng, epsilon))
+                                        {
+                                            CouchParametersTestCase.Description = "CouchLng = " + externalFieldCommon.First().CouchLng.Value + "instead of " + _couchLng + ".";
                                             CouchParametersTestCase.Result = TestCase.FAIL;
+                                        }
                                         if (!TestCase.NearlyEqual(externalFieldCommon.First().CouchVrt.Value, _couchVrt, epsilon))
+                                        {
+                                            CouchParametersTestCase.Description = "CouchVrt = " + externalFieldCommon.First().CouchVrt.Value + "instead of " + _couchVrt + ".";
                                             CouchParametersTestCase.Result = TestCase.FAIL;
+                                        }
                                         if (!TestCase.NearlyEqual(externalFieldCommon.First().CouchLat.Value, _couchLat, epsilon))
+                                        {
+                                            CouchParametersTestCase.Description = "CouchLat = " + externalFieldCommon.First().CouchLat.Value + "instead of " + _couchLat + ".";
                                             CouchParametersTestCase.Result = TestCase.FAIL;
+                                        }
                                     }
                                 }
                             }
