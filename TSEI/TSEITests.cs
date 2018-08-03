@@ -315,26 +315,6 @@ namespace VMS.TPS
             }
         }
 
-        public override TestCase MLCCheck(Beam b)
-        {
-            MLCTestCase.Description = "MLC set to 'NONE'.";
-            MLCTestCase.Result = TestCase.PASS;
-
-            try
-            {
-                if (!b.IsSetupField)
-                {
-                    if (!(b.MLC == null))
-                        MLCTestCase.Result = TestCase.FAIL;
-                }
-                return MLCTestCase;
-            }
-            catch (Exception e)
-            {
-                return MLCTestCase.HandleTestError(e);
-            }
-        }
-
         public TestCase CouchParametersCheck()
         {
             CouchParametersTestCase.Description = "CouchVrt = " + _couchVrt + "; CouchLng = " + _couchLng + "; CouchLat = " + _couchLat + ".";

@@ -23,9 +23,6 @@ namespace VMS.TPS
             StandaloneTests.Remove(PlanningApprovalTestCase);
             StandaloneTestMethods.Remove(PlanningApprovalTestCase.Name);
 
-            PerBeamTests.Remove(CollAngleTestCase);
-            TestMethods.Remove(CollAngleTestCase.Name);
-
             /*
             StandaloneTests.Remove(ImagePositionTestCase);
             StandaloneTestMethods.Remove(ImagePositionTestCase.Name);
@@ -52,26 +49,6 @@ namespace VMS.TPS
             catch (Exception e)
             {
                 return ToleranceTableTestCase.HandleTestError(e);
-            }
-        }
-
-        public override TestCase MLCCheck(Beam b)
-        {
-            MLCTestCase.Description = "MLC set to 'NONE'.";
-            MLCTestCase.Result = TestCase.PASS;
-
-            try
-            {
-                if (!b.IsSetupField)
-                {
-                    if (!(b.MLC == null))
-                        MLCTestCase.Result = TestCase.FAIL;
-                }
-                return MLCTestCase;
-            }
-            catch (Exception e)
-            {
-                return MLCTestCase.HandleTestError(e);
             }
         }
 

@@ -20,7 +20,6 @@ namespace VMS.TPS
         protected TestCase ActiveCourseTestCase;
         protected TestCase DoseRateTestCase;
         protected TestCase ToleranceTableTestCase;
-        protected TestCase MLCTestCase;
         protected TestCase SchedulingTestCase;
         protected TestCase ReferencePointTestCase;
 
@@ -72,16 +71,11 @@ namespace VMS.TPS
             this.PerBeamTests.Add(ToleranceTableTestCase);
             this.TestMethods.Add(ToleranceTableTestCase.Name, ToleranceTableCheck);
 
-            MLCTestCase = new TestCase("MLC Check", "Test not comlpeted.", TestCase.FAIL);
-            this.PerBeamTests.Add(MLCTestCase);
-            this.TestMethods.Add(MLCTestCase.Name, MLCCheck);
-
         }
 
         public abstract TestCase DoseRateCheck(Beam b);
         public abstract TestCase MachineIdCheck(Beam b);
         public abstract TestCase ToleranceTableCheck(Beam b);
-        public abstract TestCase MLCCheck(Beam b);
 
         private string FindMachineName()
         {
@@ -348,7 +342,14 @@ namespace VMS.TPS
                                 var prescription = aria.Prescriptions.Where(tmp => tmp.PrescriptionSer == prescriptionSer).First();
                                 var prescriptionProperties = prescription.PrescriptionProperties.Where(tmp => tmp.PrescriptionSer == prescriptionSer);
                                 prescriptionNotes = prescription.Notes;
+                                if (prescriptionNotes == null)
+                                    ReferencePointTestCase.Description = "NOTE: no prescription note found; ";
                                 prescriptionFreq = prescriptionProperties.Where(tmp => tmp.PropertyType == freqType).First().PropertyValue;
+                                if (prescriptionFreq == null)
+                                {
+                                    ReferencePointTestCase.Description = "NOTE: no prescription frequency found; ";
+                                    ReferencePointTestCase.Result = TestCase.FAIL;
+                                }
                             }
                         }
                     }
@@ -361,39 +362,68 @@ namespace VMS.TPS
 
             try
             {
-                foreach (var target in CurrentPlan.RTPrescription.Targets)
+                try
                 {
-                    if (target.DosePerFraction.Dose * target.NumberOfFractions > totalRxDose)
+                    foreach (var target in CurrentPlan.RTPrescription.Targets)
                     {
-                        totalRxDose = target.DosePerFraction.Dose * target.NumberOfFractions;
-                        totalRxFractions = target.NumberOfFractions;
+                        if (target.DosePerFraction.Dose * target.NumberOfFractions > totalRxDose)
+                        {
+                            totalRxDose = target.DosePerFraction.Dose * target.NumberOfFractions;
+                            totalRxFractions = target.NumberOfFractions;
+                        }
                     }
                 }
+                catch (Exception e)
+                {
+                    return ReferencePointTestCase.HandleTestError(e, "Error - prescription targets not found.");
+                }
+
                     
                 if (!TestCase.NearlyEqual(totalRxDose, CurrentPlan.PrimaryReferencePoint.TotalDoseLimit.Dose, epsilon))
+                {
+                    ReferencePointTestCase.Description += "Rx total dose does not match ref. point total dose limit; ";
                     ReferencePointTestCase.Result = TestCase.FAIL;
+                }
 
-                if (BIDfreqOptions.Contains(prescriptionFreq) ||
-                                    (prescriptionNotes.ToUpper().Contains("BID") && !prescriptionNotes.ToUpper().Contains("NO BID"))) // daily dose limit == pres dose/fx*2
+                if ((prescriptionNotes != null && prescriptionFreq != null) && (BIDfreqOptions.Contains(prescriptionFreq) ||
+                                    (prescriptionNotes.ToUpper().Contains("BID") && !prescriptionNotes.ToUpper().Contains("NO BID")))) // daily dose limit == pres dose/fx*2
                 {
                     if (!TestCase.NearlyEqual((totalRxDose/totalRxFractions) * 2, CurrentPlan.PrimaryReferencePoint.DailyDoseLimit.Dose, epsilon))
+                    {
+                        ReferencePointTestCase.Description += "Rx dose/fracs/day does not match ref. point daily dose limit; ";
                         ReferencePointTestCase.Result = TestCase.FAIL;
+                    }
                 }
-                else if (ThreeFracOptions.Contains(prescriptionFreq))
+
+                else if (prescriptionNotes != null && prescriptionFreq != null && ThreeFracOptions.Contains(prescriptionFreq))
                 {
                     if (!TestCase.NearlyEqual((totalRxDose / totalRxFractions) * 3, CurrentPlan.PrimaryReferencePoint.DailyDoseLimit.Dose, epsilon))
+                    {
+                        ReferencePointTestCase.Description += "Rx dose/frac/day does not match ref. point daily dose limit; ";
                         ReferencePointTestCase.Result = TestCase.FAIL;
+                    }
                 }
+
                 else
                 {
                     if (!TestCase.NearlyEqual((totalRxDose / totalRxFractions), CurrentPlan.PrimaryReferencePoint.DailyDoseLimit.Dose, epsilon))
+                    {
+                        ReferencePointTestCase.Description += "Rx dose/frac/day does not match ref. point daily dose limit; ";
                         ReferencePointTestCase.Result = TestCase.FAIL;
+                    }
                 }
 
                 if (!TestCase.NearlyEqual((totalRxDose / totalRxFractions), CurrentPlan.PrimaryReferencePoint.SessionDoseLimit.Dose, epsilon))
+                {
+                    ReferencePointTestCase.Description += "Rx dose/frac does not match ref. point session dose limit; ";
                     ReferencePointTestCase.Result = TestCase.FAIL;
+                }
+
                 if (!TestCase.NearlyEqual((totalRxDose / totalRxFractions), CurrentPlan.UniqueFractionation.DosePerFractionInPrimaryRefPoint.Dose, epsilon))
+                {
+                    ReferencePointTestCase.Description += "Rx dose/frac does not match ref. point dose/frac; ";
                     ReferencePointTestCase.Result = TestCase.FAIL;
+                }
 
                 return ReferencePointTestCase;
             }

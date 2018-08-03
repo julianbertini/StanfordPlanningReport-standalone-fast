@@ -53,7 +53,7 @@ namespace VMS.TPS
 
             Patient patient = app.OpenPatientById(PID);
             Course course = patient.Courses.First();
-            PlanSetup currentPlan = course.PlanSetups.ToArray()[2];
+            PlanSetup currentPlan = course.PlanSetups.ToArray()[1];
 
             PhysicsCheck physics = new PhysicsCheck(currentPlan);
 

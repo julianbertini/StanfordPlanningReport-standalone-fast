@@ -41,5 +41,29 @@ namespace VMS.TPS
                 return TreatmentFieldNameTestCase.HandleTestError(e);
             }
         }
+
+        public override TestCase MLCCheck(Beam b)
+        {
+            MLCTestCase.Description = "MLC set to 'NONE'.";
+            MLCTestCase.Result = TestCase.PASS;
+
+            try
+            {
+                if (!b.IsSetupField)
+                {
+                    if (!(b.MLC == null))
+                    {
+                        MLCTestCase.Description = "MLC is not 'NONE' for TSEI plan.";
+                        MLCTestCase.Result = TestCase.FAIL;
+                    }
+                }
+                return MLCTestCase;
+            }
+            catch (Exception e)
+            {
+                return MLCTestCase.HandleTestError(e);
+            }
+        }
+
     }
 }

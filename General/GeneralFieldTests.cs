@@ -15,6 +15,7 @@ namespace VMS.TPS
         protected TestCase DRRAllFieldsTestCase;
         protected TestCase ArcFieldNameTestCase;
         protected TestCase SetupFieldBolusTestCase;
+        protected TestCase CollAngleTestCase;
 
 
         /* Constructor for FieldTest class to initialize the current plan object
@@ -48,6 +49,10 @@ namespace VMS.TPS
             DRRAllFieldsTestCase = new TestCase("DRR Presence (Photon)", "Test not completed.", TestCase.FAIL);
             this.PerBeamTests.Add(DRRAllFieldsTestCase);
             this.TestMethods.Add(DRRAllFieldsTestCase.Name, DRRAllFieldsCheck);
+
+            CollAngleTestCase = new TestCase("Collimator Angle Check (VMAT)", "Test not completed.", TestCase.FAIL);
+            this.PerBeamTests.Add(CollAngleTestCase);
+            this.TestMethods.Add(CollAngleTestCase.Name, CollAngleCheck);
         }
 
         /* Getter method for List of field test results
@@ -57,6 +62,61 @@ namespace VMS.TPS
         public List<TestCase> GetTestResults()
         {
             return TestResults;
+        }
+
+        public TestCase CollAngleCheck(Beam b)
+        {
+            CollAngleTestCase.Description = "Coll angle is not 90 or 0.";
+            CollAngleTestCase.Result = TestCase.PASS;
+
+            double ninety = 90.0, zero = 0.0, epsilon = 0.0001;
+
+            try
+            {
+                if (!b.Id.Contains("VMAT"))
+                    CollAngleTestCase.Description = "N/A for non-VMAT beams.";
+
+                if (!b.IsSetupField && b.Id.Contains("VMAT"))
+                {
+                    foreach (var controlPt in b.ControlPoints)
+                    {
+                        if (TestCase.NearlyEqual(controlPt.CollimatorAngle, ninety, epsilon) || TestCase.NearlyEqual(controlPt.CollimatorAngle, zero, epsilon))
+                        {
+                            CollAngleTestCase.Description = "Found coll angle: " + controlPt.CollimatorAngle + ". Should not be 0 or 90.";
+                            CollAngleTestCase.Result = TestCase.FAIL;
+                        }
+                    }
+                }
+                return CollAngleTestCase;
+            }
+            catch (Exception e)
+            {
+                return CollAngleTestCase.HandleTestError(e, "Error - Collimator angle could not be found.");
+            }
+        }
+
+        public override TestCase MLCCheck(Beam b)
+        {
+            MLCTestCase.Description = "MLC is 'VMAT' or 'Arc Dynamic'.";
+            MLCTestCase.Result = TestCase.PASS;
+
+            try
+            {
+                if (!b.IsSetupField && b.Technique.Id.Contains("ARC-I"))
+                {
+                    if (!b.MLC.Id.Contains("VMAT") || !b.MLC.Id.Contains("Arc Dynamic"))
+                    {
+                        MLCTestCase.Description = "Found MLC: " + b.MLC.Id + ". For ARC-I expected 'VMAT' or 'Arc Dynamic'.";
+                        MLCTestCase.Result = TestCase.FAIL;
+                    }
+
+                }
+                return MLCTestCase;
+            }
+            catch (Exception e)
+            {
+                return MLCTestCase.HandleTestError(e, "Error - could not access MLC.");
+            }
         }
 
         //Added by SL 03/02/2018 - SetupFieldBolusCheck

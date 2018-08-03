@@ -27,7 +27,6 @@ namespace VMS.TPS
         protected TestCase TargetVolumeTestCase;
         protected TestCase ShiftNoteJournalTestCase;
         protected TestCase ImagePositionTestCase;
-        protected TestCase CollAngleTestCase;
 
         protected string[] Doctors;
 
@@ -72,10 +71,6 @@ namespace VMS.TPS
             this.PerBeamTests.Add(SBRTCTSliceThicknessTestCase);
             this.TestMethods.Add(SBRTCTSliceThicknessTestCase.Name, SBRTCTSliceThicknessCheck);
 
-            CollAngleTestCase = new TestCase("Collimator Angle Check (VMAT)", "Test not completed.", TestCase.FAIL);
-            this.PerBeamTests.Add(CollAngleTestCase);
-            this.TestMethods.Add(CollAngleTestCase.Name, CollAngleCheck);
-
             //standalone 
             PlanningApprovalTestCase = new TestCase("Planning Approval", "Plan is planning approved by MD.", TestCase.PASS);
             this.StandaloneTests.Add(PlanningApprovalTestCase);
@@ -110,26 +105,6 @@ namespace VMS.TPS
             this.StandaloneTests.Add(ImagePositionTestCase);
             this.StandaloneTestMethods.Add(ImagePositionTestCase.Name, ImagePositionCheck);
             */
-        }
-
-        public override TestCase MLCCheck(Beam b)
-        {
-            MLCTestCase.Description = "MLC is not set to 'NONE'.";
-            MLCTestCase.Result = TestCase.PASS;
-
-            try
-            {
-                if (!b.IsSetupField)
-                {
-                    if (b.MLC == null)
-                        MLCTestCase.Result = TestCase.FAIL;
-                }
-                return MLCTestCase;
-            }
-            catch (Exception e)
-            {
-                return MLCTestCase.HandleTestError(e, "Error - could not access MLC.");
-            }
         }
 
         public TestCase CouchCheck(Beam b)
@@ -537,42 +512,24 @@ namespace VMS.TPS
                             {
                                 if (DateTime.Compare(tmp.note_tstamp.Value, CurrentPlan.CreationDateTime.Value.AddDays(30)) <= 0 && DateTime.Compare(tmp.note_tstamp.Value, CurrentPlan.CreationDateTime.Value.AddDays(-7)) >= 0 && (tmp.valid_entry_ind == "Y"))
                                 {
-                                    if (tmp.quick_note_text.Contains(CurrentPlan.Id)) { ShiftNoteJournalTestCase.Result = TestCase.PASS; break; }
+                                    if (tmp.quick_note_text.Contains(CurrentPlan.Id))
+                                    {
+                                        ShiftNoteJournalTestCase.Description = "Shift note journal has been inserted.";
+                                        ShiftNoteJournalTestCase.Result = TestCase.PASS; break;
+                                    }
                                 }
                             }
+                            if (ShiftNoteJournalTestCase.Result == TestCase.FAIL)
+                                ShiftNoteJournalTestCase.Description = "Journal shift note was not found.";
                         }
                     }
                     return ShiftNoteJournalTestCase;
                 }
-                catch { ShiftNoteJournalTestCase.Result = TestCase.FAIL; return ShiftNoteJournalTestCase; }
-            }
-        }
-
-        public TestCase CollAngleCheck(Beam b)
-        {
-            CollAngleTestCase.Description = "Coll angle is not 90 or 0.";
-            CollAngleTestCase.Result = TestCase.PASS;
-
-            double ninety = 90.0, zero = 0.0, epsilon = 0.0001;
-
-            try
-            {
-                if (!b.IsSetupField)
+                catch (Exception e)
                 {
-                    foreach (var controlPt in b.ControlPoints)
-                    {
-                        if (TestCase.NearlyEqual(controlPt.CollimatorAngle,ninety,epsilon) || TestCase.NearlyEqual(controlPt.CollimatorAngle,zero,epsilon))
-                        {
-                            CollAngleTestCase.Description = "Found coll angle: " + controlPt.CollimatorAngle + ". Should not be 0 or 90.";
-                            CollAngleTestCase.Result = TestCase.FAIL;
-                        }
-                    }
+                    return ShiftNoteJournalTestCase.HandleTestError(e, "Error - Could not find journal note entry.");
                 }
-                return CollAngleTestCase;
-            }
-            catch (Exception e)
-            {
-                return CollAngleTestCase.HandleTestError(e, "Error - Collimator angle could not be found.");
+
             }
         }
 

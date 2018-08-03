@@ -23,6 +23,26 @@ namespace VMS.TPS
             this.TestMethods.Add(FieldSizeTestCase.Name, FieldSizeCheck);
         }
 
+        public override TestCase MLCCheck(Beam b)
+        {
+            MLCTestCase.Description = "MLC set to 'NONE'.";
+            MLCTestCase.Result = TestCase.PASS;
+
+            try
+            {
+                if (!b.IsSetupField)
+                {
+                    if (!(b.MLC == null))
+                        MLCTestCase.Result = TestCase.FAIL;
+                }
+                return MLCTestCase;
+            }
+            catch (Exception e)
+            {
+                return MLCTestCase.HandleTestError(e);
+            }
+        }
+
         public TestCase TreatmentFieldNameCheck()
         {
             TreatmentFieldNameTestCase.Description = "Verify AP/PA field names";
