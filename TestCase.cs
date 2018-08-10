@@ -4,7 +4,7 @@ using VMS.TPS.Common.Model.API;
 
 namespace VMS.TPS
 {
-    public class TestCase : IEquatable<TestCase>
+    public class TestCase : IComparable<TestCase>
     {
         public delegate TestCase PerBeamTest(Beam b);
         public delegate TestCase StandaloneTest();
@@ -18,6 +18,7 @@ namespace VMS.TPS
         public string Description { get; set; }
         public string Result { get; set; }
         public string Comments { get; set; }
+        private int Ord;
 
         /* Constructor for the TestResult struct. Initializes struct attributes. 
          * 
@@ -31,11 +32,12 @@ namespace VMS.TPS
          *      
          * Updated: JB 6/13/18
          */
-        public TestCase(string nm, string desc, string res, string comments = null)
+        public TestCase(string nm, string desc, string res, int ord, string comments = null)
         {
             Name = nm;
             Description = desc;
             Result = res;
+            Ord = ord;
             comments = null;
         }
 
@@ -53,17 +55,17 @@ namespace VMS.TPS
                 return diff / (absA + absB) < epsilon;
         }
 
-        /* Defines equality for any two arbitrary tests
+        /* Defines CompareTo for any two arbitrary tests
          * 
          * Updated: JB 6/13/18
          */
-        public bool Equals(TestCase other)
+        public int CompareTo(TestCase other)
         {
-            if (this.Name == other.Name && this.Description == other.Description)
+            if (this.Ord > other.Ord)
             {
-                return true;
+                return 1;
             }
-            return false;
+            return -1;
         }
 
         public string AddToListOnFail(List<TestCase> resultList, List<TestCase> inventory)

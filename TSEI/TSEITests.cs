@@ -2,6 +2,7 @@
 using AriaConnect;
 using PlanSetup = VMS.TPS.Common.Model.API.PlanSetup;
 using VMS.TPS.Common.Model.API;
+using System.Collections.Generic;
 using System.Linq;
 using ControlPoint = VMS.TPS.Common.Model.API.ControlPoint;
 
@@ -24,7 +25,7 @@ namespace VMS.TPS
         protected TestCase IntMountTestCase;
         protected TestCase CouchParametersTestCase;
 
-        public TSEITests(PlanSetup cPlan) : base(cPlan)
+        public TSEITests(PlanSetup cPlan, Dictionary<string, TestCase.PerBeamTest> testMethods, List<TestCase> perBeamTests, Dictionary<string, TestCase.StandaloneTest> standaloneTestMethods, List<TestCase> standaloneTests) : base(cPlan, testMethods, perBeamTests, standaloneTestMethods, standaloneTests)
         {
             _MUScaleFactor = 15;
             _doseRate = 888;
@@ -34,32 +35,30 @@ namespace VMS.TPS
             _technique = "HDTSE";
 
             // per Beam 
-            TechniqueTestCase = new TestCase("Technique Check", "Test not completed.", TestCase.FAIL);
-            this.PerBeamTests.Add(TechniqueTestCase);
-            this.TestMethods.Add(TechniqueTestCase.Name, TechniqueCheck);
+            TechniqueTestCase = new TestCase("Technique Check", "Test not completed.", TestCase.FAIL, 13);
+            perBeamTests.Add(TechniqueTestCase);
+            testMethods.Add(TechniqueTestCase.Name, TechniqueCheck);
 
-            MUTestCase = new TestCase("MU Check", "Test not completed.", TestCase.FAIL);
-            this.PerBeamTests.Add(MUTestCase);
-            this.TestMethods.Add(MUTestCase.Name, MUCheck);
+            MUTestCase = new TestCase("MU Check", "Test not completed.", TestCase.FAIL, 15);
+            perBeamTests.Add(MUTestCase);
+            testMethods.Add(MUTestCase.Name, MUCheck);
 
-            GantryTestCase = new TestCase("Gantry Check", "Test not completed.", TestCase.FAIL);
-            this.PerBeamTests.Add(GantryTestCase);
-            this.TestMethods.Add(GantryTestCase.Name, GantryCheck);
+            GantryTestCase = new TestCase("Gantry Angle", "Test not completed.", TestCase.FAIL, 18);
+            perBeamTests.Add(GantryTestCase);
+            testMethods.Add(GantryTestCase.Name, GantryCheck);
 
-            CollimatorTestCase = new TestCase("Collimator Check", "Test not completed.", TestCase.FAIL);
-            this.PerBeamTests.Add(CollimatorTestCase);
-            this.TestMethods.Add(CollimatorTestCase.Name, CollimatorCheck);
-
-
+            CollimatorTestCase = new TestCase("Collimator Check", "Test not completed.", TestCase.FAIL, 19);
+            perBeamTests.Add(CollimatorTestCase);
+            testMethods.Add(CollimatorTestCase.Name, CollimatorCheck);
 
             //standalone 
-            CouchParametersTestCase = new TestCase("Couch Parameters Check", "Test not completed.", TestCase.FAIL);
-            this.StandaloneTests.Add(CouchParametersTestCase);
-            this.StandaloneTestMethods.Add(CouchParametersTestCase.Name, CouchParametersCheck);
+            CouchParametersTestCase = new TestCase("Couch Parameters", "Test not completed.", TestCase.FAIL, 22);
+            standaloneTests.Add(CouchParametersTestCase);
+            standaloneTestMethods.Add(CouchParametersTestCase.Name, CouchParametersCheck);
 
-            IntMountTestCase = new TestCase("Int Mount Check", "Test not completed.", TestCase.FAIL);
-            this.StandaloneTests.Add(IntMountTestCase);
-            this.StandaloneTestMethods.Add(IntMountTestCase.Name, IntMountCheck);
+            IntMountTestCase = new TestCase("Int Mount", "Test not completed.", TestCase.FAIL, 21);
+            standaloneTests.Add(IntMountTestCase);
+            standaloneTestMethods.Add(IntMountTestCase.Name, IntMountCheck);
         }
 
         public override TestCase DoseRateCheck(Beam b)
@@ -73,7 +72,8 @@ namespace VMS.TPS
                 {
                     if (b.DoseRate != _doseRate)
                     {
-                        DoseRateTestCase.Result = TestCase.FAIL; return DoseRateTestCase;
+                        DoseRateTestCase.Description = "Dose rate is: " + b.DoseRate + " instead of " + _doseRate + ".";
+                        DoseRateTestCase.Result = TestCase.FAIL;
                     }
                 }
 
@@ -102,10 +102,17 @@ namespace VMS.TPS
             try
             {
                 if (beamMachine != machineName)
+                {
+                    MachineIdTestCase.Description = "Machine name is not the same for all beams.";
                     MachineIdTestCase.Result = TestCase.FAIL;
+                }
 
                 if (!planId.Contains(beamMachine))
+                {
+                    MachineIdTestCase.Description = "Plan name does not include or match machine name on beams.";
                     MachineIdTestCase.Result = TestCase.FAIL;
+                }
+                    
 
                 return MachineIdTestCase;
             }
@@ -154,8 +161,9 @@ namespace VMS.TPS
                     var targets = CurrentPlan.RTPrescription.Targets;
                     foreach (var target in targets)
                     {
-                        if (!TestCase.NearlyEqual(b.Meterset.Value, target.DosePerFraction.Dose * _MUScaleFactor, epsilon))
+                        if (!TestCase.NearlyEqual(b.Meterset.Value, Math.Round(target.DosePerFraction.Dose * _MUScaleFactor), epsilon))
                         {
+                            MUTestCase.Description = "MU: " + b.Meterset.Value + " does not match calculated value.";
                             MUTestCase.Result = TestCase.FAIL;
                         }
                     }
@@ -348,17 +356,17 @@ namespace VMS.TPS
 
                                         if (!TestCase.NearlyEqual(externalFieldCommon.First().CouchLng.Value, _couchLng, epsilon))
                                         {
-                                            CouchParametersTestCase.Description = "CouchLng = " + externalFieldCommon.First().CouchLng.Value + "instead of " + _couchLng + ".";
+                                            CouchParametersTestCase.Description = "CouchLng = " + externalFieldCommon.First().CouchLng.Value + " instead of " + _couchLng + ".";
                                             CouchParametersTestCase.Result = TestCase.FAIL;
                                         }
                                         if (!TestCase.NearlyEqual(externalFieldCommon.First().CouchVrt.Value, _couchVrt, epsilon))
                                         {
-                                            CouchParametersTestCase.Description = "CouchVrt = " + externalFieldCommon.First().CouchVrt.Value + "instead of " + _couchVrt + ".";
+                                            CouchParametersTestCase.Description = "CouchVrt = " + externalFieldCommon.First().CouchVrt.Value + " instead of " + _couchVrt + ".";
                                             CouchParametersTestCase.Result = TestCase.FAIL;
                                         }
                                         if (!TestCase.NearlyEqual(externalFieldCommon.First().CouchLat.Value, _couchLat, epsilon))
                                         {
-                                            CouchParametersTestCase.Description = "CouchLat = " + externalFieldCommon.First().CouchLat.Value + "instead of " + _couchLat + ".";
+                                            CouchParametersTestCase.Description = "CouchLat = " + externalFieldCommon.First().CouchLat.Value + " instead of " + _couchLat + ".";
                                             CouchParametersTestCase.Result = TestCase.FAIL;
                                         }
                                     }
@@ -377,10 +385,10 @@ namespace VMS.TPS
 
         private TestCase IntMountCheck()
         {
-            IntMountTestCase.Description = "Set to HDTS9e-.";
+            IntMountTestCase.Description = "Set to HDTS 9e-.";
             IntMountTestCase.Result = TestCase.PASS;
 
-            string IntMountId = "HDTS9e-";
+            string IntMountId = "HDTS 9e-";
 
             try
             {
@@ -405,7 +413,10 @@ namespace VMS.TPS
                                     {
                                         var addOn = aria.AddOns.Where(tmp => tmp.AddOnSer == fieldAddOn.AddOnSer).First();
                                         if (!IntMountId.Equals(addOn.AddOnId))
+                                        {
+                                            IntMountTestCase.Description = "Found Int Mount: " + addOn.AddOnId + ". Expected HDTS 9e-.";
                                             IntMountTestCase.Result = TestCase.FAIL;
+                                        }
                                     }
                                 }
                             }

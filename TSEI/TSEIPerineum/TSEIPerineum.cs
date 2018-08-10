@@ -15,7 +15,7 @@ namespace VMS.TPS
 
         private TestCase ApplicatorInsertTestCase;
 
-        public TSEIPerineum(PlanSetup cPlan) : base(cPlan)
+        public TSEIPerineum(PlanSetup cPlan, Dictionary<string, TestCase.PerBeamTest> testMethods, List<TestCase> perBeamTests, Dictionary<string, TestCase.StandaloneTest> standaloneTestMethods, List<TestCase> standaloneTests) : base(cPlan, testMethods, perBeamTests, standaloneTestMethods, standaloneTests)
         {
             base._MUScaleFactor = 1.19;
             base._doseRate = 600;
@@ -25,7 +25,12 @@ namespace VMS.TPS
             base._technique = "STATIC";
             base._tolerance = "SHC - Clinical e";
 
-            ApplicatorInsertTestCase = new TestCase("Applicator & Insert Check", "Test not completed.", TestCase.FAIL);
+            standaloneTests.Remove(IntMountTestCase);
+            standaloneTestMethods.Remove(IntMountTestCase.Name);
+
+            ApplicatorInsertTestCase = new TestCase("Applicator & Insert", "Test not completed.", TestCase.FAIL, 20);
+            standaloneTests.Add(ApplicatorInsertTestCase);
+            standaloneTestMethods.Add(ApplicatorInsertTestCase.Name, ApplicatorInsertCheck);
         }
 
         public new TestCase GantryCheck(Beam b)
@@ -52,6 +57,9 @@ namespace VMS.TPS
         public TestCase ApplicatorInsertCheck()
         {
             int nAddOns = 0;
+
+            ApplicatorInsertTestCase.Description = "Acc Mount is set to A15 and e- Aperture is set to STD FFDA.";
+            ApplicatorInsertTestCase.Result = TestCase.PASS;
 
             try
             {
@@ -80,12 +88,18 @@ namespace VMS.TPS
                                         if (addOn.AddOnType.Equals("Applicator"))
                                         {
                                             if (!_accMount.Equals(addOn.AddOnId))
+                                            {
+                                                ApplicatorInsertTestCase.Description = "Acc mount is: " + addOn.AddOnId + " instead of " + _accMount;
                                                 ApplicatorInsertTestCase.Result = TestCase.FAIL;
+                                            }
                                         }
                                         else if (addOn.AddOnType.Equals("Tray"))
                                         {
                                             if (!_eAperture.Equals(addOn.AddOnId))
+                                            {
+                                                ApplicatorInsertTestCase.Description = "eAperature mount is: " + addOn.AddOnId + " instead of " + _eAperture;
                                                 ApplicatorInsertTestCase.Result = TestCase.FAIL;
+                                            }
                                         }
                                     }
 

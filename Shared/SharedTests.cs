@@ -1,15 +1,17 @@
 ﻿using System;
 using AriaConnect;
+using AriaConnectEnm;
 using System.Linq;
 using PlanSetup = VMS.TPS.Common.Model.API.PlanSetup;
 using Course = VMS.TPS.Common.Model.API.Course;
 using System.Text.RegularExpressions;
 using VMS.TPS.Common.Model.API;
+using System.Collections.Generic;
 
 
 namespace VMS.TPS
 {
-    public abstract class SharedTests : SharedExecute
+    public abstract class SharedTests 
     {
         protected PlanSetup CurrentPlan;
 
@@ -22,62 +24,74 @@ namespace VMS.TPS
         protected TestCase ToleranceTableTestCase;
         protected TestCase SchedulingTestCase;
         protected TestCase ReferencePointTestCase;
+        //protected TestCase MobiusReportTestCase;
+        protected TestCase CardiacDeviceTestCase;
 
         protected string MachineName;
 
 
-        public SharedTests(PlanSetup cPlan) : base()
+        public SharedTests(PlanSetup cPlan, Dictionary<string, TestCase.PerBeamTest> testMethods, List<TestCase> perBeamTests, Dictionary<string, TestCase.StandaloneTest> standaloneTestMethods, List<TestCase> standaloneTests)
         {
             CurrentPlan = cPlan;
 
             MachineName = FindMachineName();
 
             // standalone tests
-            CourseNameTestCase = new TestCase("Course Name", "Test not completed.", TestCase.FAIL);
-            this.StandaloneTests.Add(CourseNameTestCase);
-            this.StandaloneTestMethods.Add(CourseNameTestCase.Name, CourseNameCheck);
+            CourseNameTestCase = new TestCase("Course Name", "Test not completed.", TestCase.FAIL, 14);
+            standaloneTests.Add(CourseNameTestCase);
+            standaloneTestMethods.Add(CourseNameTestCase.Name, CourseNameCheck);
             
-            ActiveCourseTestCase = new TestCase("Single Active Course", "Test not completed.", TestCase.FAIL);
-            this.StandaloneTests.Add(ActiveCourseTestCase);
-            this.StandaloneTestMethods.Add(ActiveCourseTestCase.Name, ActiveCourseCheck);
+            ActiveCourseTestCase = new TestCase("Single Active Course", "Test not completed.", TestCase.FAIL, 15);
+            standaloneTests.Add(ActiveCourseTestCase);
+            standaloneTestMethods.Add(ActiveCourseTestCase.Name, ActiveCourseCheck);
 
-            SchedulingTestCase = new TestCase("Scheduling Check", "Test not completed.", TestCase.FAIL);
-            this.StandaloneTests.Add(SchedulingTestCase);
-            this.StandaloneTestMethods.Add(SchedulingTestCase.Name, SchedulingCheck);
+            SchedulingTestCase = new TestCase("Scheduling Fractions", "Test not completed.", TestCase.FAIL, 39);
+            standaloneTests.Add(SchedulingTestCase);
+            standaloneTestMethods.Add(SchedulingTestCase.Name, SchedulingCheck);
 
-            ReferencePointTestCase = new TestCase("Reference Point Check", "Test not completed.", TestCase.FAIL);
-            this.StandaloneTests.Add(ReferencePointTestCase);
-            this.StandaloneTestMethods.Add(ReferencePointTestCase.Name, ReferencePointCheck);
+            ReferencePointTestCase = new TestCase("Reference Point", "", TestCase.FAIL, 38);
+            standaloneTests.Add(ReferencePointTestCase);
+            standaloneTestMethods.Add(ReferencePointTestCase.Name, ReferencePointCheck);
 
+            /*
+            MobiusReportTestCase = new TestCase("Mobius Report Check", "", TestCase.FAIL);
+            standaloneTests.Add(MobiusReportTestCase);
+            standaloneTestMethods.Add(MobiusReportTestCase.Name, MobiusReportCheck);
+            */
+
+            /*
+            CardiacDeviceTestCase = new TestCase("Pacemaker Check", "", TestCase.FAIL, 38);
+            standaloneTests.Add(CardiacDeviceTestCase);
+            standaloneTestMethods.Add(CardiacDeviceTestCase.Name, CardiacDeviceCheck);
+            */
 
             // per Beam tests
-            MachineScaleTestCase = new TestCase("Machine Scale", "Test not completed.", TestCase.FAIL);
-            this.PerBeamTests.Add(MachineScaleTestCase);
-            this.TestMethods.Add(MachineScaleTestCase.Name, MachineScaleCheck);
+            MachineScaleTestCase = new TestCase("Machine Scale", "Test not completed.", TestCase.FAIL, 17);
+            perBeamTests.Add(MachineScaleTestCase);
+            testMethods.Add(MachineScaleTestCase.Name, MachineScaleCheck);
 
-            MachineIdTestCase = new TestCase("Machine Constancy", "Test not completed.", TestCase.FAIL);
-            this.PerBeamTests.Add(MachineIdTestCase);
-            this.TestMethods.Add(MachineIdTestCase.Name, MachineIdCheck);
+            MachineIdTestCase = new TestCase("Machine Constancy", "Test not completed.", TestCase.FAIL, 16);
+            perBeamTests.Add(MachineIdTestCase);
+            testMethods.Add(MachineIdTestCase.Name, MachineIdCheck);
 
-            ShortTreatmentTimeTestCase = new TestCase("Adequate Tx Time", "Test not completed.", TestCase.FAIL);
-            this.PerBeamTests.Add(ShortTreatmentTimeTestCase);
-            this.TestMethods.Add(ShortTreatmentTimeTestCase.Name, ShortTreatmentTimeCheck);
+            ShortTreatmentTimeTestCase = new TestCase("Adequate Tx Time", "Test not completed.", TestCase.FAIL, 26);
+            perBeamTests.Add(ShortTreatmentTimeTestCase);
+            testMethods.Add(ShortTreatmentTimeTestCase.Name, ShortTreatmentTimeCheck);
 
-            DoseRateTestCase = new TestCase("Dose Rate", "Test not completed.", TestCase.FAIL);
-            this.PerBeamTests.Add(DoseRateTestCase);
-            this.TestMethods.Add(DoseRateTestCase.Name, DoseRateCheck);
+            DoseRateTestCase = new TestCase("Dose Rate", "Test not completed.", TestCase.FAIL, 27);
+            perBeamTests.Add(DoseRateTestCase);
+            testMethods.Add(DoseRateTestCase.Name, DoseRateCheck);
 
-            ToleranceTableTestCase = new TestCase("Tolerance Table", "Test not completed.", TestCase.FAIL);
-            this.PerBeamTests.Add(ToleranceTableTestCase);
-            this.TestMethods.Add(ToleranceTableTestCase.Name, ToleranceTableCheck);
-
+            ToleranceTableTestCase = new TestCase("Tolerance Table", "Test not completed.", TestCase.FAIL, 28);
+            perBeamTests.Add(ToleranceTableTestCase);
+            testMethods.Add(ToleranceTableTestCase.Name, ToleranceTableCheck);
         }
 
         public abstract TestCase DoseRateCheck(Beam b);
         public abstract TestCase MachineIdCheck(Beam b);
         public abstract TestCase ToleranceTableCheck(Beam b);
 
-        private string FindMachineName()
+        protected string FindMachineName()
         {
             string machineName = "";
             foreach (Beam b in CurrentPlan.Beams)
@@ -140,7 +154,7 @@ namespace VMS.TPS
 
             try
             {
-#pragma warning disable 0618
+                #pragma warning disable 0618
                 // This one is okay
                 if (MachineName.Contains("ROP_LA_1"))
                 {
@@ -197,23 +211,43 @@ namespace VMS.TPS
                         if (b.MLCPlanType.ToString().ToUpper().Contains("STATIC") || b.MLCPlanType.ToString().ToUpper().Contains("DYNAMIC"))
                         {
                             //Console.WriteLine("{0}", Math.Round((decimal)(b.Meterset.Value / b.DoseRate * 1.19), 1));
-                            if (time_in_eclipse_decimal < Math.Round((decimal)(b.Meterset.Value / b.DoseRate * 1.19), 1)) { ShortTreatmentTimeTestCase.Result = TestCase.FAIL; return ShortTreatmentTimeTestCase; }
+                            if (time_in_eclipse_decimal < Math.Round((decimal)(b.Meterset.Value / b.DoseRate * 1.19), 1))
+                            {
+                                ShortTreatmentTimeTestCase.Description = "Minimum tx time is not met.";
+                                ShortTreatmentTimeTestCase.Result = TestCase.FAIL;
+                                return ShortTreatmentTimeTestCase;
+                            }
                         }
                         else if (b.MLCPlanType.ToString().ToUpper().Contains("VMAT") || b.MLCPlanType.ToString().ToUpper().Contains("ARC"))  // VMAT and Conformal Arc
                         {
                             if (b.TreatmentUnit.MachineModel.ToString().ToUpper().Contains("TDS"))  // TrueBeam
                             {
-                                if (time_in_eclipse_decimal < allowed_time_TrueBeam_decimal) { ShortTreatmentTimeTestCase.Result = TestCase.FAIL; return ShortTreatmentTimeTestCase; }
+                                if (time_in_eclipse_decimal < allowed_time_TrueBeam_decimal)
+                                {
+                                    ShortTreatmentTimeTestCase.Description = "Minimum tx time is not met.";
+                                    ShortTreatmentTimeTestCase.Result = TestCase.FAIL;
+                                    return ShortTreatmentTimeTestCase;
+                                }
                             }
                             else    // Clinac
                             {
-                                if (time_in_eclipse_decimal < allowed_time_Clinac_decimal) { ShortTreatmentTimeTestCase.Result = TestCase.FAIL; return ShortTreatmentTimeTestCase; }
+                                if (time_in_eclipse_decimal < allowed_time_Clinac_decimal)
+                                {
+                                    ShortTreatmentTimeTestCase.Description = "Minimum tx time is not met.";
+                                    ShortTreatmentTimeTestCase.Result = TestCase.FAIL;
+                                    return ShortTreatmentTimeTestCase;
+                                }
                             }
                         }
                     }
                     else if (CurrentPlan.Beams.First().EnergyModeDisplayName.ToString().ToUpper().Contains("E"))   // for Electron
                     {
-                        if (time_in_eclipse_decimal < Math.Round((decimal)(b.Meterset.Value / b.DoseRate * 1.19), 1)) { ShortTreatmentTimeTestCase.Result = TestCase.FAIL; return ShortTreatmentTimeTestCase; }
+                        if (time_in_eclipse_decimal < Math.Round((decimal)(b.Meterset.Value / b.DoseRate * 1.19), 1))
+                        {
+                            ShortTreatmentTimeTestCase.Description = "Minimum tx time is not met.";
+                            ShortTreatmentTimeTestCase.Result = TestCase.FAIL;
+                            return ShortTreatmentTimeTestCase;
+                        }
                     }
                 }
                 return ShortTreatmentTimeTestCase;
@@ -223,11 +257,10 @@ namespace VMS.TPS
 
         public TestCase SchedulingCheck()
         {
-            SchedulingTestCase.Description = "# scheduled fx = # of fx for plan.";
+            SchedulingTestCase.Description = "# scheduled fx = # of fx for plan; status is 'TREAT'.";
             SchedulingTestCase.Result = TestCase.PASS;
 
-            string status = "", template = "", fieldId = "";
-            int nScheduledFractions = 0;
+            string status = "";
 
             try
             {
@@ -246,7 +279,6 @@ namespace VMS.TPS
                             long RTPlanSer = aria.RTPlans.Where(tmp => tmp.PlanSetupSer == planSetupSer).First().RTPlanSer;
                             var sessionRTPlans = aria.SessionRTPlans.Where(tmp => tmp.RTPlanSer == RTPlanSer); 
                             var sessionProcedureParts = aria.SessionProcedureParts.Where(tmp => tmp.RTPlanSer == RTPlanSer);
-                            var d = sessionProcedureParts.Count();
 
                             if (sessionRTPlans.Count() != CurrentPlan.UniqueFractionation.NumberOfFractions)
                             {
@@ -257,50 +289,16 @@ namespace VMS.TPS
                             foreach (var sess in sessionRTPlans)
                             {
                                 status = sess.Status;
-                                if (!status.Equals("SCHEDULE"))
+                                if (!status.Equals("TREAT"))
                                 {
-                                    SchedulingTestCase.Description = "Status of 1 or more fractions is not set to 'SCHEDULE'.";
+                                    SchedulingTestCase.Description = "Status of 1 or more fractions is not set to 'TREAT'.";
                                     SchedulingTestCase.Result = TestCase.FAIL;
+                                    break;
                                 }
                             }
-
-                            /*
-                            var arbitraryRTPlan = sessionRTPlans.First();
-                            var sessProcedures = arbitraryRTPlan.Session.SessionProcedures;
-                            var s = sessProcedures.Count();
-                            foreach (var sessProcedurePart in sessionProcedureParts)
-                            {
-                                var sessProcedure = arbitraryRTPlan.Session.SessionProcedures.Where(tmp => tmp.SessionProcedureSer == sessProcedurePart.SessionProcedureSer).First();
-                                template = sessProcedure.SessionProcedureTemplateId;
-                            }
-                            */
-
-                            /*
-                            long sessionSer = aria.Sessions.Where(tmp => tmp.CourseSer == courseSer).First().SessionSer;
-                            var sessionProcedures = aria.SessionProcedures.Where(tmp => tmp.Sess)
-                            foreach (SessionProcedurePart sessProcedurePart in sessProcedure.SessionProcedureParts)
-                                    {
-                                    template = sessProcedure.SessionProcedureTemplateId;
-                                    var radiation = aria.Radiations.Where(tmp => tmp.RadiationSer == sessProcedurePart.RadiationSer);
-                                        fieldId = radiation.First().RadiationId;
-
-                                        if (fieldId.Equals("ISO AP") || fieldId.Equals("ISO PA") || fieldId.Equals("ISO RLAT") || fieldId.Equals("ISO LLAT"))
-                                        {
-                                            if (!template.Equals("KV OBI"))
-                                                SchedulingTestCase.Result = TestCase.FAIL;
-                                        }
-                                        else if (fieldId.Equals("CBCT"))
-                                        {
-                                            if (!template.Equals("kV_CBCT"))
-                                                SchedulingTestCase.Result = TestCase.FAIL;
-                                        }
-                                    }
-                            }
-                                            */
                         }
                     }
                 }
-
 
                 return SchedulingTestCase;
             }
@@ -312,7 +310,6 @@ namespace VMS.TPS
 
         public TestCase ReferencePointCheck()
         {
-            ReferencePointTestCase.Description = "Ref. pt tracking correctly & Tolerance Dose vals set accordingly.";
             ReferencePointTestCase.Result = TestCase.PASS;
 
             short freqType = 7;
@@ -322,6 +319,7 @@ namespace VMS.TPS
             string prescriptionFreq = "";
             string[] BIDfreqOptions = {"10 Times a week", "10 TIMES A WEEK", "2 times/day", "2-3 times daily", "3 times/day, 11 fractions in 1 week",
                                                     "5 times a week,bid on last tx", "6 times/week, BID one day/week", "bid on last day", "Twice Daily", "TWICE DAILY"};
+            string[] noBIDOptions = {"DO NOT GIVE BID", "NO BID"};
             string[] ThreeFracOptions = { "Thrice Daily", "THRICE DAILY" };
             try
             { // get the prescription frequency notes and frequency value
@@ -342,8 +340,6 @@ namespace VMS.TPS
                                 var prescription = aria.Prescriptions.Where(tmp => tmp.PrescriptionSer == prescriptionSer).First();
                                 var prescriptionProperties = prescription.PrescriptionProperties.Where(tmp => tmp.PrescriptionSer == prescriptionSer);
                                 prescriptionNotes = prescription.Notes;
-                                if (prescriptionNotes == null)
-                                    ReferencePointTestCase.Description = "NOTE: no prescription note found; ";
                                 prescriptionFreq = prescriptionProperties.Where(tmp => tmp.PropertyType == freqType).First().PropertyValue;
                                 if (prescriptionFreq == null)
                                 {
@@ -357,7 +353,7 @@ namespace VMS.TPS
             }
             catch (Exception e)
             {
-                return ReferencePointTestCase.HandleTestError(e);
+                return ReferencePointTestCase.HandleTestError(e, "No linked prescription was found.");
             }
 
             try
@@ -375,7 +371,7 @@ namespace VMS.TPS
                 }
                 catch (Exception e)
                 {
-                    return ReferencePointTestCase.HandleTestError(e, "Error - prescription targets not found.");
+                    return ReferencePointTestCase.HandleTestError(e, "No linked prescription was found.");
                 }
 
                     
@@ -385,8 +381,8 @@ namespace VMS.TPS
                     ReferencePointTestCase.Result = TestCase.FAIL;
                 }
 
-                if ((prescriptionNotes != null && prescriptionFreq != null) && (BIDfreqOptions.Contains(prescriptionFreq) ||
-                                    (prescriptionNotes.ToUpper().Contains("BID") && !prescriptionNotes.ToUpper().Contains("NO BID")))) // daily dose limit == pres dose/fx*2
+                if ( (prescriptionNotes != null && prescriptionFreq != null) && ( BIDfreqOptions.Contains(prescriptionFreq) ||
+                                    ( prescriptionNotes.ToUpper().Contains("BID") && !noBIDOptions.Any(str => prescriptionNotes.ToUpper().Contains(str)) ) ) ) // daily dose limit == pres dose/fx*2
                 {
                     if (!TestCase.NearlyEqual((totalRxDose/totalRxFractions) * 2, CurrentPlan.PrimaryReferencePoint.DailyDoseLimit.Dose, epsilon))
                     {
@@ -425,6 +421,9 @@ namespace VMS.TPS
                     ReferencePointTestCase.Result = TestCase.FAIL;
                 }
 
+                if (ReferencePointTestCase.Result == TestCase.PASS)
+                    ReferencePointTestCase.Description = "Ref. pt tracking correctly & Tolerance Dose vals set accordingly.";
+
                 return ReferencePointTestCase;
             }
             catch (Exception e)
@@ -432,6 +431,41 @@ namespace VMS.TPS
                 return ReferencePointTestCase.HandleTestError(e);
             }
         }
+
+        /*
+        public TestCase MobiusReportCheck()
+        {
+            int empty = 0;
+            string path = @"\\shraonpfcap103\CancerCTR\SHC - Isodose Plans\MobiusReports", pattern = CurrentPlan.Course.Patient.Id + "*";
+            string[] reports = System.IO.Directory.GetFiles(path, pattern);
+
+            MobiusReportTestCase.Description = "Mobius report was found.";
+            MobiusReportTestCase.Result = TestCase.PASS;
+
+            if (reports.Length == empty)
+            {
+                MobiusReportTestCase.Description = "Mobius Report not found.";
+                MobiusReportTestCase.Result = TestCase.FAIL;
+            }
+
+            return MobiusReportTestCase;
+        }
+        */
+
+        /*
+        public TestCase CardiacDeviceCheck()
+        {
+            using (var ariaEnm = new AriaEnm())
+            {
+                var pt_id_enm = ariaEnm.pt_inst_key.Where(tmp => tmp.pt_key_value == CurrentPlan.Course.Patient.Id).First().pt_id;
+                var pt = ariaEnm.pts.Where(tmp => tmp.pt_id == pt_id_enm).First();
+                var pt_status_icon = pt.pt_status_icon;
+                var pt_status = pt_status_icon.First().status_icon; 
+            }
+
+            return CardiacDeviceTestCase;
+        }
+        */
 
     }
 }

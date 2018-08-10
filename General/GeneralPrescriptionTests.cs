@@ -15,11 +15,11 @@ namespace VMS.TPS
          *
          * Updated: JB 7/3/18
          */
-        public GeneralPrescriptionTests(PlanSetup cPlan, string[] doctors) : base(cPlan, doctors)
+        public GeneralPrescriptionTests(PlanSetup cPlan, string[] doctors, Dictionary<string, TestCase.PerBeamTest> testMethods, List<TestCase> perBeamTests, Dictionary<string, TestCase.StandaloneTest> standaloneTestMethods, List<TestCase> standaloneTests) : base(cPlan, doctors, testMethods, perBeamTests, standaloneTestMethods, standaloneTests)
         {
-            PrescribedDosePercentageTestCase = new TestCase("Prescribed Dose Percentage", "Test not completed.", TestCase.FAIL);
-            this.StandaloneTests.Add(PrescribedDosePercentageTestCase);
-            this.StandaloneTestMethods.Add(PrescribedDosePercentageTestCase.Name, PrescribedDosePercentageCheck);
+            PrescribedDosePercentageTestCase = new TestCase("Prescribed Dose Percentage", "Test not completed.", TestCase.FAIL, 12);
+            standaloneTests.Add(PrescribedDosePercentageTestCase);
+            standaloneTestMethods.Add(PrescribedDosePercentageTestCase.Name, PrescribedDosePercentageCheck);
         }
 
         public TestCase PrescribedDosePercentageCheck()
@@ -48,7 +48,7 @@ namespace VMS.TPS
                 PrescriptionFractionationTestCase.Result = TestCase.FAIL; return PrescriptionFractionationTestCase;
             }
             catch(Exception ex) {
-                return PrescriptionFractionationTestCase.HandleTestError(ex, "Error - no prescription targets found.");
+                return PrescriptionFractionationTestCase.HandleTestError(ex, "No linked prescription was found.");
             }
         }
 
@@ -68,7 +68,7 @@ namespace VMS.TPS
                 PrescriptionDoseTestCase.Result = TestCase.FAIL; return PrescriptionDoseTestCase;
             }
             catch(Exception e) {
-                return PrescriptionDoseTestCase.HandleTestError(e, "Error - no prescription targets found.");
+                return PrescriptionDoseTestCase.HandleTestError(e, "No linked prescription was found.");
             }
         }
 
@@ -106,7 +106,7 @@ namespace VMS.TPS
 
             catch (Exception e)
             {
-                return PrescriptionBolusTestCase.HandleTestError(e, "Error - could not find boluses in fields.");
+                return PrescriptionBolusTestCase.HandleTestError(e, "No linked prescription was found.");
             }
 
         }
@@ -131,7 +131,7 @@ namespace VMS.TPS
             }
             catch (Exception e)
             {
-                return PrescriptionEnergyTestCase.HandleTestError(e, "Error - could not find prescription or field energies.");
+                return PrescriptionEnergyTestCase.HandleTestError(e, "No linked prescription was found.");
             }
         }
 

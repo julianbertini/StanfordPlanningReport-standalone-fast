@@ -1,5 +1,6 @@
 ﻿using PlanSetup = VMS.TPS.Common.Model.API.PlanSetup;
 using VMS.TPS.Common.Model.API;
+using System.Collections.Generic;
 using System;
 
 namespace VMS.TPS
@@ -7,16 +8,19 @@ namespace VMS.TPS
     class ClinicalElectronFieldTests : GeneralFieldTests
     {
 
-        public ClinicalElectronFieldTests(PlanSetup cPlan) : base(cPlan)
+        public ClinicalElectronFieldTests(PlanSetup cPlan, Dictionary<string, TestCase.PerBeamTest> testMethods, List<TestCase> perBeamTests, Dictionary<string, TestCase.StandaloneTest> standaloneTestMethods, List<TestCase> standaloneTests) : base(cPlan, testMethods, perBeamTests, standaloneTestMethods, standaloneTests)
         {
-            StandaloneTests.Remove(SetupFieldAngleTestCase);
-            StandaloneTestMethods.Remove(SetupFieldAngleTestCase.Name);
+            standaloneTests.Remove(SetupFieldAngleTestCase);
+            standaloneTestMethods.Remove(SetupFieldAngleTestCase.Name);
 
-            PerBeamTests.Remove(DRRAllFieldsTestCase);
-            TestMethods.Remove(DRRAllFieldsTestCase.Name);
+            perBeamTests.Remove(DRRAllFieldsTestCase);
+            testMethods.Remove(DRRAllFieldsTestCase.Name);
 
-            PerBeamTests.Remove(CollAngleTestCase);
-            TestMethods.Remove(CollAngleTestCase.Name);
+            perBeamTests.Remove(CollAngleTestCase);
+            testMethods.Remove(CollAngleTestCase.Name);
+
+            perBeamTests.Remove(ArcFieldNameTestCase);
+            testMethods.Remove(ArcFieldNameTestCase.Name);
         }
 
         public override TestCase MLCCheck(Beam b)

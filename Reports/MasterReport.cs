@@ -36,9 +36,9 @@ namespace VMS.TPS
 
         private List<TestCase> testResults;
 
-        public MasterReport(Patient patient, Course course, PlanSetup plan)
+        public MasterReport(Patient patient, Course course, PlanSetup plan, string planType)
         {
-            physicsReport = new PhysicsReport(patient, course);
+            physicsReport = new PhysicsReport(patient, course, plan, planType);
 
             Report = new Report(plan ,patient, course);
 

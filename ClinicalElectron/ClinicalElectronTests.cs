@@ -1,4 +1,5 @@
 ﻿using VMS.TPS.Common.Model.API;
+using System.Collections.Generic;
 using System;
 
 namespace VMS.TPS
@@ -7,26 +8,48 @@ namespace VMS.TPS
     {
         private TestCase CustomeCodeTestCase;
 
-        public ClinicalElectronTests(PlanSetup cPlan, string[] doctors) : base(cPlan, doctors)
+        public ClinicalElectronTests(PlanSetup cPlan, string[] doctors, Dictionary<string, TestCase.PerBeamTest> testMethods, List<TestCase> perBeamTests, Dictionary<string, TestCase.StandaloneTest> standaloneTestMethods, List<TestCase> standaloneTests) : base(cPlan, doctors, testMethods, perBeamTests, standaloneTestMethods, standaloneTests)
         {
-            CustomeCodeTestCase = new TestCase("Custom Code Check (e-)", "Test not completed.", TestCase.FAIL);
+            CustomeCodeTestCase = new TestCase("Custom Code Check (e-)", "Test not completed.", TestCase.FAIL, 20);
 
-            StandaloneTests.Remove(UserOriginTestCase);
-            StandaloneTestMethods.Remove(UserOriginTestCase.Name);
+            standaloneTests.Remove(UserOriginTestCase);
+            standaloneTestMethods.Remove(UserOriginTestCase.Name);
 
-            StandaloneTests.Remove(PatientOrientationTestCase);
-            StandaloneTestMethods.Remove(PatientOrientationTestCase.Name);
+            standaloneTests.Remove(PatientOrientationTestCase);
+            standaloneTestMethods.Remove(PatientOrientationTestCase.Name);
 
-            StandaloneTests.Remove(TargetVolumeTestCase);
-            StandaloneTestMethods.Remove(TargetVolumeTestCase.Name);
+            standaloneTests.Remove(TargetVolumeTestCase);
+            standaloneTestMethods.Remove(TargetVolumeTestCase.Name);
 
-            StandaloneTests.Remove(PlanningApprovalTestCase);
-            StandaloneTestMethods.Remove(PlanningApprovalTestCase.Name);
+            standaloneTests.Remove(PlanningApprovalTestCase);
+            standaloneTestMethods.Remove(PlanningApprovalTestCase.Name);
 
-            /*
-            StandaloneTests.Remove(ImagePositionTestCase);
-            StandaloneTestMethods.Remove(ImagePositionTestCase.Name);
-            */
+            standaloneTests.Remove(ImageDateTestCase);
+            standaloneTestMethods.Remove(ImageDateTestCase.Name);
+
+            standaloneTests.Remove(ShiftNoteJournalTestCase);
+            standaloneTestMethods.Remove(ShiftNoteJournalTestCase.Name);
+
+            standaloneTests.Remove(ImagerPositionTestCase);
+            standaloneTestMethods.Remove(ImagerPositionTestCase.Name);
+
+            perBeamTests.Remove(SBRTCTSliceThicknessTestCase);
+            testMethods.Remove(SBRTCTSliceThicknessTestCase.Name);
+
+            perBeamTests.Remove(SBRTDoseResolutionTestCase);
+            testMethods.Remove(SBRTDoseResolutionTestCase.Name);
+
+            perBeamTests.Remove(TableHeightTestCase);
+            testMethods.Remove(TableHeightTestCase.Name);
+
+            perBeamTests.Remove(JawLimitTestCase);
+            testMethods.Remove(JawLimitTestCase.Name);
+
+            perBeamTests.Remove(CouchTestCase);
+            testMethods.Remove(CouchTestCase.Name);
+
+            perBeamTests.Remove(PlanNormalizationTestCase);
+            testMethods.Remove(PlanNormalizationTestCase.Name);
         }
 
         public override TestCase ToleranceTableCheck(Beam b)

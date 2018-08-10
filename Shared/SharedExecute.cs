@@ -11,10 +11,10 @@ namespace VMS.TPS
 {
     public class SharedExecute
     {
-        protected Dictionary<string, TestCase.PerBeamTest> TestMethods;
-        protected Dictionary<string, TestCase.StandaloneTest> StandaloneTestMethods;
-        protected List<TestCase> PerBeamTests;
-        protected List<TestCase> StandaloneTests;
+        public Dictionary<string, TestCase.PerBeamTest> TestMethods { get; set; }
+        public Dictionary<string, TestCase.StandaloneTest> StandaloneTestMethods { get; set; }
+        public List<TestCase> PerBeamTests { get; set; }
+        public List<TestCase> StandaloneTests { get; set; }
         public List<TestCase> TestResults { get; set; }
 
         public SharedExecute()

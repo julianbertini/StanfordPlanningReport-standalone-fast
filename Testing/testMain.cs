@@ -52,13 +52,16 @@ namespace VMS.TPS
             Environment.SetEnvironmentVariable("ROOT_PATH", @"Z:\\Users\\Jbertini\\ESAPI\\StanfordPlanningReport-standalone-fast");
 
             Patient patient = app.OpenPatientById(PID);
-            Course course = patient.Courses.First();
-            PlanSetup currentPlan = course.PlanSetups.ToArray()[1];
+            Course course = patient.Courses.ToArray()[1];
+            PlanSetup currentPlan = course.PlanSetups.ToArray()[3];
+
+            //GeneralTests s = new GeneralTests(currentPlan, docs);
+
 
             PhysicsCheck physics = new PhysicsCheck(currentPlan);
 
             // PDF CREATION
-            MasterReport report = new MasterReport(patient, course, currentPlan)
+            MasterReport report = new MasterReport(patient, course, currentPlan, physics.PlanType)
             {
                 TestResults = physics.Results
             };

@@ -1,7 +1,9 @@
 ﻿using Patient = VMS.TPS.Common.Model.API.Patient;
 using Course = VMS.TPS.Common.Model.API.Course;
+using PlanSetup = VMS.TPS.Common.Model.API.PlanSetup;
 using System.Collections.Generic;
 using System;
+using System.Linq;
 
 namespace VMS.TPS
 {
@@ -11,14 +13,20 @@ namespace VMS.TPS
 
         public List<TestCase> TestResults { get; set; }
 
-        private Patient Patient;
-        private Course Course;
+        private Patient _patient;
+        private Course _course;
+        private PlanSetup _currentPlan;
+        private string _planType;
 
-        public PhysicsReport(Patient patient, Course course)
+        private string[] _electronEnergies = { "6E", "9E", "12E", "16E", "20E" };
+
+        public PhysicsReport(Patient patient, Course course, PlanSetup currentPlan, string planType)
         {
             TestResults = new List<TestCase>();
-            Patient = patient;
-            Course = course;
+            _patient = patient;
+            _course = course;
+            _currentPlan = currentPlan;
+            _planType = planType;
         }
 
         /* Formats the HTML content of the physics report with the relevant information and styling. 
@@ -32,7 +40,6 @@ namespace VMS.TPS
          */
         public string FormatTestResultHTML()
         {
-       
             var physicsReportHTML = new HtmlAgilityPack.HtmlDocument();
 
             physicsReportHTML.Load(physicsReportHTMLPath);
@@ -86,8 +93,8 @@ namespace VMS.TPS
             }
 
             var h2 = physicsReportHTML.DocumentNode.SelectSingleNode("//body/div/header/h2");
-            h2.InnerHtml = Patient.FirstName.ToString() + Patient.MiddleName.ToString() + Patient.LastName.ToString()
-                                        + "（" + Patient.Id.ToString() + ")" + " - " + Course.Id.ToString();
+            h2.InnerHtml = _patient.FirstName.ToString() + _patient.MiddleName.ToString() + _patient.LastName.ToString()
+                                        + "（" + _patient.Id.ToString() + ")" + " - " + _course.Id.ToString() + " - " + _planType;
 
             return physicsReportHTML.DocumentNode.SelectSingleNode("//html").OuterHtml;
         }

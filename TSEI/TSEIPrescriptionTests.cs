@@ -3,6 +3,7 @@ using System.Linq;
 using System.Text.RegularExpressions;
 using PlanSetup = VMS.TPS.Common.Model.API.PlanSetup;
 using VMS.TPS.Common.Model.API;
+using System.Collections.Generic;
 
 namespace VMS.TPS
 {
@@ -16,7 +17,7 @@ namespace VMS.TPS
          * 
          * Updated: JB 7/3/18
          */
-        public TSEIPrescriptionTests(PlanSetup cPlan, string[] doctors) : base(cPlan, doctors)
+        public TSEIPrescriptionTests(PlanSetup cPlan, string[] doctors, Dictionary<string, TestCase.PerBeamTest> testMethods, List<TestCase> perBeamTests, Dictionary<string, TestCase.StandaloneTest> standaloneTestMethods, List<TestCase> standaloneTests) : base(cPlan, doctors, testMethods, perBeamTests, standaloneTestMethods, standaloneTests)
         {
             TSEIEnergy = "9E";
         }
@@ -47,7 +48,7 @@ namespace VMS.TPS
             }
             catch (Exception ex)
             { 
-                return PrescriptionFractionationTestCase.HandleTestError(ex);
+                return PrescriptionFractionationTestCase.HandleTestError(ex, "No linked prescription was found.");
             }
         }
 
@@ -79,7 +80,7 @@ namespace VMS.TPS
                 PrescriptionDoseTestCase.Result = TestCase.FAIL; return PrescriptionDoseTestCase;
             }
             catch (Exception ex) {
-                return PrescriptionDoseTestCase.HandleTestError(ex);
+                return PrescriptionDoseTestCase.HandleTestError(ex, "No linked prescription was found.");
             }
         }
 
@@ -113,7 +114,7 @@ namespace VMS.TPS
             }
             catch (Exception ex)
             {
-                return PrescriptionEnergyTestCase.HandleTestError(ex);
+                return PrescriptionEnergyTestCase.HandleTestError(ex, "No linked prescription was found.");
             }
         }
 
@@ -148,7 +149,7 @@ namespace VMS.TPS
 
             catch (Exception ex)
             {
-                return PrescriptionBolusTestCase.HandleTestError(ex);
+                return PrescriptionBolusTestCase.HandleTestError(ex, "No linked prescription was found.");
             }
 
         }

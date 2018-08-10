@@ -12,13 +12,13 @@ namespace VMS.TPS
     {
         protected string _fieldName;
 
-        public TSEIPerineumFieldTests(PlanSetup cPlan): base(cPlan)
+        public TSEIPerineumFieldTests(PlanSetup cPlan, Dictionary<string, TestCase.PerBeamTest> testMethods, List<TestCase> perBeamTests, Dictionary<string, TestCase.StandaloneTest> standaloneTestMethods, List<TestCase> standaloneTests) : base(cPlan, testMethods, perBeamTests, standaloneTestMethods, standaloneTests)
         {
             _fieldName = "Perineum";
 
-            TreatmentFieldNameTestCase = new TestCase("Tx Field Name Check", "Test not completed.", TestCase.FAIL);
-            this.PerBeamTests.Add(TreatmentFieldNameTestCase);
-            this.TestMethods.Add(TreatmentFieldNameTestCase.Name, TreatmentFieldNameCheck);
+            TreatmentFieldNameTestCase = new TestCase("Tx Field Name Check", "Test not completed.", TestCase.FAIL, 12);
+            perBeamTests.Add(TreatmentFieldNameTestCase);
+            testMethods.Add(TreatmentFieldNameTestCase.Name, TreatmentFieldNameCheck);
         }
 
         public TestCase TreatmentFieldNameCheck(Beam b)

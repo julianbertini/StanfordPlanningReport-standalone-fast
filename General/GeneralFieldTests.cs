@@ -16,52 +16,49 @@ namespace VMS.TPS
         protected TestCase ArcFieldNameTestCase;
         protected TestCase SetupFieldBolusTestCase;
         protected TestCase CollAngleTestCase;
+        protected TestCase SetupIsocentricTestCase;
 
 
         /* Constructor for FieldTest class to initialize the current plan object
          *
          * Updated: JB 6/13/18
          */
-        public GeneralFieldTests(PlanSetup cPlan): base(cPlan)
+        public GeneralFieldTests(PlanSetup cPlan, Dictionary<string, TestCase.PerBeamTest> testMethods, List<TestCase> perBeamTests, Dictionary<string, TestCase.StandaloneTest> standaloneTestMethods, List<TestCase> standaloneTests) : base(cPlan, testMethods, perBeamTests, standaloneTestMethods, standaloneTests)
         {
             // standalone tests
-            SetupFieldAngleTestCase = new TestCase("Setup Fields Presence (Photon)", "Test not completed.", TestCase.FAIL);
-            this.StandaloneTests.Add(SetupFieldAngleTestCase);
-            this.StandaloneTestMethods.Add(SetupFieldAngleTestCase.Name, SetupFieldAngleCheck);
+            SetupFieldAngleTestCase = new TestCase("Setup Fields Presence (Photon)", "Test not completed.", TestCase.FAIL, 20);
+            standaloneTests.Add(SetupFieldAngleTestCase);
+            standaloneTestMethods.Add(SetupFieldAngleTestCase.Name, SetupFieldAngleCheck);
+
+            // Standalone
+            SetupIsocentricTestCase = new TestCase("Field Isocenter", "", TestCase.FAIL, 23);
+            standaloneTests.Add(SetupIsocentricTestCase);
+            standaloneTestMethods.Add(SetupIsocentricTestCase.Name, SetupIsocentricCheck);
 
             // per Beam tests
-            ArcFieldNameTestCase = new TestCase("Arc Field Name (VMAT)", "Test not completed.", TestCase.FAIL);
-            this.PerBeamTests.Add(ArcFieldNameTestCase);
-            this.TestMethods.Add(ArcFieldNameTestCase.Name, ArcFieldNameCheck);
+            ArcFieldNameTestCase = new TestCase("Arc Field Name (VMAT)", "Test not completed.", TestCase.FAIL, 19);
+            perBeamTests.Add(ArcFieldNameTestCase);
+            testMethods.Add(ArcFieldNameTestCase.Name, ArcFieldNameCheck);
 
-            TreatmentFieldNameTestCase = new TestCase("Tx Field Name and Angle (3D)", "Test not completed.", TestCase.FAIL);
-            this.PerBeamTests.Add(TreatmentFieldNameTestCase);
-            this.TestMethods.Add(TreatmentFieldNameTestCase.Name, TreatmentFieldNameCheck);
+            TreatmentFieldNameTestCase = new TestCase("Tx Field Name and Angle (3D)", "Test not completed.", TestCase.FAIL, 18);
+            perBeamTests.Add(TreatmentFieldNameTestCase);
+            testMethods.Add(TreatmentFieldNameTestCase.Name, TreatmentFieldNameCheck);
 
-            SetupFieldNameTestCase = new TestCase("Setup Field Name", "Test not completed.", TestCase.FAIL);
-            this.PerBeamTests.Add(SetupFieldNameTestCase);
-            this.TestMethods.Add(SetupFieldNameTestCase.Name, SetupFieldNameCheck);
+            SetupFieldNameTestCase = new TestCase("Setup Field Name", "Test not completed.", TestCase.FAIL, 21);
+            perBeamTests.Add(SetupFieldNameTestCase);
+            testMethods.Add(SetupFieldNameTestCase.Name, SetupFieldNameCheck);
 
-            SetupFieldBolusTestCase = new TestCase("Setup Field Bolus", "Test not completed.", TestCase.FAIL);
-            this.PerBeamTests.Add(SetupFieldBolusTestCase);
-            this.TestMethods.Add(SetupFieldBolusTestCase.Name, SetupFieldBolusCheck);
+            SetupFieldBolusTestCase = new TestCase("Setup Field Bolus", "Test not completed.", TestCase.FAIL, 22);
+            perBeamTests.Add(SetupFieldBolusTestCase);
+            testMethods.Add(SetupFieldBolusTestCase.Name, SetupFieldBolusCheck);
 
-            DRRAllFieldsTestCase = new TestCase("DRR Presence (Photon)", "Test not completed.", TestCase.FAIL);
-            this.PerBeamTests.Add(DRRAllFieldsTestCase);
-            this.TestMethods.Add(DRRAllFieldsTestCase.Name, DRRAllFieldsCheck);
+            DRRAllFieldsTestCase = new TestCase("DRR Presence (Photon)", "Test not completed.", TestCase.FAIL, 42);
+            perBeamTests.Add(DRRAllFieldsTestCase);
+            testMethods.Add(DRRAllFieldsTestCase.Name, DRRAllFieldsCheck);
 
-            CollAngleTestCase = new TestCase("Collimator Angle Check (VMAT)", "Test not completed.", TestCase.FAIL);
-            this.PerBeamTests.Add(CollAngleTestCase);
-            this.TestMethods.Add(CollAngleTestCase.Name, CollAngleCheck);
-        }
-
-        /* Getter method for List of field test results
-         * 
-         * Updated: JB 6/13/18
-         */
-        public List<TestCase> GetTestResults()
-        {
-            return TestResults;
+            CollAngleTestCase = new TestCase("Collimator Angle Check (VMAT)", "Test not completed.", TestCase.FAIL, 24);
+            perBeamTests.Add(CollAngleTestCase);
+            testMethods.Add(CollAngleTestCase.Name, CollAngleCheck);
         }
 
         public TestCase CollAngleCheck(Beam b)
@@ -73,7 +70,7 @@ namespace VMS.TPS
 
             try
             {
-                if (!b.Id.Contains("VMAT"))
+                if (!b.IsSetupField && !b.Id.Contains("VMAT"))
                     CollAngleTestCase.Description = "N/A for non-VMAT beams.";
 
                 if (!b.IsSetupField && b.Id.Contains("VMAT"))
@@ -97,6 +94,7 @@ namespace VMS.TPS
 
         public override TestCase MLCCheck(Beam b)
         {
+            MLCTestCase.Name = "MLC Check (IMRT)";
             MLCTestCase.Description = "MLC is 'VMAT' or 'Arc Dynamic'.";
             MLCTestCase.Result = TestCase.PASS;
 
@@ -511,6 +509,51 @@ namespace VMS.TPS
             catch (Exception ex)
             {
                 return ArcFieldNameTestCase.HandleTestError(ex);
+            }
+        }
+
+        public TestCase SetupIsocentricCheck()
+        {
+            SetupIsocentricTestCase.Description = "All isocenter coords. for fields match.";
+            SetupIsocentricTestCase.Result = TestCase.PASS;
+
+            double expectedX = 0, expectedY = 0, expectedZ = 0;
+            string isocentric = "Isocentric";
+
+            try
+            {
+                var firstBeam = CurrentPlan.Beams.First();
+                expectedX = firstBeam.IsocenterPosition.x;
+                expectedY = firstBeam.IsocenterPosition.y;
+                expectedZ = firstBeam.IsocenterPosition.z;
+
+                foreach (Beam b in CurrentPlan.Beams)
+                {
+                    if (b.SetupTechnique.Equals(isocentric))
+                    {
+                        if (b.IsocenterPosition.x != expectedX)
+                        {
+                            SetupIsocentricTestCase.Description = "X coordinates do not match.";
+                            SetupIsocentricTestCase.Result = TestCase.FAIL;
+                        }
+                        if (b.IsocenterPosition.y != expectedY)
+                        {
+                            SetupIsocentricTestCase.Description = "Y coordinates do not match.";
+                            SetupIsocentricTestCase.Result = TestCase.FAIL;
+                        }
+                        if (b.IsocenterPosition.z != expectedZ)
+                        {
+                            SetupIsocentricTestCase.Description = "Y coordinates do not match.";
+                            SetupIsocentricTestCase.Result = TestCase.FAIL;
+                        }
+                    }
+                }
+
+                return SetupIsocentricTestCase;
+            }
+            catch (Exception e)
+            {
+                return SetupIsocentricTestCase.HandleTestError(e, "Could not access isocenter coords.");
             }
         }
 

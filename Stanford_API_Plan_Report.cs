@@ -30,7 +30,7 @@ namespace VMS.TPS
             */
 
             Console.WriteLine("Export reports! ... :)");
-            MasterReport report = new MasterReport(patient, course, currentPlan)
+            MasterReport report = new MasterReport(patient, course, currentPlan, physics.PlanType)
             {
                 TestResults = physics.Results
             };

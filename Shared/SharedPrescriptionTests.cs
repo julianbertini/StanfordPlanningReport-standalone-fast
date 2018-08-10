@@ -1,11 +1,13 @@
 ﻿using System.Linq;
+using System;
 using AriaSysSmall;
 using PlanSetup = VMS.TPS.Common.Model.API.PlanSetup;
 using VMS.TPS.Common.Model.API;
+using System.Collections.Generic;
 
 namespace VMS.TPS
 {
-    public abstract class SharedPrescriptionTests : SharedExecute
+    public abstract class SharedPrescriptionTests
     {
         protected PlanSetup CurrentPlan;
 
@@ -20,36 +22,36 @@ namespace VMS.TPS
         protected string[] _Doctors;
         protected string[] _BolusInfo;
 
-        public SharedPrescriptionTests(PlanSetup cPlan, string[] doctors) : base()
+        public SharedPrescriptionTests(PlanSetup cPlan, string[] doctors, Dictionary<string, TestCase.PerBeamTest> testMethods, List<TestCase> perBeamTests, Dictionary<string, TestCase.StandaloneTest> standaloneTestMethods, List<TestCase> standaloneTests) 
         {
             _Doctors = doctors;
             CurrentPlan = cPlan;
 
             _BolusInfo = GetBolusFreqAndThickness();
 
-            PrescriptionApprovalTestCase = new TestCase("Prescription Approval", "Test not completed.", TestCase.FAIL);
-            this.StandaloneTests.Add(PrescriptionApprovalTestCase);
-            this.StandaloneTestMethods.Add(PrescriptionApprovalTestCase.Name, PrescriptionApprovalCheck);
+            PrescriptionApprovalTestCase = new TestCase("Prescription Approval", "Test not completed.", TestCase.FAIL, 1);
+            standaloneTests.Add(PrescriptionApprovalTestCase);
+            standaloneTestMethods.Add(PrescriptionApprovalTestCase.Name, PrescriptionApprovalCheck);
 
-            PrescriptionEnergyTestCase = new TestCase("Prescription Energy", "Test not completed.", TestCase.FAIL);
-            this.PerBeamTests.Add(PrescriptionEnergyTestCase);
-            this.TestMethods.Add(PrescriptionEnergyTestCase.Name, PrescriptionEnergyCheck);
+            PrescriptionEnergyTestCase = new TestCase("Prescription Energy", "Test not completed.", TestCase.FAIL, 5);
+            perBeamTests.Add(PrescriptionEnergyTestCase);
+            testMethods.Add(PrescriptionEnergyTestCase.Name, PrescriptionEnergyCheck);
 
-            PrescriptionDosePerFractionTestCase = new TestCase("Prescription Dose Per Fraction", "Test not completed.", TestCase.FAIL);
-            this.StandaloneTests.Add(PrescriptionDosePerFractionTestCase);
-            this.StandaloneTestMethods.Add(PrescriptionDosePerFractionTestCase.Name, PrescriptionDosePerFractionCheck);
+            PrescriptionDosePerFractionTestCase = new TestCase("Prescription Dose Per Fraction", "Test not completed.", TestCase.FAIL, 2);
+            standaloneTests.Add(PrescriptionDosePerFractionTestCase);
+            standaloneTestMethods.Add(PrescriptionDosePerFractionTestCase.Name, PrescriptionDosePerFractionCheck);
 
-            PrescriptionFractionationTestCase = new TestCase("Prescription Fractionation", "Test not completed.", TestCase.FAIL);
-            this.StandaloneTests.Add(PrescriptionFractionationTestCase);
-            this.StandaloneTestMethods.Add(PrescriptionFractionationTestCase.Name, PrescriptionFractionationCheck);
+            PrescriptionFractionationTestCase = new TestCase("Prescription Fractionation", "Test not completed.", TestCase.FAIL, 3);
+            standaloneTests.Add(PrescriptionFractionationTestCase);
+            standaloneTestMethods.Add(PrescriptionFractionationTestCase.Name, PrescriptionFractionationCheck);
 
-            PrescriptionDoseTestCase = new TestCase("Prescription Dose", "Test not completed", TestCase.FAIL);
-            this.StandaloneTests.Add(PrescriptionDoseTestCase);
-            this.StandaloneTestMethods.Add(PrescriptionDoseTestCase.Name, PrescriptionDoseCheck);
+            PrescriptionDoseTestCase = new TestCase("Prescription Dose", "Test not completed", TestCase.FAIL, 4);
+            standaloneTests.Add(PrescriptionDoseTestCase);
+            standaloneTestMethods.Add(PrescriptionDoseTestCase.Name, PrescriptionDoseCheck);
 
-            PrescriptionBolusTestCase = new TestCase("Prescription Bolus", "Test not completed.", TestCase.FAIL);
-            this.PerBeamTests.Add(PrescriptionBolusTestCase);
-            this.TestMethods.Add(PrescriptionBolusTestCase.Name, PrescriptionBolusCheck);
+            PrescriptionBolusTestCase = new TestCase("Prescription Bolus", "Test not completed.", TestCase.FAIL, 6);
+            perBeamTests.Add(PrescriptionBolusTestCase);
+            testMethods.Add(PrescriptionBolusTestCase.Name, PrescriptionBolusCheck);
 
         }
 
@@ -96,18 +98,38 @@ namespace VMS.TPS
 
         public TestCase PrescriptionDosePerFractionCheck()
         {
+            double totalRxDose = 0.0;
+            int totalRxFractions = 0;
+
             PrescriptionDosePerFractionTestCase.Description = "Planned dose per fraction matches linked Rx.";
             PrescriptionDosePerFractionTestCase.Result = TestCase.PASS;
 
+            double epsilon = 0.0001;
+
             try
             {
-                foreach (RTPrescriptionTarget t in CurrentPlan.RTPrescription.Targets)
+                foreach (var target in CurrentPlan.RTPrescription.Targets)
                 {
-                    if ((t.DosePerFraction.Dose - CurrentPlan.UniqueFractionation.PrescribedDosePerFraction.Dose) <= CurrentPlan.UniqueFractionation.PrescribedDosePerFraction.Dose * 0.01) { PrescriptionDosePerFractionTestCase.Result = TestCase.PASS; return PrescriptionDosePerFractionTestCase; }
+                    if (target.DosePerFraction.Dose * target.NumberOfFractions > totalRxDose)
+                    {
+                        totalRxDose = target.DosePerFraction.Dose * target.NumberOfFractions;
+                        totalRxFractions = target.NumberOfFractions;
+                    }
                 }
-                PrescriptionDosePerFractionTestCase.Result = TestCase.FAIL; return PrescriptionDosePerFractionTestCase;
+
+                if (!TestCase.NearlyEqual(totalRxDose/totalRxFractions, CurrentPlan.UniqueFractionation.PrescribedDosePerFraction.Dose, epsilon))
+                {
+                    PrescriptionDosePerFractionTestCase.Description = "Planned dose/fraction: " + CurrentPlan.UniqueFractionation.PrescribedDosePerFraction.Dose + " does not match Rx.";
+                    PrescriptionDosePerFractionTestCase.Result = TestCase.FAIL;
+                    return PrescriptionDosePerFractionTestCase;
+                }
+                
+                return PrescriptionDosePerFractionTestCase;
             }
-            catch { PrescriptionDosePerFractionTestCase.Result = TestCase.FAIL; return PrescriptionDosePerFractionTestCase; }
+            catch(Exception e)
+            {
+                return PrescriptionDosePerFractionTestCase.HandleTestError(e, "No linked prescription was found."); 
+            }
         }
 
         public TestCase PrescriptionApprovalCheck()
@@ -143,10 +165,18 @@ namespace VMS.TPS
                     }
 
                     if (_Doctors.Contains(CurrentPlan.RTPrescription.HistoryUserName) && rx_status.ToString().ToUpper().Contains("APPROVED"))
-                    { PrescriptionApprovalTestCase.Result = TestCase.PASS; return PrescriptionApprovalTestCase; }
-                    else { PrescriptionApprovalTestCase.Result = TestCase.FAIL; return PrescriptionApprovalTestCase; }
+                    { return PrescriptionApprovalTestCase; }
+                    else
+                    {
+                        PrescriptionApprovalTestCase.Description = "Rx is not approved by MD.";
+                        PrescriptionApprovalTestCase.Result = TestCase.FAIL;
+                        return PrescriptionApprovalTestCase;
+                    }
                 }
-                catch { PrescriptionApprovalTestCase.Result = TestCase.FAIL; return PrescriptionApprovalTestCase; }
+                catch (Exception e)
+                {
+                    return PrescriptionApprovalTestCase.HandleTestError(e, "No linked prescription was found.");
+                }
             }
         }
 

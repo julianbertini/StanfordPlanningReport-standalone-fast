@@ -11,11 +11,11 @@ namespace VMS.TPS
     class TSEIPerineumPrescriptionTests : TSEIPrescriptionTests
     {
 
-        public TSEIPerineumPrescriptionTests(PlanSetup cPlan, string[] doctors) : base(cPlan, doctors)
+        public TSEIPerineumPrescriptionTests(PlanSetup cPlan, string[] doctors, Dictionary<string, TestCase.PerBeamTest> testMethods, List<TestCase> perBeamTests, Dictionary<string, TestCase.StandaloneTest> standaloneTestMethods, List<TestCase> standaloneTests) : base(cPlan, doctors, testMethods, perBeamTests, standaloneTestMethods, standaloneTests)
         {
             base.TSEIEnergy = "6E";
             base._nFractionsDivisor = 1;
-    }
+        }
 
         public override TestCase PrescriptionBolusCheck(Beam b)
         {

@@ -12,15 +12,15 @@ namespace VMS.TPS
 
         protected TestCase FieldSizeTestCase;
 
-        public TSEIFieldTests(PlanSetup cPlan): base(cPlan)
+        public TSEIFieldTests(PlanSetup cPlan, Dictionary<string, TestCase.PerBeamTest> testMethods, List<TestCase> perBeamTests, Dictionary<string, TestCase.StandaloneTest> standaloneTestMethods, List<TestCase> standaloneTests) : base(cPlan, testMethods, perBeamTests, standaloneTestMethods, standaloneTests)
         {
-            TreatmentFieldNameTestCase = new TestCase("Tx Field Name Check", "Test not completed.", TestCase.FAIL);
-            this.StandaloneTests.Add(TreatmentFieldNameTestCase);
-            this.StandaloneTestMethods.Add(TreatmentFieldNameTestCase.Name, TreatmentFieldNameCheck);
+            TreatmentFieldNameTestCase = new TestCase("Tx Field Name Check", "Test not completed.", TestCase.FAIL, 12);
+            standaloneTests.Add(TreatmentFieldNameTestCase);
+            standaloneTestMethods.Add(TreatmentFieldNameTestCase.Name, TreatmentFieldNameCheck);
 
-            FieldSizeTestCase = new TestCase("Field Size Check", "Test not completed.", TestCase.FAIL);
-            this.PerBeamTests.Add(FieldSizeTestCase);
-            this.TestMethods.Add(FieldSizeTestCase.Name, FieldSizeCheck);
+            FieldSizeTestCase = new TestCase("Field Size Check", "Test not completed.", TestCase.FAIL, 20);
+            perBeamTests.Add(FieldSizeTestCase);
+            testMethods.Add(FieldSizeTestCase.Name, FieldSizeCheck);
         }
 
         public override TestCase MLCCheck(Beam b)
